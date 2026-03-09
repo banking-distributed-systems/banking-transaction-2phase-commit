@@ -1,5 +1,7 @@
 import uuid
 import hashlib
+import logging
+import os
 import pymysql
 import concurrent.futures
 from flask import Flask, request, jsonify
@@ -8,6 +10,23 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+# ---------------------------------------------------------------------------
+# File logger — ghi chi tiết mọi sự kiện 2PC vào .log
+# ---------------------------------------------------------------------------
+LOG_FILE = os.path.join(os.path.dirname(__file__), '..', '.log')
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s  %(levelname)-8s  %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    handlers=[
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
+        logging.StreamHandler(),          # vẫn in ra terminal
+    ]
+)
+logger = logging.getLogger('2pc')
+
+# ---------------------------------------------------------------------------
 # Thời gian chờ tối đa (giây) cho Phase 1 (PREPARE) — Kịch bản 5
 PREPARE_TIMEOUT = 10
 
@@ -31,8 +50,41 @@ def get_log_conn():
     """Kết nối autocommit tới DB1 để ghi transaction_log"""
     return get_connection({**db1_config, 'autocommit': True})
 
+# Nhãn hiển thị cho từng phase
+_PHASE_LABEL = {
+    'PREPARING':    'Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch',
+    'PREPARED':     'Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng',
+    'COMMITTING':   'Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT',
+    'COMMIT_A':     'Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa',
+    'COMMITTED':    'Phase 2  ✔ COMMITTED   — Hoàn tất thành công',
+    'ABORTED':      'Phase *  ✖ ABORTED     — Giao dịch bị hủy (Rollback)',
+    'TIMEOUT':      'Phase 1  ⏱ TIMEOUT     — Participant phản hồi quá chậm',
+    'COMPENSATING': 'Recover  ↺ COMPENSATING — Đang hoàn tiền cho Bank A',
+    'COMPENSATED':  'Recover  ✔ COMPENSATED  — Hoàn tiền thành công',
+}
+
 def log_phase(tx_id, xid, phase, from_acc=None, to_acc=None, amount=None, description=''):
-    """Ghi / cập nhật trạng thái phase vào transaction_log"""
+    """Ghi / cập nhật trạng thái phase vào transaction_log VÀ file .log"""
+    label = _PHASE_LABEL.get(phase, phase)
+
+    # Ghi file log
+    if phase == 'PREPARING':
+        logger.info(
+            '[PHASE] %s | tx=%s | %s | %s → %s | %.0fđ | "%s"',
+            label, tx_id, xid[:12],
+            from_acc['account_number'], to_acc['account_number'],
+            amount, description
+        )
+    elif phase in ('COMMITTED', 'COMPENSATED'):
+        logger.info('[PHASE] %s | tx=%s', label, tx_id)
+    elif phase in ('ABORTED', 'TIMEOUT', 'COMMIT_A'):
+        logger.warning('[PHASE] %s | tx=%s', label, tx_id)
+    elif phase == 'COMPENSATING':
+        logger.warning('[PHASE] %s | tx=%s', label, tx_id)
+    else:
+        logger.info('[PHASE] %s | tx=%s', label, tx_id)
+
+    # Ghi DB
     try:
         conn = get_log_conn()
         with conn.cursor() as cur:
@@ -53,7 +105,7 @@ def log_phase(tx_id, xid, phase, from_acc=None, to_acc=None, amount=None, descri
                 )
         conn.close()
     except Exception as e:
-        print(f"[LOG] Lỗi ghi transaction_log ({phase}):", e)
+        logger.error('[PHASE] Lỗi ghi transaction_log (%s): %s', phase, e)
 
 # ---------------------------------------------------------------------------
 # Compensating Transaction — Kịch bản 4
@@ -63,10 +115,11 @@ def _do_compensation(tx_id, xid, from_account_number, amount):
     Bank A đã COMMIT (tiền đã trừ) nhưng Bank B chưa COMMIT.
     Tạo giao dịch bù: cộng lại số tiền cho tài khoản nguồn (Bank A).
     """
-    print(f"[COMPENSATE] Bắt đầu hoàn tiền cho giao dịch {tx_id} ...")
+    logger.warning('[COMPENSATE] Bắt đầu hoàn tiền | tx=%s | acc=%s | amount=%.0f',
+                   tx_id, from_account_number, amount)
     from_acc, from_conf = find_account_by_number(from_account_number)
     if not from_acc:
-        print(f"[COMPENSATE] Không tìm thấy tài khoản nguồn {from_account_number}")
+        logger.error('[COMPENSATE] Không tìm thấy tài khoản nguồn %s', from_account_number)
         return False
     try:
         log_phase(tx_id, xid, 'COMPENSATING')
@@ -78,8 +131,8 @@ def _do_compensation(tx_id, xid, from_account_number, amount):
             )
         conn.close()
         log_phase(tx_id, xid, 'COMPENSATED')
-        print(f"[COMPENSATE] Đã hoàn {amount:,.0f}đ → tài khoản {from_account_number}")
-        # Lưu dấu vết vào bảng transactions
+        logger.info('[COMPENSATE] Hoàn %.0fđ → %s thành công | tx=%s',
+                    amount, from_account_number, tx_id)
         comp_tx_id = 'COMP-' + tx_id
         try:
             lc = get_log_conn()
@@ -94,10 +147,10 @@ def _do_compensation(tx_id, xid, from_account_number, amount):
                 )
             lc.close()
         except Exception as log_err:
-            print(f"[COMPENSATE] Lỗi ghi transactions: {log_err}")
+            logger.error('[COMPENSATE] Lỗi ghi transactions: %s', log_err)
         return True
     except Exception as e:
-        print(f"[COMPENSATE] Lỗi thực hiện compensation {tx_id}: {e}")
+        logger.error('[COMPENSATE] Lỗi thực hiện compensation %s: %s', tx_id, e)
         return False
 
 # ---------------------------------------------------------------------------
@@ -112,7 +165,7 @@ def recover_in_doubt_transactions():
       COMMIT_A           → XA COMMIT Bank B nếu còn PREPARED; nếu không → Compensation
       COMPENSATING       → Chạy lại compensation bị gián đoạn
     """
-    print("[RECOVERY] Bắt đầu kiểm tra giao dịch treo...")
+    logger.info('[RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════')
     recovered = []
 
     # Bước 1: XA RECOVER — map xid → list configs còn PREPARED
@@ -127,7 +180,7 @@ def recover_in_doubt_transactions():
                     in_doubt.setdefault(xid, []).append(config)
             conn.close()
         except Exception as e:
-            print("[RECOVERY] Lỗi XA RECOVER:", e)
+            logger.error('[RECOVERY] Lỗi XA RECOVER: %s', e)
 
     # Bước 2: đọc tất cả log entry chưa kết thúc
     # (bao gồm COMMIT_A — Bank A đã commit, có thể không còn trong XA RECOVER)
@@ -141,16 +194,16 @@ def recover_in_doubt_transactions():
             pending_logs = {row['xid']: row for row in cur.fetchall()}
         lc.close()
     except Exception as e:
-        print("[RECOVERY] Lỗi đọc transaction_log:", e)
+        logger.error('[RECOVERY] Lỗi đọc transaction_log: %s', e)
         pending_logs = {}
 
     all_xids = set(in_doubt.keys()) | set(pending_logs.keys())
 
     if not all_xids:
-        print("[RECOVERY] Không có giao dịch treo.")
+        logger.info('[RECOVERY] Không có giao dịch treo.')
         return []
 
-    print(f"[RECOVERY] Tìm thấy {len(all_xids)} giao dịch cần xử lý.")
+    logger.info('[RECOVERY] Tìm thấy %d giao dịch cần xử lý.', len(all_xids))
 
     for xid in all_xids:
         log_entry   = pending_logs.get(xid)
@@ -158,7 +211,7 @@ def recover_in_doubt_transactions():
         tx_id       = log_entry['tx_id'] if log_entry else xid
         prepared_on = in_doubt.get(xid, [])  # configs còn PREPARED
 
-        print(f"[RECOVERY] {tx_id}: phase={phase}, PREPARED trên {len(prepared_on)} DB")
+        logger.info('[RECOVERY] tx=%s | phase=%s | PREPARED trên %d DB', tx_id, phase, len(prepared_on))
 
         # ── Kịch bản 4: Bank A đã COMMIT, Bank B chưa COMMIT ─────────────
         if phase == 'COMMIT_A':
@@ -172,9 +225,9 @@ def recover_in_doubt_transactions():
                             cur.execute(f"XA COMMIT '{xid}'")
                         conn.close()
                         commit_ok = True
-                        print(f"[RECOVERY] {tx_id}: Hoàn tất XA COMMIT Bank B → COMMITTED")
+                        logger.info('[RECOVERY] tx=%s: Hoàn tất XA COMMIT Bank B → COMMITTED', tx_id)
                     except Exception as e:
-                        print(f"[RECOVERY] Lỗi XA COMMIT Bank B: {e}")
+                        logger.error('[RECOVERY] Lỗi XA COMMIT Bank B: %s', e)
 
                 if commit_ok:
                     log_phase(tx_id, xid, 'COMMITTED')
@@ -196,7 +249,7 @@ def recover_in_doubt_transactions():
             else:
                 # Bank B không còn trong XA RECOVER (DB mất prepared state)
                 # Bank A đã commit rồi → bắt buộc Compensation
-                print(f"[RECOVERY] {tx_id}: Bank B mất XA state → thực hiện compensation")
+                logger.warning('[RECOVERY] tx=%s: Bank B mất XA state → thực hiện compensation', tx_id)
                 ok = _do_compensation(tx_id, xid,
                                       log_entry['from_account_number'],
                                       float(log_entry['amount']))
@@ -220,7 +273,7 @@ def recover_in_doubt_transactions():
                         cur.execute(f"XA COMMIT '{xid}'")
                     conn.close()
                 except Exception as e:
-                    print(f"[RECOVERY] Lỗi XA COMMIT ({config['database']}): {e}")
+                    logger.error('[RECOVERY] Lỗi XA COMMIT (%s): %s', config['database'], e)
             log_phase(tx_id, xid, 'COMMITTED')
             recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'COMMITTED'})
 
@@ -233,7 +286,7 @@ def recover_in_doubt_transactions():
                         cur.execute(f"XA ROLLBACK '{xid}'")
                     conn.close()
                 except Exception as e:
-                    print(f"[RECOVERY] Lỗi XA ROLLBACK ({config['database']}): {e}")
+                    logger.error('[RECOVERY] Lỗi XA ROLLBACK (%s): %s', config['database'], e)
             if log_entry:
                 log_phase(tx_id, xid, 'ABORTED')
             recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'ABORTED'})
@@ -262,7 +315,7 @@ def login():
             if user:
                 return jsonify({"status": "success", "user": user})
         except Exception as e:
-            print("Lỗi login:", e)
+            logger.error('[LOGIN] Lỗi kết nối DB: %s', e)
 
     return jsonify({"status": "error", "message": "Số điện thoại hoặc mật khẩu không đúng"}), 401
 
@@ -277,7 +330,7 @@ def get_accounts():
             accounts.extend(cursor.fetchall())
         conn1.close()
     except Exception as e:
-        print("Lỗi kết nối DB1:", e)
+        logger.error('[ACCOUNTS] Lỗi kết nối DB1: %s', e)
 
     try:
         conn2 = get_connection(db2_config)
@@ -286,7 +339,7 @@ def get_accounts():
             accounts.extend(cursor.fetchall())
         conn2.close()
     except Exception as e:
-        print("Lỗi kết nối DB2:", e)
+        logger.error('[ACCOUNTS] Lỗi kết nối DB2: %s', e)
 
     return jsonify(accounts)
 
@@ -306,7 +359,7 @@ def find_account_by_number(account_number):
             if acc:
                 return acc, config
         except Exception as e:
-            print("Lỗi lookup:", e)
+            logger.error('[LOOKUP] Lỗi tìm tài khoản: %s', e)
     return None, None
 
 def _xa_prepare_participant(config, xid, account_id, amount, is_debit):
@@ -388,7 +441,8 @@ def transfer():
                 rc.close()
             except: pass
 
-    # Ghi log: PREPARING
+    logger.info('[TRANSFER] ── Giao dịch mới | tx=%s | %s → %s | %.0fđ | "%s"',
+                tx_id, from_account_number, to_account_number, amount, description)
     log_phase(tx_id, xid, 'PREPARING', from_acc, to_acc, amount, description)
 
     # ===== PHASE 1: XA PREPARE \u2014 ch\u1ea1y song song, c\u00f3 timeout (K\u1ecbch b\u1ea3n 5) =====
@@ -404,10 +458,11 @@ def transfer():
     # \u2500\u2500 Ki\u1ec3m tra timeout \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
     if pending:
         slow = []
-        if future_from in pending: slow.append('Bank A (ngu\u1ed3n)')
-        if future_to   in pending: slow.append('Bank B (\u0111\u00edch)')
+        if future_from in pending: slow.append('Bank A (nguồn)')
+        if future_to   in pending: slow.append('Bank B (đích)')
         slow_str = ', '.join(slow)
-        print(f"[TIMEOUT] {tx_id}: {slow_str} kh\u00f4ng ph\u1ea3n h\u1ed3i PREPARE sau {PREPARE_TIMEOUT}s")
+        logger.warning('[TIMEOUT] tx=%s | %s không phản hồi PREPARE sau %ds',
+                       tx_id, slow_str, PREPARE_TIMEOUT)
         log_phase(tx_id, xid, 'TIMEOUT')
         _rollback_xa()
         return jsonify({
@@ -423,10 +478,11 @@ def transfer():
     for future in [future_from, future_to]:
         exc = future.exception()
         if exc is not None:
+            logger.error('[TRANSFER] tx=%s: Phase 1 thất bại | lỗi=%s', tx_id, exc)
             log_phase(tx_id, xid, 'ABORTED')
             _rollback_xa()
             return jsonify({"status": "error",
-                            "message": f"Giao d\u1ecbch th\u1ea5t b\u1ea1i \u1edf Phase 1: {str(exc)}"}), 500
+                            "message": f"Giao dịch thất bại ở Phase 1: {str(exc)}"}), 500
 
     # \u2500\u2500 C\u1ea3 hai \u0111\u00e3 PREPARE th\u00e0nh c\u00f4ng \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
     log_phase(tx_id, xid, 'PREPARED')
@@ -463,7 +519,10 @@ def transfer():
                 )
             conn_log.close()
         except Exception as log_err:
-            print("L\u1ed7i l\u01b0u h\u00f3a \u0111\u01a1n:", log_err)
+            logger.error('[TRANSFER] L\u1ed7i l\u01b0u h\u00f3a \u0111\u01a1n: %s', log_err)
+
+        logger.info('[TRANSFER] \u2714 Ho\u00e0n t\u1ea5t | tx=%s | %.0f\u0111 | %s \u2192 %s',
+                    tx_id, amount, from_account_number, to_account_number)
 
         return jsonify({"status": "success",
                         "message": "Chuy\u1ec3n ti\u1ec1n th\u00e0nh c\u00f4ng! (2-Phase Commit Ho\u00e0n t\u1ea5t)",
@@ -471,14 +530,15 @@ def transfer():
 
     except Exception as e:
         if commit_a_done:
-            # K\u1ecbch b\u1ea3n 4: Bank A \u0111\u00e3 COMMIT, Bank B ch\u01b0a
-            print(f"[PARTIAL COMMIT] {tx_id}: Bank A committed, Bank B failed \u2192 compensation")
+            # Kịch bản 4: Bank A đã COMMIT, Bank B chưa
+            logger.error('[PARTIAL COMMIT] tx=%s: Bank A committed, Bank B failed → compensation', tx_id)
             try:
                 rc = get_connection({**to_config, 'autocommit': True})
                 with rc.cursor() as c: c.execute(f"XA ROLLBACK '{xid}'")
                 rc.close()
+                logger.info('[PARTIAL COMMIT] XA ROLLBACK Bank B thành công | tx=%s', tx_id)
             except Exception as rb_err:
-                print(f"[PARTIAL COMMIT] XA ROLLBACK Bank B th\u1ea5t b\u1ea1i: {rb_err}")
+                logger.error('[PARTIAL COMMIT] XA ROLLBACK Bank B thất bại: %s', rb_err)
 
             ok = _do_compensation(tx_id, xid, from_acc['account_number'], amount)
             return jsonify({
@@ -492,15 +552,16 @@ def transfer():
                 "tx_id": tx_id
             }), 500
         else:
+            logger.error('[TRANSFER] tx=%s: Phase 2 thất bại | lỗi=%s', tx_id, e)
             log_phase(tx_id, xid, 'ABORTED')
             _rollback_xa()
             return jsonify({"status": "error",
-                            "message": f"Giao d\u1ecbch th\u1ea5t b\u1ea1i, \u0111\u00e3 Rollback: {str(e)}"}), 500
+                            "message": f"Giao dịch thất bại, đã Rollback: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    # Chạy recovery trước khi server nhận request mới
+    logger.info('[SERVER] ════════ V-Bank 2PC Server khởi động ════════')
     try:
         recover_in_doubt_transactions()
     except Exception as e:
-        print("[RECOVERY] Không thể chạy recovery khi khởi động:", e)
+        logger.error('[RECOVERY] Không thể chạy recovery khi khởi động: %s', e)
     app.run(debug=True, port=5000)

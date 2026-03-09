@@ -1,0 +1,133 @@
+2026-03-10 00:05:07  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:05:07  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:05:07  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:05:07  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:05:07  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:05:07  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:05:07  WARNING    * Debugger is active!
+2026-03-10 00:05:07  WARNING    * Debugger is active!
+2026-03-10 00:05:07  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:05:07  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:05:25  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\app.py', reloading
+2026-03-10 00:05:25  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\app.py', reloading
+2026-03-10 00:05:25  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:05:25  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:05:25  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:05:25  WARNING    * Debugger is active!
+2026-03-10 00:05:25  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:05:25  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:05:25  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:05:25  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:05:25  WARNING    * Debugger is active!
+2026-03-10 00:05:25  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:06:31  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\fix_log.py', reloading
+2026-03-10 00:06:31  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\fix_log.py', reloading
+2026-03-10 00:06:31  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:06:31  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:06:31  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:06:31  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:06:31  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:06:31  WARNING    * Debugger is active!
+2026-03-10 00:06:31  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:06:31  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:06:31  WARNING    * Debugger is active!
+2026-03-10 00:06:31  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:06:40  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\fix_log.py', reloading
+2026-03-10 00:06:40  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\fix_log.py', reloading
+2026-03-10 00:06:41  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:06:41  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:06:41  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:06:41  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:06:41  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:06:41  WARNING    * Debugger is active!
+2026-03-10 00:06:41  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:06:41  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:06:41  WARNING    * Debugger is active!
+2026-03-10 00:06:41  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:06:42  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\app.py', reloading
+2026-03-10 00:06:42  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\app.py', reloading
+2026-03-10 00:06:42  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:06:42  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:06:42  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:06:42  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:06:42  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:06:42  WARNING    * Debugger is active!
+2026-03-10 00:06:42  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:06:42  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:06:42  WARNING    * Debugger is active!
+2026-03-10 00:06:42  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:07:16  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\fix_log2.py', reloading
+2026-03-10 00:07:17  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\fix_log2.py', reloading
+2026-03-10 00:07:17  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:07:17  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:07:17  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:07:17  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:07:17  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:07:17  WARNING    * Debugger is active!
+2026-03-10 00:07:17  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:07:17  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:07:17  WARNING    * Debugger is active!
+2026-03-10 00:07:17  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:07:20  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\fix_log2.py', reloading
+2026-03-10 00:07:20  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\fix_log2.py', reloading
+2026-03-10 00:07:20  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:07:20  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:07:20  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:07:20  WARNING    * Debugger is active!
+2026-03-10 00:07:20  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:07:20  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:07:20  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:07:21  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:07:21  WARNING    * Debugger is active!
+2026-03-10 00:07:21  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:09:00  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\app.py', reloading
+2026-03-10 00:09:00  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\app.py', reloading
+2026-03-10 00:09:01  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:09:01  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:09:01  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
+2026-03-10 00:09:01  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-10 00:09:01  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:09:01  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-10 00:09:01  WARNING    * Debugger is active!
+2026-03-10 00:09:01  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:09:01  WARNING    * Debugger is active!
+2026-03-10 00:09:01  INFO       * Debugger PIN: 438-967-800
+2026-03-10 00:09:40  INFO      127.0.0.1 - - [10/Mar/2026 00:09:40] "OPTIONS /api/login HTTP/1.1" 200 -
+2026-03-10 00:09:41  INFO      127.0.0.1 - - [10/Mar/2026 00:09:41] "POST /api/login HTTP/1.1" 200 -
+2026-03-10 00:09:41  INFO      127.0.0.1 - - [10/Mar/2026 00:09:41] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-10 00:09:44  INFO      127.0.0.1 - - [10/Mar/2026 00:09:44] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-03-10 00:09:44  INFO      127.0.0.1 - - [10/Mar/2026 00:09:44] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-03-10 00:09:45  INFO      127.0.0.1 - - [10/Mar/2026 00:09:45] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-03-10 00:09:45  INFO      [TRANSFER] ── Giao dịch mới | tx=VB73F9FA2A7F | 2038 4756 9801 → 1029 3847 5612 | 10000đ | "Tram bank 1 chuyen tien"
+2026-03-10 00:09:45  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB73F9FA2A7F | 73f9fa2a7fed | 2038 4756 9801 → 1029 3847 5612 | 10000đ | "Tram bank 1 chuyen tien"
+2026-03-10 00:09:45  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB73F9FA2A7F
+2026-03-10 00:09:45  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB73F9FA2A7F
+2026-03-10 00:09:45  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB73F9FA2A7F
+2026-03-10 00:09:45  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB73F9FA2A7F
+2026-03-10 00:09:45  INFO      [TRANSFER] ✔ Hoàn tất | tx=VB73F9FA2A7F | 10000đ | 2038 4756 9801 → 1029 3847 5612
+2026-03-10 00:09:45  INFO      127.0.0.1 - - [10/Mar/2026 00:09:45] "POST /api/transfer HTTP/1.1" 200 -
+2026-03-10 00:09:45  INFO      127.0.0.1 - - [10/Mar/2026 00:09:45] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-10 00:10:27  INFO      127.0.0.1 - - [10/Mar/2026 00:10:27] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-03-10 00:10:28  INFO      127.0.0.1 - - [10/Mar/2026 00:10:28] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-03-10 00:10:34  INFO      127.0.0.1 - - [10/Mar/2026 00:10:34] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-03-10 00:10:34  INFO      [TRANSFER] ── Giao dịch mới | tx=VB5C2ED8DAE9 | 2038 4756 9801 → 1029 3847 5612 | 10000đ | "Tram bank 1 chuyen tien"
+2026-03-10 00:10:34  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB5C2ED8DAE9 | 5c2ed8dae9b0 | 2038 4756 9801 → 1029 3847 5612 | 10000đ | "Tram bank 1 chuyen tien"
+2026-03-10 00:10:34  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB5C2ED8DAE9
+2026-03-10 00:10:34  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB5C2ED8DAE9
+2026-03-10 00:10:34  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB5C2ED8DAE9
+2026-03-10 00:10:34  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB5C2ED8DAE9
+2026-03-10 00:10:34  INFO      [TRANSFER] ✔ Hoàn tất | tx=VB5C2ED8DAE9 | 10000đ | 2038 4756 9801 → 1029 3847 5612
+2026-03-10 00:10:34  INFO      127.0.0.1 - - [10/Mar/2026 00:10:34] "POST /api/transfer HTTP/1.1" 200 -
+2026-03-10 00:10:35  INFO      127.0.0.1 - - [10/Mar/2026 00:10:35] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-10 00:11:09  INFO      127.0.0.1 - - [10/Mar/2026 00:11:09] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-03-10 00:11:09  INFO      127.0.0.1 - - [10/Mar/2026 00:11:09] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-03-10 00:11:12  INFO      127.0.0.1 - - [10/Mar/2026 00:11:12] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-03-10 00:11:13  INFO      [TRANSFER] ── Giao dịch mới | tx=VB5AA2611865 | 2038 4756 9801 → 1029 3847 5612 | 10000đ | "Tram bank 1 chuyen tien"
+2026-03-10 00:11:13  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB5AA2611865 | 5aa2611865b5 | 2038 4756 9801 → 1029 3847 5612 | 10000đ | "Tram bank 1 chuyen tien"
+2026-03-10 00:11:13  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB5AA2611865
+2026-03-10 00:11:13  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB5AA2611865
+2026-03-10 00:11:13  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB5AA2611865
+2026-03-10 00:11:13  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB5AA2611865
+2026-03-10 00:11:13  INFO      [TRANSFER] ✔ Hoàn tất | tx=VB5AA2611865 | 10000đ | 2038 4756 9801 → 1029 3847 5612
+2026-03-10 00:11:13  INFO      127.0.0.1 - - [10/Mar/2026 00:11:13] "POST /api/transfer HTTP/1.1" 200 -
+2026-03-10 00:11:13  INFO      127.0.0.1 - - [10/Mar/2026 00:11:13] "GET /api/accounts HTTP/1.1" 200 -
