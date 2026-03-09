@@ -42,75 +42,187 @@ def log_phase(tx_id, xid, phase, from_acc=None, to_acc=None, amount=None, descri
         print(f"[LOG] Lỗi ghi transaction_log ({phase}):", e)
 
 # ---------------------------------------------------------------------------
+# Compensating Transaction — Kịch bản 4
+# ---------------------------------------------------------------------------
+def _do_compensation(tx_id, xid, from_account_number, amount):
+    """
+    Bank A đã COMMIT (tiền đã trừ) nhưng Bank B chưa COMMIT.
+    Tạo giao dịch bù: cộng lại số tiền cho tài khoản nguồn (Bank A).
+    """
+    print(f"[COMPENSATE] Bắt đầu hoàn tiền cho giao dịch {tx_id} ...")
+    from_acc, from_conf = find_account_by_number(from_account_number)
+    if not from_acc:
+        print(f"[COMPENSATE] Không tìm thấy tài khoản nguồn {from_account_number}")
+        return False
+    try:
+        log_phase(tx_id, xid, 'COMPENSATING')
+        conn = get_connection({**from_conf, 'autocommit': True})
+        with conn.cursor() as cur:
+            cur.execute(
+                "UPDATE accounts SET balance = balance + %s WHERE id = %s",
+                (amount, from_acc['id'])
+            )
+        conn.close()
+        log_phase(tx_id, xid, 'COMPENSATED')
+        print(f"[COMPENSATE] Đã hoàn {amount:,.0f}đ → tài khoản {from_account_number}")
+        # Lưu dấu vết vào bảng transactions
+        comp_tx_id = 'COMP-' + tx_id
+        try:
+            lc = get_log_conn()
+            with lc.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO transactions "
+                    "(tx_id, from_account_number, from_name, to_account_number, to_name, amount, description, status) "
+                    "VALUES (%s,'SYSTEM','Hệ thống',%s,%s,%s,%s,'COMPENSATED')",
+                    (comp_tx_id,
+                     from_acc['account_number'], from_acc['name'],
+                     amount, f'Hoàn tiền bù giao dịch lỗi {tx_id}')
+                )
+            lc.close()
+        except Exception as log_err:
+            print(f"[COMPENSATE] Lỗi ghi transactions: {log_err}")
+        return True
+    except Exception as e:
+        print(f"[COMPENSATE] Lỗi thực hiện compensation {tx_id}: {e}")
+        return False
+
+# ---------------------------------------------------------------------------
 # Recovery: chạy khi TC khởi động lại
 # ---------------------------------------------------------------------------
 def recover_in_doubt_transactions():
     """
-    Quét các XA transaction đang PREPARED trên DB1 và DB2.
-    Đối chiếu với transaction_log:
-      - phase == 'PREPARED'  → TC đã quyết định COMMIT trước khi sập → XA COMMIT
-      - phase == 'PREPARING' hoặc không rõ → chưa commit → XA ROLLBACK
+    Quét XA transactions đang PREPARED và log entries chưa hoàn tất.
+    Xử lý từng kịch bản:
+      PREPARING          → XA ROLLBACK (sập trước khi PREPARE hoàn tất)
+      PREPARED/COMMITTING → XA COMMIT tất cả participant còn PREPARED
+      COMMIT_A           → XA COMMIT Bank B nếu còn PREPARED; nếu không → Compensation
+      COMPENSATING       → Chạy lại compensation bị gián đoạn
     """
     print("[RECOVERY] Bắt đầu kiểm tra giao dịch treo...")
     recovered = []
 
-    # Bước 1: lấy danh sách xid đang PREPARED trên cả hai DB
-    in_doubt_xids = set()
+    # Bước 1: XA RECOVER — map xid → list configs còn PREPARED
+    in_doubt = {}
     for config in [db1_config, db2_config]:
         try:
             conn = get_connection({**config, 'autocommit': True})
             with conn.cursor() as cur:
                 cur.execute("XA RECOVER")
-                rows = cur.fetchall()
-                for row in rows:
-                    in_doubt_xids.add(row[3])  # column 3 = data (xid string)
+                for row in cur.fetchall():
+                    xid = row[3]
+                    in_doubt.setdefault(xid, []).append(config)
             conn.close()
         except Exception as e:
             print("[RECOVERY] Lỗi XA RECOVER:", e)
 
-    if not in_doubt_xids:
+    # Bước 2: đọc tất cả log entry chưa kết thúc
+    # (bao gồm COMMIT_A — Bank A đã commit, có thể không còn trong XA RECOVER)
+    try:
+        lc = get_log_conn()
+        with lc.cursor(pymysql.cursors.DictCursor) as cur:
+            cur.execute(
+                "SELECT * FROM transaction_log "
+                "WHERE phase IN ('PREPARING','PREPARED','COMMITTING','COMMIT_A','COMPENSATING')"
+            )
+            pending_logs = {row['xid']: row for row in cur.fetchall()}
+        lc.close()
+    except Exception as e:
+        print("[RECOVERY] Lỗi đọc transaction_log:", e)
+        pending_logs = {}
+
+    all_xids = set(in_doubt.keys()) | set(pending_logs.keys())
+
+    if not all_xids:
         print("[RECOVERY] Không có giao dịch treo.")
         return []
 
-    print(f"[RECOVERY] Tìm thấy {len(in_doubt_xids)} giao dịch treo: {in_doubt_xids}")
+    print(f"[RECOVERY] Tìm thấy {len(all_xids)} giao dịch cần xử lý.")
 
-    # Bước 2: đối chiếu với transaction_log
-    try:
-        log_conn = get_log_conn()
-        with log_conn.cursor(pymysql.cursors.DictCursor) as cur:
-            placeholders = ','.join(['%s'] * len(in_doubt_xids))
-            cur.execute(
-                f"SELECT tx_id, xid, phase FROM transaction_log WHERE xid IN ({placeholders})",
-                tuple(in_doubt_xids)
-            )
-            logs = {row['xid']: row for row in cur.fetchall()}
-        log_conn.close()
-    except Exception as e:
-        print("[RECOVERY] Lỗi đọc transaction_log:", e)
-        logs = {}
+    for xid in all_xids:
+        log_entry   = pending_logs.get(xid)
+        phase       = log_entry['phase'] if log_entry else None
+        tx_id       = log_entry['tx_id'] if log_entry else xid
+        prepared_on = in_doubt.get(xid, [])  # configs còn PREPARED
 
-    # Bước 3: quyết định COMMIT hoặc ROLLBACK
-    for xid in in_doubt_xids:
-        log_entry = logs.get(xid)
-        decision = 'COMMIT' if (log_entry and log_entry['phase'] == 'PREPARED') else 'ROLLBACK'
-        tx_id = log_entry['tx_id'] if log_entry else xid
+        print(f"[RECOVERY] {tx_id}: phase={phase}, PREPARED trên {len(prepared_on)} DB")
 
-        for config in [db1_config, db2_config]:
-            try:
-                conn = get_connection({**config, 'autocommit': True})
-                with conn.cursor() as cur:
-                    if decision == 'COMMIT':
+        # ── Kịch bản 4: Bank A đã COMMIT, Bank B chưa COMMIT ─────────────
+        if phase == 'COMMIT_A':
+            if prepared_on:
+                # Bank B vẫn trong XA PREPARED → có thể hoàn tất COMMIT
+                commit_ok = False
+                for config in prepared_on:
+                    try:
+                        conn = get_connection({**config, 'autocommit': True})
+                        with conn.cursor() as cur:
+                            cur.execute(f"XA COMMIT '{xid}'")
+                        conn.close()
+                        commit_ok = True
+                        print(f"[RECOVERY] {tx_id}: Hoàn tất XA COMMIT Bank B → COMMITTED")
+                    except Exception as e:
+                        print(f"[RECOVERY] Lỗi XA COMMIT Bank B: {e}")
+
+                if commit_ok:
+                    log_phase(tx_id, xid, 'COMMITTED')
+                    recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'COMMIT_B_COMPLETED'})
+                else:
+                    # Không COMMIT được → XA ROLLBACK Bank B + Compensation Bank A
+                    for config in prepared_on:
+                        try:
+                            conn = get_connection({**config, 'autocommit': True})
+                            with conn.cursor() as cur:
+                                cur.execute(f"XA ROLLBACK '{xid}'")
+                            conn.close()
+                        except: pass
+                    ok = _do_compensation(tx_id, xid,
+                                          log_entry['from_account_number'],
+                                          float(log_entry['amount']))
+                    recovered.append({'tx_id': tx_id, 'xid': xid,
+                                      'action': 'COMPENSATED' if ok else 'COMPENSATION_FAILED'})
+            else:
+                # Bank B không còn trong XA RECOVER (DB mất prepared state)
+                # Bank A đã commit rồi → bắt buộc Compensation
+                print(f"[RECOVERY] {tx_id}: Bank B mất XA state → thực hiện compensation")
+                ok = _do_compensation(tx_id, xid,
+                                      log_entry['from_account_number'],
+                                      float(log_entry['amount']))
+                recovered.append({'tx_id': tx_id, 'xid': xid,
+                                  'action': 'COMPENSATED' if ok else 'COMPENSATION_FAILED'})
+
+        # ── Compensation bị gián đoạn → chạy lại ────────────────────────
+        elif phase == 'COMPENSATING' and log_entry:
+            ok = _do_compensation(tx_id, xid,
+                                  log_entry['from_account_number'],
+                                  float(log_entry['amount']))
+            recovered.append({'tx_id': tx_id, 'xid': xid,
+                              'action': 'COMPENSATED' if ok else 'COMPENSATION_FAILED'})
+
+        # ── PREPARED / COMMITTING: sập sau Phase 1 → tiếp tục COMMIT ────
+        elif phase in ('PREPARED', 'COMMITTING'):
+            for config in prepared_on:
+                try:
+                    conn = get_connection({**config, 'autocommit': True})
+                    with conn.cursor() as cur:
                         cur.execute(f"XA COMMIT '{xid}'")
-                    else:
-                        cur.execute(f"XA ROLLBACK '{xid}'")
-                conn.close()
-            except Exception as e:
-                print(f"[RECOVERY] Lỗi XA {decision} trên {config['database']}: {e}")
+                    conn.close()
+                except Exception as e:
+                    print(f"[RECOVERY] Lỗi XA COMMIT ({config['database']}): {e}")
+            log_phase(tx_id, xid, 'COMMITTED')
+            recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'COMMITTED'})
 
-        final_phase = 'COMMITTED' if decision == 'COMMIT' else 'ABORTED'
-        log_phase(tx_id, xid, final_phase)
-        recovered.append({'tx_id': tx_id, 'xid': xid, 'decision': decision})
-        print(f"[RECOVERY] {tx_id} ({xid[:12]}...) → {decision}")
+        # ── PREPARING hoặc không rõ: rollback ────────────────────────────
+        else:
+            for config in prepared_on:
+                try:
+                    conn = get_connection({**config, 'autocommit': True})
+                    with conn.cursor() as cur:
+                        cur.execute(f"XA ROLLBACK '{xid}'")
+                    conn.close()
+                except Exception as e:
+                    print(f"[RECOVERY] Lỗi XA ROLLBACK ({config['database']}): {e}")
+            if log_entry:
+                log_phase(tx_id, xid, 'ABORTED')
+            recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'ABORTED'})
 
     return recovered
 
@@ -228,6 +340,7 @@ def transfer():
 
     xid   = str(uuid.uuid4()).replace("-", "")
     tx_id = 'VB' + xid[:10].upper()
+    commit_a_done = False  # Cờ theo dõi: Bank A đã commit trong Phase 2 chưa
 
     conn_from = get_connection(from_config)
     conn_to   = get_connection(to_config)
@@ -257,7 +370,17 @@ def transfer():
         log_phase(tx_id, xid, 'PREPARED')
 
         # ===== PHASE 2: COMMIT =====
+        # Ghi nhận TC bắt đầu Phase 2; recovery sẽ dùng phase này
+        log_phase(tx_id, xid, 'COMMITTING')
+
+        # Bank A (nguồn) commit trước
         c_from.execute(f"XA COMMIT '{xid}'")
+        # *** Nếu TC sập ngay đây → phase = COMMIT_A trong log ***
+        # *** Recovery sẽ phát hiện và hoàn tất hoặc bù giao dịch ***
+        log_phase(tx_id, xid, 'COMMIT_A')
+        commit_a_done = True   # Bank A đã commit thành công
+
+        # Bank B (đích) commit
         c_to.execute(f"XA COMMIT '{xid}'")
 
         # --- Ghi log: COMMITTED ---
@@ -283,16 +406,46 @@ def transfer():
                         "tx_id": tx_id})
 
     except Exception as e:
-        # --- Ghi log: ABORTED ---
-        log_phase(tx_id, xid, 'ABORTED')
-        try:
-            c_from.execute(f"XA ROLLBACK '{xid}'")
-        except: pass
-        try:
-            c_to.execute(f"XA ROLLBACK '{xid}'")
-        except: pass
-        return jsonify({"status": "error",
-                        "message": f"Giao dịch thất bại, đã Rollback: {str(e)}"}), 500
+        if commit_a_done:
+            # ───────────────────────────────────────────────────────────────
+            # KỊCH BẢN 4: Bank A đã COMMIT, Bank B chưa COMMIT
+            # XA ROLLBACK Bank A không còn hiệu lực → phải dùng Compensating Transaction
+            # ───────────────────────────────────────────────────────────────
+            print(f"[PARTIAL COMMIT] {tx_id}: Bank A committed, Bank B failed → compensation")
+
+            # Thử XA ROLLBACK Bank B (nếu vẫn còn trong PREPARED state)
+            try:
+                c_to.execute(f"XA ROLLBACK '{xid}'")
+                print(f"[PARTIAL COMMIT] XA ROLLBACK Bank B thành công")
+            except Exception as rb_err:
+                print(f"[PARTIAL COMMIT] XA ROLLBACK Bank B thất bại: {rb_err}")
+
+            # Thực hiện giao dịch bù cho Bank A
+            ok = _do_compensation(tx_id, xid, from_acc['account_number'], amount)
+
+            return jsonify({
+                "status": "error",
+                "message": (
+                    "Lỗi COMMIT lệch pha (Kịch bản 4): "
+                    "Bank A đã trừ tiền nhưng Bank B chưa nhận. "
+                    + ("Đã hoàn tiền tự động cho người gửi." if ok
+                       else "CẢNH BÁO: Hoàn tiền thất bại — cần xử lý thủ công!")
+                ),
+                "partial_failure": True,
+                "compensation": ok,
+                "tx_id": tx_id
+            }), 500
+        else:
+            # Lỗi trong Phase 1 → XA ROLLBACK bình thường
+            log_phase(tx_id, xid, 'ABORTED')
+            try:
+                c_from.execute(f"XA ROLLBACK '{xid}'")
+            except: pass
+            try:
+                c_to.execute(f"XA ROLLBACK '{xid}'")
+            except: pass
+            return jsonify({"status": "error",
+                            "message": f"Giao dịch thất bại, đã Rollback: {str(e)}"}), 500
     finally:
         conn_from.close()
         conn_to.close()
