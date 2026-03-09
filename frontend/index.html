@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V-Bank - Ngân hàng số thế hệ mới</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="smartphone-container">
+
+        <!-- ========== LOGIN SCREEN ========== -->
+        <div id="loginScreen" class="screen login-screen">
+            <div class="login-lang">
+                <i class="fas fa-globe"></i> VI | EN
+            </div>
+            <div class="login-logo">
+                <div class="logo-icon">
+                    <i class="fas fa-university"></i>
+                </div>
+                <h1>V-Bank</h1>
+                <p>Ngân hàng số thế hệ mới</p>
+            </div>
+            <div class="login-form">
+                <div class="input-group">
+                    <label>Số điện thoại</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="loginPhone" placeholder="Nhập số điện thoại">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Mật khẩu</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Nhập mật khẩu">
+                        <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+                    </div>
+                </div>
+                <div class="login-links">
+                    <a href="#">Quên mật khẩu?</a>
+                    <a href="#">Đăng ký mới</a>
+                </div>
+                <button class="login-btn" onclick="doLogin()">ĐĂNG NHẬP</button>
+                <div id="loginMessage" class="login-message"></div>
+                <div class="face-id">
+                    <i class="fas fa-smile-beam"></i>
+                    <span>Đăng nhập bằng Face ID</span>
+                </div>
+            </div>
+            <div class="login-bottom-nav">
+                <div class="nav-item">
+                    <i class="fas fa-qrcode"></i>
+                    <span>Quét QR</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Địa điểm</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-headset"></i>
+                    <span>Hỗ trợ</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Smart OTP</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== DASHBOARD SCREEN ========== -->
+        <div id="dashboardScreen" class="screen dashboard-screen" style="display:none;">
+            <!-- Header -->
+            <div class="dash-header">
+                <div class="dash-header-left">
+                    <div class="avatar-circle" id="avatarCircle">A</div>
+                    <div>
+                        <span class="greeting" id="greeting">CHÀO BUỔI SÁNG,</span>
+                        <h2 id="dashUserName">Nguyễn Văn A</h2>
+                    </div>
+                </div>
+                <div class="dash-header-right">
+                    <i class="fas fa-bell"></i>
+                </div>
+            </div>
+
+            <!-- Balance Card -->
+            <div class="balance-card">
+                <div class="balance-top">
+                    <span>Số dư khả dụng</span>
+                    <i class="fas fa-eye" id="toggleBalanceEye" onclick="toggleBalance()"></i>
+                </div>
+                <h2 id="mainBalance">******* VND</h2>
+                <div class="balance-bottom">
+                    <div class="account-info">
+                        <span class="label">SỐ TÀI KHOẢN</span>
+                        <span class="account-num" id="accountNumber">**** **** ****</span>
+                        <i class="fas fa-copy" onclick="copyAccountNumber()"></i>
+                    </div>
+                    <span class="account-badge" id="accountBadge">STANDARD</span>
+                </div>
+            </div>
+
+            <!-- Quick Services -->
+            <div class="quick-services">
+                <div class="services-header">
+                    <h3>Dịch vụ nhanh</h3>
+                    <a href="#">Xem tất cả</a>
+                </div>
+                <div class="services-grid">
+                    <div class="service-item" onclick="openTransferModal()">
+                        <div class="service-icon blue"><i class="fas fa-exchange-alt"></i></div>
+                        <span>Chuyển tiền</span>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon orange"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <span>Thanh toán</span>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon green"><i class="fas fa-mobile-alt"></i></div>
+                        <span>Nạp tiền ĐT</span>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-icon purple"><i class="fas fa-qrcode"></i></div>
+                        <span>QR Pay</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spending Chart -->
+            <div class="spending-section">
+                <div class="spending-header">
+                    <h3>Biểu đồ chi tiêu</h3>
+                    <select class="month-select">
+                        <option>Tháng này</option>
+                    </select>
+                </div>
+                <div class="chart-area">
+                    <div class="chart-bars">
+                        <div class="bar-group"><div class="bar" style="height:40%"></div><span>T2</span></div>
+                        <div class="bar-group"><div class="bar" style="height:65%"></div><span>T3</span></div>
+                        <div class="bar-group"><div class="bar" style="height:50%"></div><span>T4</span></div>
+                        <div class="bar-group"><div class="bar" style="height:80%"></div><span>T5</span></div>
+                        <div class="bar-group"><div class="bar" style="height:55%"></div><span>T6</span></div>
+                        <div class="bar-group"><div class="bar" style="height:70%"></div><span>T7</span></div>
+                        <div class="bar-group"><div class="bar" style="height:35%"></div><span>CN</span></div>
+                    </div>
+                </div>
+                <div class="spending-total">
+                    <div>
+                        <span class="spending-label">TỔNG CHI TIÊU</span>
+                        <h3 id="totalSpending">12,450,000 VND</h3>
+                    </div>
+                    <span class="spending-change negative"><i class="fas fa-arrow-down"></i> 8%</span>
+                </div>
+            </div>
+
+            <!-- Bottom Nav -->
+            <div class="bottom-nav">
+                <div class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Trang chủ</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-qrcode"></i>
+                    <span>QR Pay</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Giao dịch</span>
+                </div>
+                <div class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Cài đặt</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== TRANSFER MODAL ========== -->
+        <div id="transferModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Chuyển tiền</h2>
+                    <span class="close" onclick="closeTransferModal()">&times;</span>
+                </div>
+                <div class="modal-badge">2-Phase Commit</div>
+
+                <label>Từ tài khoản:</label>
+                <div class="from-account-info">
+                    <i class="fas fa-wallet"></i>
+                    <div>
+                        <span id="fromAccountName">---</span>
+                        <small id="fromAccountNum">---</small>
+                    </div>
+                </div>
+
+                <label for="toAccountInput">Số tài khoản người nhận:</label>
+                <div class="modal-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="toAccountInput" placeholder="Nhập số tài khoản..." oninput="onToAccountInput()">
+                </div>
+                <!-- </div> -->
+                <div id="toAccountResult" class="account-lookup-result"></div>
+
+                <label for="amount">Số tiền (VND):</label>
+                <input type="number" id="amount" placeholder="Nhập số tiền..." min="1000">
+
+                <label for="description">Nội dung chuyển khoản:</label>
+                <input type="text" id="description" placeholder="Nhập nội dung..." maxlength="100">
+
+                <button class="submit-btn" onclick="executeTransfer()">Xác nhận chuyển tiền</button>
+            </div>
+        </div>
+
+        <!-- ========== RECEIPT SCREEN ========== -->
+        <div id="receiptScreen" class="screen receipt-screen" style="display:none;">
+            <div class="receipt-header">
+                <i class="fas fa-chevron-left" onclick="showDashboard()"></i>
+                <h2>Hóa đơn giao dịch</h2>
+                <span></span>
+            </div>
+
+            <div class="receipt-success-icon">
+                <div class="receipt-check">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h3>Chuyển tiền thành công</h3>
+                <p id="receiptAmount">0 VND</p>
+            </div>
+
+            <div class="receipt-card">
+                <div class="receipt-row">
+                    <span>Mã giao dịch</span>
+                    <strong id="receiptTxId">---</strong>
+                </div>
+                <div class="receipt-divider"></div>
+                <div class="receipt-row">
+                    <span>Thời gian</span>
+                    <strong id="receiptTime">---</strong>
+                </div>
+                <div class="receipt-divider"></div>
+                <div class="receipt-row">
+                    <span>Tài khoản nguồn</span>
+                    <div class="receipt-right">
+                        <strong id="receiptFromName">---</strong>
+                        <small id="receiptFromNum">---</small>
+                    </div>
+                </div>
+                <div class="receipt-divider"></div>
+                <div class="receipt-row">
+                    <span>Tài khoản đích</span>
+                    <div class="receipt-right">
+                        <strong id="receiptToName">---</strong>
+                        <small id="receiptToNum">---</small>
+                    </div>
+                </div>
+                <div class="receipt-divider"></div>
+                <div class="receipt-row">
+                    <span>Nội dung</span>
+                    <strong id="receiptDesc">---</strong>
+                </div>
+                <div class="receipt-divider"></div>
+                <div class="receipt-row">
+                    <span>Phương thức</span>
+                    <strong>2-Phase Commit</strong>
+                </div>
+                <div class="receipt-divider receipt-divider-dashed"></div>
+                <div class="receipt-row receipt-total">
+                    <span>Số tiền</span>
+                    <strong id="receiptAmountRow">---</strong>
+                </div>
+            </div>
+
+            <div class="receipt-actions">
+                <button class="receipt-btn-outline" onclick="showDashboard()">
+                    <i class="fas fa-home"></i> Về trang chủ
+                </button>
+                <button class="receipt-btn-solid" onclick="openTransferModal()">
+                    <i class="fas fa-exchange-alt"></i> Chuyển tiếp
+                </button>
+            </div>
+        </div>
+
+        <!-- ========== TOAST POPUP ========== -->
+        <div id="toast" class="toast">
+            <div class="toast-icon" id="toastIcon"><i id="toastIconI" class="fas fa-check-circle"></i></div>
+            <div class="toast-body">
+                <p class="toast-title" id="toastTitle">Thông báo</p>
+                <p class="toast-msg" id="toastMsg"></p>
+            </div>
+            <div class="toast-close" onclick="closeToast()"><i class="fas fa-times"></i></div>
+        </div>
+
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

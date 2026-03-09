@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mysql1:
+    image: mysql:latest
+    container_name: mysql1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bank1
+    ports:
+      - "5433:3306"
+    volumes:
+      - ./db1-init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+
+  mysql2:
+    image: mysql:latest
+    container_name: mysql2
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bank2
+    ports:
+      - "5434:3306"
+    volumes:
+      - ./db2-init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+
+  mysql3:
+    image: mysql:latest
+    container_name: mysql3
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bank3
+    ports:
+      - "5435:3306"
+    volumes:
+      - ./db3-init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
