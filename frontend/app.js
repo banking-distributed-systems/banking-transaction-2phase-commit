@@ -201,14 +201,15 @@ function closeTransferModal() {
 }
 
 async function executeTransfer() {
-    const amount = document.getElementById('amount').value;
+    const amountVal = document.getElementById('amount').value;
+    const description = document.getElementById('description').value.trim();
 
     if (!resolvedToAccount) {
         showToast('error', 'Lỗi', 'Vui lòng nhập số tài khoản người nhận hợp lệ!');
         return;
     }
 
-    if (!amount || amount <= 0) {
+    if (!amountVal || amountVal <= 0) {
         showToast('error', 'Lỗi', 'Số tiền không hợp lệ!');
         return;
     }
@@ -222,22 +223,22 @@ async function executeTransfer() {
             body: JSON.stringify({
                 from_account_number: currentUser.account_number,
                 to_account_number: resolvedToAccount.account_number,
-                amount: parseFloat(amount)
+                amount: parseFloat(amountVal),
+                description
             })
         });
         const result = await response.json();
 
         if (response.ok) {
-            const amount = parseFloat(document.getElementById('amount').value);
-            const description = document.getElementById('description').value.trim();
             const now = new Date();
             const timeStr = now.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
             const txId = result.tx_id || ('VB' + Date.now().toString().slice(-10).toUpperCase());
 
+            closeToast();
             closeTransferModal();
             fetchAccounts();
             showReceipt({
-                amount,
+                amount: parseFloat(amountVal),
                 txId,
                 time: timeStr,
                 fromName: currentUser.name,
