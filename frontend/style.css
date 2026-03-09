@@ -890,23 +890,25 @@ body {
 }
 
 .receipt-row strong {
-    font-size: 13px;
+   font-size: 13px;
     color: #1a1a2e;
     font-weight: 600;
     text-align: right;
-    max-width: 55%;
-    word-break: break-all;
+    flex: 1;                  /* ✅ chiếm hết phần còn lại */
+    max-width: none;          /* ✅ bỏ giới hạn */
+    word-break: break-word;   /* ✅ chỉ bẻ khi cần */
 }
 
 .receipt-right {
     text-align: right;
+    flex: 1;          /* ✅ mở rộng vùng chứa */
+    min-width: 0;     /* ✅ cho phép co giãn đúng */
 }
 
 .receipt-right strong {
-    display: block;
-    font-size: 13px;
-    color: #1a1a2e;
-    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .receipt-right small {

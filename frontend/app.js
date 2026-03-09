@@ -103,7 +103,7 @@ function showReceipt(txData) {
     document.getElementById('receiptAmountRow').textContent = formatMoney(txData.amount);
     document.getElementById('receiptTxId').textContent = txData.txId;
     document.getElementById('receiptTime').textContent = txData.time;
-    document.getElementById('receiptFromName').textContent = txData.fromName;
+    // document.getElementById('receiptFromName').textContent = txData.fromName;
     document.getElementById('receiptFromNum').textContent = txData.fromNum;
     document.getElementById('receiptToName').textContent = txData.toName;
     document.getElementById('receiptToNum').textContent = txData.toNum;
