@@ -200,7 +200,35 @@ function closeTransferModal() {
     document.getElementById('transferModal').style.display = 'none';
 }
 
+function confirmTransfer() {
+    const amountVal = document.getElementById('amount').value;
+    const description = document.getElementById('description').value.trim();
+
+    if (!resolvedToAccount) {
+        showToast('error', 'Lỗi', 'Vui lòng nhập số tài khoản người nhận hợp lệ!');
+        return;
+    }
+    if (!amountVal || amountVal <= 0) {
+        showToast('error', 'Lỗi', 'Số tiền không hợp lệ!');
+        return;
+    }
+
+    // Điền thông tin vào dialog
+    document.getElementById('confirmToName').textContent = resolvedToAccount.name;
+    document.getElementById('confirmToNum').textContent  = resolvedToAccount.account_number;
+    document.getElementById('confirmAmount').textContent =
+        parseInt(amountVal).toLocaleString('vi-VN') + ' đ';
+    document.getElementById('confirmDesc').textContent   = description || '(Không có)';
+
+    document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function closeConfirm() {
+    document.getElementById('confirmOverlay').classList.remove('show');
+}
+
 async function executeTransfer() {
+    closeConfirm();
     const amountVal = document.getElementById('amount').value;
     const description = document.getElementById('description').value.trim();
 

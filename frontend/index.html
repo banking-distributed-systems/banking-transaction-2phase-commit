@@ -209,7 +209,37 @@
                 <label for="description">Nội dung chuyển khoản:</label>
                 <input type="text" id="description" placeholder="Nhập nội dung..." maxlength="100">
 
-                <button class="submit-btn" onclick="executeTransfer()">Xác nhận chuyển tiền</button>
+                <button class="submit-btn" onclick="confirmTransfer()">Xác nhận chuyển tiền</button>
+            </div>
+        </div>
+
+        <!-- ========== CONFIRM DIALOG ========== -->
+        <div id="confirmOverlay" class="confirm-overlay" onclick="closeConfirm()">
+            <div class="confirm-dialog" onclick="event.stopPropagation()">
+                <div class="confirm-icon"><i class="fas fa-paper-plane"></i></div>
+                <h3 class="confirm-title">Xác nhận giao dịch</h3>
+                <div class="confirm-rows">
+                    <div class="confirm-row">
+                        <span class="confirm-label">Người nhận</span>
+                        <span class="confirm-value" id="confirmToName"></span>
+                    </div>
+                    <div class="confirm-row">
+                        <span class="confirm-label">Số tài khoản</span>
+                        <span class="confirm-value" id="confirmToNum"></span>
+                    </div>
+                    <div class="confirm-row">
+                        <span class="confirm-label">Số tiền</span>
+                        <span class="confirm-value confirm-amount" id="confirmAmount"></span>
+                    </div>
+                    <div class="confirm-row">
+                        <span class="confirm-label">Nội dung</span>
+                        <span class="confirm-value" id="confirmDesc"></span>
+                    </div>
+                </div>
+                <div class="confirm-actions">
+                    <button class="confirm-btn-cancel" onclick="closeConfirm()">Hủy</button>
+                    <button class="confirm-btn-ok" onclick="executeTransfer()">Chuyển tiền</button>
+                </div>
             </div>
         </div>
 
