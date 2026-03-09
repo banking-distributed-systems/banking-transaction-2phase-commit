@@ -1,14 +1,28 @@
 import uuid
 import hashlib
 import pymysql
+import concurrent.futures
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-db1_config = {'host': 'localhost', 'port': 5433, 'user': 'root', 'password': 'root', 'database': 'bank1', 'autocommit': False}
-db2_config = {'host': 'localhost', 'port': 5434, 'user': 'root', 'password': 'root', 'database': 'bank2', 'autocommit': False}
+# Thời gian chờ tối đa (giây) cho Phase 1 (PREPARE) — Kịch bản 5
+PREPARE_TIMEOUT = 10
+
+# connect_timeout: thời gian tối đa thiết lập kết nối
+# read_timeout / write_timeout: thời gian tối đa chờ phản hồi từ DB
+db1_config = {
+    'host': 'localhost', 'port': 5433, 'user': 'root', 'password': 'root',
+    'database': 'bank1', 'autocommit': False,
+    'connect_timeout': 5, 'read_timeout': 8, 'write_timeout': 8
+}
+db2_config = {
+    'host': 'localhost', 'port': 5434, 'user': 'root', 'password': 'root',
+    'database': 'bank2', 'autocommit': False,
+    'connect_timeout': 5, 'read_timeout': 8, 'write_timeout': 8
+}
 
 def get_connection(config):
     return pymysql.connect(**config)
@@ -295,6 +309,28 @@ def find_account_by_number(account_number):
             print("Lỗi lookup:", e)
     return None, None
 
+def _xa_prepare_participant(config, xid, account_id, amount, is_debit):
+    """
+    Worker ch\u1ea1y trong thread ri\u00eang (Phase 1).
+    Th\u1ef1c hi\u1ec7n: XA START \u2192 UPDATE balance \u2192 XA END \u2192 XA PREPARE.
+    Sau PREPARE, XA state t\u1ed3n t\u1ea1i tr\u00ean MySQL server \u2014 connection c\u00f3 th\u1ec3 \u0111\u00f3ng.
+    N\u1ebfu DB ph\u1ea3n h\u1ed3i ch\u1eadm qu\u00e1 read_timeout \u2192 pymysql t\u1ef1 raise OperationalError.
+    """
+    conn = get_connection(config)
+    try:
+        cur = conn.cursor()
+        cur.execute(f"XA START '{xid}'")
+        if is_debit:
+            cur.execute("UPDATE accounts SET balance = balance - %s WHERE id = %s",
+                        (amount, account_id))
+        else:
+            cur.execute("UPDATE accounts SET balance = balance + %s WHERE id = %s",
+                        (amount, account_id))
+        cur.execute(f"XA END '{xid}'")
+        cur.execute(f"XA PREPARE '{xid}'")
+    finally:
+        conn.close()  # XA PREPARED \u2014 state \u0111\u01b0\u1ee3c gi\u1eef b\u1edfi MySQL, kh\u00f4ng ph\u1ea3i connection
+
 @app.route('/api/lookup-account', methods=['POST'])
 def lookup_account():
     data = request.json
@@ -326,67 +362,95 @@ def transfer():
     description         = data.get('description', '')
 
     if amount <= 0:
-        return jsonify({"status": "error", "message": "Số tiền không hợp lệ"}), 400
+        return jsonify({"status": "error", "message": "S\u1ed1 ti\u1ec1n kh\u00f4ng h\u1ee3p l\u1ec7"}), 400
 
     from_acc, from_config = find_account_by_number(from_account_number)
     to_acc,   to_config   = find_account_by_number(to_account_number)
 
     if not from_acc:
-        return jsonify({"status": "error", "message": "Tài khoản nguồn không tồn tại"}), 400
+        return jsonify({"status": "error", "message": "T\u00e0i kho\u1ea3n ngu\u1ed3n kh\u00f4ng t\u1ed3n t\u1ea1i"}), 400
     if not to_acc:
-        return jsonify({"status": "error", "message": "Tài khoản đích không tồn tại"}), 400
+        return jsonify({"status": "error", "message": "T\u00e0i kho\u1ea3n \u0111\u00edch kh\u00f4ng t\u1ed3n t\u1ea1i"}), 400
     if from_acc['id'] == to_acc['id'] and from_config == to_config:
-        return jsonify({"status": "error", "message": "Không thể chuyển tiền cùng một tài khoản"}), 400
+        return jsonify({"status": "error", "message": "Kh\u00f4ng th\u1ec3 chuy\u1ec3n ti\u1ec1n c\u00f9ng m\u1ed9t t\u00e0i kho\u1ea3n"}), 400
 
     xid   = str(uuid.uuid4()).replace("-", "")
     tx_id = 'VB' + xid[:10].upper()
-    commit_a_done = False  # Cờ theo dõi: Bank A đã commit trong Phase 2 chưa
+    commit_a_done = False
 
-    conn_from = get_connection(from_config)
-    conn_to   = get_connection(to_config)
+    def _rollback_xa():
+        """Rollback XA tr\u00ean c\u1ea3 hai DB b\u1eb1ng k\u1ebft n\u1ed1i m\u1edbi (b\u1ecf qua l\u1ed7i n\u1ebfu XA ch\u01b0a t\u1ed3n t\u1ea1i)."""
+        for cfg in [from_config, to_config]:
+            try:
+                rc = get_connection({**cfg, 'autocommit': True})
+                with rc.cursor() as c:
+                    c.execute(f"XA ROLLBACK '{xid}'")
+                rc.close()
+            except: pass
 
+    # Ghi log: PREPARING
+    log_phase(tx_id, xid, 'PREPARING', from_acc, to_acc, amount, description)
+
+    # ===== PHASE 1: XA PREPARE \u2014 ch\u1ea1y song song, c\u00f3 timeout (K\u1ecbch b\u1ea3n 5) =====
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        future_from = executor.submit(
+            _xa_prepare_participant, from_config, xid, from_acc['id'], amount, True)
+        future_to = executor.submit(
+            _xa_prepare_participant, to_config,   xid, to_acc['id'],   amount, False)
+
+        done, pending = concurrent.futures.wait(
+            [future_from, future_to], timeout=PREPARE_TIMEOUT)
+
+    # \u2500\u2500 Ki\u1ec3m tra timeout \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+    if pending:
+        slow = []
+        if future_from in pending: slow.append('Bank A (ngu\u1ed3n)')
+        if future_to   in pending: slow.append('Bank B (\u0111\u00edch)')
+        slow_str = ', '.join(slow)
+        print(f"[TIMEOUT] {tx_id}: {slow_str} kh\u00f4ng ph\u1ea3n h\u1ed3i PREPARE sau {PREPARE_TIMEOUT}s")
+        log_phase(tx_id, xid, 'TIMEOUT')
+        _rollback_xa()
+        return jsonify({
+            "status":  "error",
+            "message": (f"K\u1ecbch b\u1ea3n 5 \u2014 Timeout: {slow_str} kh\u00f4ng ph\u1ea3n h\u1ed3i "
+                        f"trong {PREPARE_TIMEOUT}s. \u0110\u00e3 t\u1ef1 \u0111\u1ed9ng h\u1ee7y giao d\u1ecbch, "
+                        f"kh\u00f4ng t\u00e0i kho\u1ea3n n\u00e0o thay \u0111\u1ed5i s\u1ed1 d\u01b0."),
+            "timeout": True,
+            "tx_id":   tx_id
+        }), 408
+
+    # \u2500\u2500 Ki\u1ec3m tra l\u1ed7i t\u1eeb c\u00e1c future \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+    for future in [future_from, future_to]:
+        exc = future.exception()
+        if exc is not None:
+            log_phase(tx_id, xid, 'ABORTED')
+            _rollback_xa()
+            return jsonify({"status": "error",
+                            "message": f"Giao d\u1ecbch th\u1ea5t b\u1ea1i \u1edf Phase 1: {str(exc)}"}), 500
+
+    # \u2500\u2500 C\u1ea3 hai \u0111\u00e3 PREPARE th\u00e0nh c\u00f4ng \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+    log_phase(tx_id, xid, 'PREPARED')
+
+    # ===== PHASE 2: COMMIT =====
     try:
-        c_from = conn_from.cursor()
-        c_to   = conn_to.cursor()
-
-        # --- Ghi log: PREPARING (trước khi thực hiện bất kỳ thẩm vấn nào) ---
-        log_phase(tx_id, xid, 'PREPARING', from_acc, to_acc, amount, description)
-
-        # ===== PHASE 1: START + UPDATE + PREPARE =====
-        c_from.execute(f"XA START '{xid}'")
-        c_to.execute(f"XA START '{xid}'")
-
-        c_from.execute("UPDATE accounts SET balance = balance - %s WHERE id = %s", (amount, from_acc['id']))
-        c_to.execute("UPDATE accounts SET balance = balance + %s WHERE id = %s", (amount, to_acc['id']))
-
-        c_from.execute(f"XA END '{xid}'")
-        c_to.execute(f"XA END '{xid}'")
-
-        c_from.execute(f"XA PREPARE '{xid}'")
-        c_to.execute(f"XA PREPARE '{xid}'")
-
-        # --- Ghi log: PREPARED (cả hai participant đã sẵn sàng) ---
-        # Nếu TC sập sau đây → recovery sẽ thấy PREPARED → tự COMMIT lại
-        log_phase(tx_id, xid, 'PREPARED')
-
-        # ===== PHASE 2: COMMIT =====
-        # Ghi nhận TC bắt đầu Phase 2; recovery sẽ dùng phase này
         log_phase(tx_id, xid, 'COMMITTING')
 
-        # Bank A (nguồn) commit trước
-        c_from.execute(f"XA COMMIT '{xid}'")
-        # *** Nếu TC sập ngay đây → phase = COMMIT_A trong log ***
-        # *** Recovery sẽ phát hiện và hoàn tất hoặc bù giao dịch ***
+        # Bank A (ngu\u1ed3n) commit tr\u01b0\u1edbc \u2014 d\u00f9ng k\u1ebft n\u1ed1i m\u1edbi (Phase 1 \u0111\u00e3 \u0111\u00f3ng)
+        ca = get_connection({**from_config, 'autocommit': True})
+        with ca.cursor() as c: c.execute(f"XA COMMIT '{xid}'")
+        ca.close()
+
         log_phase(tx_id, xid, 'COMMIT_A')
-        commit_a_done = True   # Bank A đã commit thành công
+        commit_a_done = True
 
-        # Bank B (đích) commit
-        c_to.execute(f"XA COMMIT '{xid}'")
+        # Bank B (\u0111\u00edch) commit
+        cb = get_connection({**to_config, 'autocommit': True})
+        with cb.cursor() as c: c.execute(f"XA COMMIT '{xid}'")
+        cb.close()
 
-        # --- Ghi log: COMMITTED ---
         log_phase(tx_id, xid, 'COMMITTED')
 
-        # Lưu hóa đơn vào bảng transactions
+        # L\u01b0u h\u00f3a \u0111\u01a1n
         try:
             conn_log = get_log_conn()
             with conn_log.cursor() as cur:
@@ -399,56 +463,39 @@ def transfer():
                 )
             conn_log.close()
         except Exception as log_err:
-            print("Lỗi lưu hóa đơn:", log_err)
+            print("L\u1ed7i l\u01b0u h\u00f3a \u0111\u01a1n:", log_err)
 
         return jsonify({"status": "success",
-                        "message": "Chuyển tiền thành công! (2-Phase Commit Hoàn tất)",
+                        "message": "Chuy\u1ec3n ti\u1ec1n th\u00e0nh c\u00f4ng! (2-Phase Commit Ho\u00e0n t\u1ea5t)",
                         "tx_id": tx_id})
 
     except Exception as e:
         if commit_a_done:
-            # ───────────────────────────────────────────────────────────────
-            # KỊCH BẢN 4: Bank A đã COMMIT, Bank B chưa COMMIT
-            # XA ROLLBACK Bank A không còn hiệu lực → phải dùng Compensating Transaction
-            # ───────────────────────────────────────────────────────────────
-            print(f"[PARTIAL COMMIT] {tx_id}: Bank A committed, Bank B failed → compensation")
-
-            # Thử XA ROLLBACK Bank B (nếu vẫn còn trong PREPARED state)
+            # K\u1ecbch b\u1ea3n 4: Bank A \u0111\u00e3 COMMIT, Bank B ch\u01b0a
+            print(f"[PARTIAL COMMIT] {tx_id}: Bank A committed, Bank B failed \u2192 compensation")
             try:
-                c_to.execute(f"XA ROLLBACK '{xid}'")
-                print(f"[PARTIAL COMMIT] XA ROLLBACK Bank B thành công")
+                rc = get_connection({**to_config, 'autocommit': True})
+                with rc.cursor() as c: c.execute(f"XA ROLLBACK '{xid}'")
+                rc.close()
             except Exception as rb_err:
-                print(f"[PARTIAL COMMIT] XA ROLLBACK Bank B thất bại: {rb_err}")
+                print(f"[PARTIAL COMMIT] XA ROLLBACK Bank B th\u1ea5t b\u1ea1i: {rb_err}")
 
-            # Thực hiện giao dịch bù cho Bank A
             ok = _do_compensation(tx_id, xid, from_acc['account_number'], amount)
-
             return jsonify({
-                "status": "error",
-                "message": (
-                    "Lỗi COMMIT lệch pha (Kịch bản 4): "
-                    "Bank A đã trừ tiền nhưng Bank B chưa nhận. "
-                    + ("Đã hoàn tiền tự động cho người gửi." if ok
-                       else "CẢNH BÁO: Hoàn tiền thất bại — cần xử lý thủ công!")
-                ),
+                "status":  "error",
+                "message": ("L\u1ed7i COMMIT l\u1ec7ch pha (K\u1ecbch b\u1ea3n 4): "
+                            "Bank A \u0111\u00e3 tr\u1eeb ti\u1ec1n nh\u01b0ng Bank B ch\u01b0a nh\u1eadn. "
+                            + ("\u0110\u00e3 ho\u00e0n ti\u1ec1n t\u1ef1 \u0111\u1ed9ng cho ng\u01b0\u1eddi g\u1eedi." if ok
+                               else "C\u1ea2NH B\u00c1O: Ho\u00e0n ti\u1ec1n th\u1ea5t b\u1ea1i \u2014 c\u1ea7n x\u1eed l\u00fd th\u1ee7 c\u00f4ng!")),
                 "partial_failure": True,
                 "compensation": ok,
                 "tx_id": tx_id
             }), 500
         else:
-            # Lỗi trong Phase 1 → XA ROLLBACK bình thường
             log_phase(tx_id, xid, 'ABORTED')
-            try:
-                c_from.execute(f"XA ROLLBACK '{xid}'")
-            except: pass
-            try:
-                c_to.execute(f"XA ROLLBACK '{xid}'")
-            except: pass
+            _rollback_xa()
             return jsonify({"status": "error",
-                            "message": f"Giao dịch thất bại, đã Rollback: {str(e)}"}), 500
-    finally:
-        conn_from.close()
-        conn_to.close()
+                            "message": f"Giao d\u1ecbch th\u1ea5t b\u1ea1i, \u0111\u00e3 Rollback: {str(e)}"}), 500
 
 if __name__ == '__main__':
     # Chạy recovery trước khi server nhận request mới
