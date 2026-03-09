@@ -1,1 +1,180 @@
-# banking-transaction-2phase-commit
+# V-Bank — Banking Transaction với Two-Phase Commit (2PC)
+
+Ứng dụng ngân hàng demo minh hoạ giao thức **Two-Phase Commit (2PC)** trong hệ thống phân tán, xử lý các kịch bản lỗi thực tế khi chuyển tiền giữa hai ngân hàng khác nhau.
+
+---
+
+## Kiến trúc hệ thống
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Frontend (Browser)                │
+│         HTML + CSS + Vanilla JS  (port 5500)        │
+└─────────────────────┬───────────────────────────────┘
+                      │ HTTP / REST API
+┌─────────────────────▼───────────────────────────────┐
+│          Transaction Coordinator — TC               │
+│              Flask (Python)  port 5000              │
+│  • Điều phối 2PC giữa hai ngân hàng                 │
+│  • Ghi transaction_log từng phase                   │
+│  • Auto-recovery khi khởi động lại                  │
+└─────────────┬───────────────────┬───────────────────┘
+              │ XA                │ XA
+┌─────────────▼──────┐  ┌─────────▼───────────────────┐
+│  Bank A — mysql1   │  │  Bank B — mysql2            │
+│  localhost:5433    │  │  localhost:5434             │
+│  database: bank1   │  │  database: bank2            │
+└────────────────────┘  └─────────────────────────────┘
+```
+
+---
+
+## Tính năng
+
+- **Đăng nhập** theo số điện thoại / mật khẩu
+- **Chuyển tiền** bằng số tài khoản, tra cứu tên chủ tài khoản trực tiếp
+- **Popup xác nhận** trước khi thực hiện giao dịch
+- **Hóa đơn giao dịch** sau khi chuyển thành công
+- **Toàn bộ 2PC** được ghi log chi tiết ra `backend/transaction_log` (DB) và file `.log`
+- **Recovery tự động** mỗi lần server khởi động
+
+---
+
+## Xử lý các kịch bản lỗi 2PC
+
+| # | Kịch bản | Cơ chế xử lý |
+|---|---|---|
+| **KB 1** | TC sập sau Phase 1 (PREPARE) | Startup recovery: đọc log → `PREPARED` → XA COMMIT tiếp tục |
+| **KB 2** | TC sập ở trạng thái PREPARING | Startup recovery: đọc log → `PREPARING` → XA ROLLBACK |
+| **KB 3** | TC sập đang COMMITTING | Startup recovery: đọc log → `COMMITTING` → XA COMMIT tiếp tục |
+| **KB 4** | Bank A COMMIT xong, Bank B chưa COMMIT | Phát hiện `COMMIT_A` → thử XA COMMIT Bank B → nếu không được: **Compensating Transaction** (hoàn tiền Bank A) |
+| **KB 5** | Bank B phản hồi quá chậm (Latency/Timeout) | Phase 1 chạy song song qua `ThreadPoolExecutor`, timeout 10s → tự động XA ROLLBACK, trả HTTP 408 |
+
+---
+
+## Chuỗi trạng thái (Transaction Log)
+
+```
+PREPARING → PREPARED → COMMITTING → COMMIT_A → COMMITTED
+                                         ↑
+                              TC có thể sập tại đây (KB4)
+               ↓
+            TIMEOUT     (KB5 — Bank phản hồi quá chậm)
+               ↓
+            ABORTED     (lỗi Phase 1, rollback bình thường)
+               ↓
+         COMPENSATING → COMPENSATED  (KB4 — hoàn tiền Bank A)
+```
+
+---
+
+## Cấu trúc project
+
+```
+banking-transaction-2phase-commit/
+├── backend/
+│   ├── app.py              # Flask API + toàn bộ logic 2PC
+│   └── requirements.txt
+├── frontend/
+│   ├── index.html          # UI V-Bank (Login, Dashboard, Modal, Receipt)
+│   ├── style.css
+│   └── app.js
+├── db1-init/
+│   └── init.sql            # Schema Bank A (accounts, transactions, transaction_log)
+├── db2-init/
+│   └── init.sql            # Schema Bank B (accounts)
+├── db3-init/
+│   └── init.sql            # Schema Bank C (chưa dùng)
+├── docker-compose.yml
+├── .log                    # File log chi tiết mọi sự kiện 2PC
+└── README.md
+```
+
+---
+
+## Cài đặt & Chạy
+
+### Yêu cầu
+
+- Docker Desktop
+- Python 3.10+
+
+### 1. Khởi động database
+
+```bash
+docker-compose up -d
+```
+
+Tạo 3 container MySQL:
+| Container | Port | Database |
+|---|---|---|
+| mysql1 | 5433 | bank1 (Bank A) |
+| mysql2 | 5434 | bank2 (Bank B) |
+| mysql3 | 5435 | bank3 |
+
+### 2. Cài dependencies Python
+
+```bash
+pip install -r backend/requirements.txt
+```
+
+### 3. Khởi động backend
+
+```bash
+cd backend
+python app.py
+```
+
+Server chạy tại `http://localhost:5000`. Tự động chạy recovery khi khởi động.
+
+### 4. Mở frontend
+
+Mở file `frontend/index.html` trong trình duyệt (hoặc dùng Live Server).
+
+---
+
+## Tài khoản demo
+
+| Tên | Số tài khoản | Ngân hàng | SĐT | Mật khẩu |
+|---|---|---|---|---|
+| Nguyễn Văn A | 1029 3847 5612 | Bank A | 0901234567 | 123456 |
+| Trần Thị B | 2038 4756 9801 | Bank B | 0912345678 | 123456 |
+| Lê Văn C | 3047 5612 8934 | Bank C | 0923456789 | 123456 |
+
+---
+
+## API Endpoints
+
+| Method | Endpoint | Mô tả |
+|---|---|---|
+| `POST` | `/api/login` | Đăng nhập |
+| `GET` | `/api/accounts` | Lấy danh sách tài khoản |
+| `POST` | `/api/lookup-account` | Tra cứu tên theo số tài khoản |
+| `POST` | `/api/transfer` | Thực hiện chuyển tiền (2PC) |
+| `POST` | `/api/recover` | Kích hoạt recovery thủ công |
+
+---
+
+## File log
+
+Toàn bộ sự kiện 2PC được ghi vào **`.log`** ở thư mục gốc:
+
+```
+2026-03-10 14:23:01  INFO     [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VBAB12CD34 | ...
+2026-03-10 14:23:01  INFO     [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VBAB12CD34
+2026-03-10 14:23:01  INFO     [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VBAB12CD34
+2026-03-10 14:23:01  INFO     [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VBAB12CD34
+2026-03-10 14:23:01  INFO     [TRANSFER] ✔ Hoàn tất | tx=VBAB12CD34 | 500000đ | 1029… → 2038…
+```
+
+---
+
+## Stack công nghệ
+
+| Tầng | Công nghệ |
+|---|---|
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Backend | Python 3, Flask, PyMySQL |
+| Database | MySQL 8 (XA Transactions) |
+| Container | Docker, Docker Compose |
+| 2PC Protocol | MySQL XA (eXtended Architecture) |
