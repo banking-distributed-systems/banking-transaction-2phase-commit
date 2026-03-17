@@ -1,159 +1,39 @@
-2026-03-17 20:36:25  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
-2026-03-17 20:36:25  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
-2026-03-17 20:36:25  INFO      [RECOVERY] Không có giao dịch treo.
-2026-03-17 20:36:25  INFO      [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2026-03-17 20:36:25  INFO      [33mPress CTRL+C to quit[0m
-2026-03-17 20:36:25  INFO       * Restarting with stat
-2026-03-17 20:36:25  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
-2026-03-17 20:36:26  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
-2026-03-17 20:36:26  INFO      [RECOVERY] Không có giao dịch treo.
-2026-03-17 20:36:26  WARNING    * Debugger is active!
-2026-03-17 20:36:26  INFO       * Debugger PIN: 535-083-205
-2026-03-17 20:36:52  INFO      127.0.0.1 - - [17/Mar/2026 20:36:52] "OPTIONS /api/login HTTP/1.1" 200 -
-2026-03-17 20:36:52  INFO      127.0.0.1 - - [17/Mar/2026 20:36:52] "POST /api/login HTTP/1.1" 200 -
-2026-03-17 20:36:52  INFO      127.0.0.1 - - [17/Mar/2026 20:36:52] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:37:03  INFO      127.0.0.1 - - [17/Mar/2026 20:37:03] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
-2026-03-17 20:37:03  INFO      127.0.0.1 - - [17/Mar/2026 20:37:03] "POST /api/lookup-account HTTP/1.1" 200 -
-2026-03-17 20:37:17  INFO      127.0.0.1 - - [17/Mar/2026 20:37:17] "OPTIONS /api/transfer HTTP/1.1" 200 -
-2026-03-17 20:37:17  INFO      [TRANSFER] ── Giao dịch mới | tx=VB2FD3DEA885 | 2038 4756 9801 → 1029 3847 5612 | 36000đ | "Trần Thị B chuyen tien"
-2026-03-17 20:37:17  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB2FD3DEA885 | 2fd3dea88508 | 2038 4756 9801 → 1029 3847 5612 | 36000đ | "Trần Thị B chuyen tien"
-2026-03-17 20:37:17  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB2FD3DEA885
-2026-03-17 20:37:17  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB2FD3DEA885
-2026-03-17 20:37:17  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB2FD3DEA885
-2026-03-17 20:37:18  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB2FD3DEA885
-2026-03-17 20:37:18  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB2FD3DEA885 | 36000đ | 2038 4756 9801 → 1029 3847 5612
-2026-03-17 20:37:18  INFO      127.0.0.1 - - [17/Mar/2026 20:37:18] "POST /api/transfer HTTP/1.1" 200 -
-2026-03-17 20:37:18  INFO      127.0.0.1 - - [17/Mar/2026 20:37:18] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:37:22  INFO      127.0.0.1 - - [17/Mar/2026 20:37:22] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:37:29  INFO      127.0.0.1 - - [17/Mar/2026 20:37:29] "OPTIONS /api/login HTTP/1.1" 200 -
-2026-03-17 20:37:29  INFO      127.0.0.1 - - [17/Mar/2026 20:37:29] "POST /api/login HTTP/1.1" 200 -
-2026-03-17 20:37:29  INFO      127.0.0.1 - - [17/Mar/2026 20:37:29] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:37:33  INFO      127.0.0.1 - - [17/Mar/2026 20:37:33] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
-2026-03-17 20:37:33  INFO      127.0.0.1 - - [17/Mar/2026 20:37:33] "POST /api/lookup-account HTTP/1.1" 200 -
-2026-03-17 20:37:34  INFO      127.0.0.1 - - [17/Mar/2026 20:37:34] "OPTIONS /api/transfer HTTP/1.1" 200 -
-2026-03-17 20:37:35  INFO      [TRANSFER] ── Giao dịch mới | tx=VB15A1E7D5A9 | 2038 4756 9801 → 1029 3847 5612 | 36000đ | "Trần Thị B chuyen tien"
-2026-03-17 20:37:35  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB15A1E7D5A9 | 15a1e7d5a9df | 2038 4756 9801 → 1029 3847 5612 | 36000đ | "Trần Thị B chuyen tien"
-2026-03-17 20:37:35  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB15A1E7D5A9
-2026-03-17 20:37:35  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB15A1E7D5A9
-2026-03-17 20:37:35  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB15A1E7D5A9
-2026-03-17 20:37:35  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB15A1E7D5A9
-2026-03-17 20:37:35  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB15A1E7D5A9 | 36000đ | 2038 4756 9801 → 1029 3847 5612
-2026-03-17 20:37:35  INFO      127.0.0.1 - - [17/Mar/2026 20:37:35] "POST /api/transfer HTTP/1.1" 200 -
-2026-03-17 20:37:35  INFO      127.0.0.1 - - [17/Mar/2026 20:37:35] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:37:38  INFO      127.0.0.1 - - [17/Mar/2026 20:37:38] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:47:41  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
-2026-03-17 20:47:41  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
-2026-03-17 20:47:41  INFO      [RECOVERY] Không có giao dịch treo.
-2026-03-17 20:47:41  INFO      [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2026-03-17 20:47:41  INFO      [33mPress CTRL+C to quit[0m
-2026-03-17 20:47:41  INFO       * Restarting with stat
-2026-03-17 20:47:41  INFO      [SERVER] ════════ V-Bank 2PC Server khởi động ════════
-2026-03-17 20:47:41  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
-2026-03-17 20:47:41  INFO      [RECOVERY] Không có giao dịch treo.
-2026-03-17 20:47:41  WARNING    * Debugger is active!
-2026-03-17 20:47:42  INFO       * Debugger PIN: 535-083-205
-2026-03-17 20:49:55  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 20:49:55  INFO                    V-Bank 2PC Server đang khởi động...              
-2026-03-17 20:49:55  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 20:49:55  INFO      [STARTUP] Đang kiểm tra kết nối database...
-2026-03-17 20:49:55  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
-2026-03-17 20:49:55  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
-2026-03-17 20:49:55  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
-2026-03-17 20:49:55  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
-2026-03-17 20:49:55  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
-2026-03-17 20:49:55  INFO      [RECOVERY] Không có giao dịch treo.
-2026-03-17 20:49:55  INFO      [STARTUP] ✓ Không có giao dịch treo nào
-2026-03-17 20:49:55  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 20:49:55  INFO        🎉 V-Bank 2PC Server khởi động thành công!
-2026-03-17 20:49:55  INFO        📍 Server chạy tại: http://localhost:5000
-2026-03-17 20:49:55  INFO        📍 API Base URL:    http://localhost:5000/api
-2026-03-17 20:49:55  INFO        🗄  Database:       bank1/bank2/bank3
-2026-03-17 20:49:55  INFO        ⏱  Prepare Timeout: 10 giây
-2026-03-17 20:49:55  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 20:49:55  INFO      [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2026-03-17 20:49:55  INFO      [33mPress CTRL+C to quit[0m
-2026-03-17 20:49:55  INFO       * Restarting with stat
-2026-03-17 20:49:55  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 20:49:55  INFO                    V-Bank 2PC Server đang khởi động...              
-2026-03-17 20:49:55  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 20:49:55  INFO      [STARTUP] Đang kiểm tra kết nối database...
-2026-03-17 20:49:55  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
-2026-03-17 20:49:55  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
-2026-03-17 20:49:55  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
-2026-03-17 20:49:55  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
-2026-03-17 20:49:55  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
-2026-03-17 20:49:56  INFO      [RECOVERY] Không có giao dịch treo.
-2026-03-17 20:49:56  INFO      [STARTUP] ✓ Không có giao dịch treo nào
-2026-03-17 20:49:56  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 20:49:56  INFO        🎉 V-Bank 2PC Server khởi động thành công!
-2026-03-17 20:49:56  INFO        📍 Server chạy tại: http://localhost:5000
-2026-03-17 20:49:56  INFO        📍 API Base URL:    http://localhost:5000/api
-2026-03-17 20:49:56  INFO        🗄  Database:       bank1/bank2/bank3
-2026-03-17 20:49:56  INFO        ⏱  Prepare Timeout: 10 giây
-2026-03-17 20:49:56  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 20:49:56  WARNING    * Debugger is active!
-2026-03-17 20:49:56  INFO       * Debugger PIN: 535-083-205
-2026-03-17 20:52:02  INFO      127.0.0.1 - - [17/Mar/2026 20:52:02] "OPTIONS /api/login HTTP/1.1" 200 -
-2026-03-17 20:52:02  INFO      127.0.0.1 - - [17/Mar/2026 20:52:02] "POST /api/login HTTP/1.1" 200 -
-2026-03-17 20:52:02  INFO      127.0.0.1 - - [17/Mar/2026 20:52:02] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:52:05  INFO      127.0.0.1 - - [17/Mar/2026 20:52:05] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
-2026-03-17 20:52:06  INFO      127.0.0.1 - - [17/Mar/2026 20:52:06] "POST /api/lookup-account HTTP/1.1" 200 -
-2026-03-17 20:52:08  INFO      127.0.0.1 - - [17/Mar/2026 20:52:08] "OPTIONS /api/transfer HTTP/1.1" 200 -
-2026-03-17 20:52:08  INFO      [TRANSFER] ── Giao dịch mới | tx=VBB99451978D | 2038 4756 9801 → 1029 3847 5612 | 36000đ | "Trần Thị B chuyen tien"
-2026-03-17 20:52:08  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VBB99451978D | b99451978df7 | 2038 4756 9801 → 1029 3847 5612 | 36000đ | "Trần Thị B chuyen tien"
-2026-03-17 20:52:08  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VBB99451978D
-2026-03-17 20:52:08  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VBB99451978D
-2026-03-17 20:52:08  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VBB99451978D
-2026-03-17 20:52:08  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VBB99451978D
-2026-03-17 20:52:08  INFO      [TRANSFER] ✓ Hoàn tất | tx=VBB99451978D | 36000đ | 2038 4756 9801 → 1029 3847 5612
-2026-03-17 20:52:08  INFO      127.0.0.1 - - [17/Mar/2026 20:52:08] "POST /api/transfer HTTP/1.1" 200 -
-2026-03-17 20:52:08  INFO      127.0.0.1 - - [17/Mar/2026 20:52:08] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:52:17  INFO      127.0.0.1 - - [17/Mar/2026 20:52:17] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:52:27  INFO      127.0.0.1 - - [17/Mar/2026 20:52:27] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
-2026-03-17 20:52:27  INFO      127.0.0.1 - - [17/Mar/2026 20:52:27] "POST /api/lookup-account HTTP/1.1" 200 -
-2026-03-17 20:52:31  INFO      127.0.0.1 - - [17/Mar/2026 20:52:31] "OPTIONS /api/transfer HTTP/1.1" 200 -
-2026-03-17 20:52:31  INFO      [TRANSFER] ── Giao dịch mới | tx=VBB1F9034B9E | 2038 4756 9801 → 1029 3847 5612 | 92000đ | "Trần Thị B chuyen tien"
-2026-03-17 20:52:31  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VBB1F9034B9E | b1f9034b9ed8 | 2038 4756 9801 → 1029 3847 5612 | 92000đ | "Trần Thị B chuyen tien"
-2026-03-17 20:52:31  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VBB1F9034B9E
-2026-03-17 20:52:31  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VBB1F9034B9E
-2026-03-17 20:52:31  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VBB1F9034B9E
-2026-03-17 20:52:31  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VBB1F9034B9E
-2026-03-17 20:52:31  INFO      [TRANSFER] ✓ Hoàn tất | tx=VBB1F9034B9E | 92000đ | 2038 4756 9801 → 1029 3847 5612
-2026-03-17 20:52:31  INFO      127.0.0.1 - - [17/Mar/2026 20:52:31] "POST /api/transfer HTTP/1.1" 200 -
-2026-03-17 20:52:31  INFO      127.0.0.1 - - [17/Mar/2026 20:52:31] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:52:33  INFO      127.0.0.1 - - [17/Mar/2026 20:52:33] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 20:59:27  ERROR     [TRANSFER] Lỗi lưu hóa đơn: Connection failed
-2026-03-17 20:59:29  ERROR     [DB] Lỗi thực thi query: Query failed
-2026-03-17 20:59:29  INFO      [TRANSFER] ── Giao dịch mới | tx=VB54D54C7C68 | 1029 3847 5612 → 2038 4756 9801 | 50000đ | "Test"
-2026-03-17 20:59:29  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB54D54C7C68 | 54d54c7c68c6 | 1029 3847 5612 → 2038 4756 9801 | 50000đ | "Test"
-2026-03-17 20:59:29  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB54D54C7C68
-2026-03-17 20:59:29  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB54D54C7C68
-2026-03-17 20:59:29  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB54D54C7C68
-2026-03-17 20:59:29  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB54D54C7C68
-2026-03-17 20:59:29  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB54D54C7C68 | 50000đ | 1029 3847 5612 → 2038 4756 9801
-2026-03-17 20:59:30  INFO      [TRANSFER] ── Giao dịch mới | tx=VBEA768AED5E | 102938475612 → 203847569801 | 50000đ | ""
-2026-03-17 20:59:30  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VBEA768AED5E | ea768aed5eab | 102938475612 → 203847569801 | 50000đ | ""
-2026-03-17 20:59:30  ERROR     [PHASE] Lỗi ghi transaction_log (PREPARING): 'name'
-2026-03-17 20:59:30  ERROR     [TRANSFER] tx=VBEA768AED5E: Phase 1 thất bại | lỗi=(1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
-2026-03-17 20:59:30  WARNING   [PHASE] Phase *  ✖ ABORTED     — Giao dịch bị hủy (Rollback) | tx=VBEA768AED5E
-2026-03-17 20:59:30  WARNING   [XA] Lỗi XA ROLLBACK (bank1): (1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
-2026-03-17 20:59:30  WARNING   [XA] Lỗi XA ROLLBACK (bank2): (1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
-2026-03-17 20:59:30  INFO      [TRANSFER] ── Giao dịch mới | tx=VB4E56158807 | 102938475612 → 203847569801 | 50000đ | ""
-2026-03-17 20:59:30  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB4E56158807 | 4e561588077a | 102938475612 → 203847569801 | 50000đ | ""
-2026-03-17 20:59:30  ERROR     [PHASE] Lỗi ghi transaction_log (PREPARING): 'name'
-2026-03-17 20:59:30  ERROR     [TRANSFER] tx=VB4E56158807: Phase 1 thất bại | lỗi=(1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
-2026-03-17 20:59:30  WARNING   [PHASE] Phase *  ✖ ABORTED     — Giao dịch bị hủy (Rollback) | tx=VB4E56158807
-2026-03-17 20:59:30  WARNING   [XA] Lỗi XA ROLLBACK (bank1): (1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
-2026-03-17 20:59:30  WARNING   [XA] Lỗi XA ROLLBACK (bank2): (1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
-2026-03-17 20:59:30  INFO      [TRANSFER] ── Giao dịch mới | tx=VB522ED0E03A | 1029 3847 5612 → 2038 4756 9801 | 999999999đ | "Large transfer"
-2026-03-17 20:59:30  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB522ED0E03A | 522ed0e03a59 | 1029 3847 5612 → 2038 4756 9801 | 999999999đ | "Large transfer"
-2026-03-17 20:59:30  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB522ED0E03A
-2026-03-17 20:59:30  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB522ED0E03A
-2026-03-17 20:59:30  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB522ED0E03A
-2026-03-17 20:59:30  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB522ED0E03A
-2026-03-17 20:59:30  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB522ED0E03A | 999999999đ | 1029 3847 5612 → 2038 4756 9801
-2026-03-17 20:59:30  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
-2026-03-17 20:59:30  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-17 22:29:31  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-17 22:29:31  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-03-17 22:29:31  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-17 22:29:31  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-03-17 22:29:31  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-03-17 22:29:31  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-03-17 22:29:31  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-03-17 22:29:31  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-03-17 22:29:31  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-17 22:29:31  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-17 22:29:31  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-03-17 22:29:31  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-17 22:29:31  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-03-17 22:29:31  INFO        📍 Server chạy tại: http://localhost:5000
+2026-03-17 22:29:31  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-03-17 22:29:31  INFO        🗄  Database:       bank1/bank2/bank3
+2026-03-17 22:29:31  INFO        ⏱  Prepare Timeout: 10 giây
+2026-03-17 22:29:31  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-17 22:29:31  WARNING    * Debugger is active!
+2026-03-17 22:29:31  INFO       * Debugger PIN: 535-083-205
+2026-03-17 22:29:44  INFO      127.0.0.1 - - [17/Mar/2026 22:29:44] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:29:53  INFO      127.0.0.1 - - [17/Mar/2026 22:29:53] "[33mGET /api/ HTTP/1.1[0m" 404 -
+2026-03-17 22:29:59  INFO      127.0.0.1 - - [17/Mar/2026 22:29:59] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:29:59  INFO      127.0.0.1 - - [17/Mar/2026 22:29:59] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:30:20  INFO      127.0.0.1 - - [17/Mar/2026 22:30:20] "[33mGET /api/ HTTP/1.1[0m" 404 -
+2026-03-17 22:30:29  INFO      127.0.0.1 - - [17/Mar/2026 22:30:29] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:30:35  INFO      127.0.0.1 - - [17/Mar/2026 22:30:35] "POST /api/login HTTP/1.1" 200 -
+2026-03-17 22:30:45  INFO      127.0.0.1 - - [17/Mar/2026 22:30:45] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:30:45  INFO      127.0.0.1 - - [17/Mar/2026 22:30:45] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:30:58  INFO      127.0.0.1 - - [17/Mar/2026 22:30:58] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:30:59  INFO      127.0.0.1 - - [17/Mar/2026 22:30:59] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:31:17  INFO      127.0.0.1 - - [17/Mar/2026 22:31:17] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:31:17  INFO      127.0.0.1 - - [17/Mar/2026 22:31:17] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:32:48  INFO      127.0.0.1 - - [17/Mar/2026 22:32:48] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:32:48  INFO      127.0.0.1 - - [17/Mar/2026 22:32:48] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:32:59  INFO      127.0.0.1 - - [17/Mar/2026 22:32:59] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:32:59  INFO      127.0.0.1 - - [17/Mar/2026 22:32:59] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:33:18  INFO      127.0.0.1 - - [17/Mar/2026 22:33:18] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:33:18  INFO      127.0.0.1 - - [17/Mar/2026 22:33:18] "GET /api/accounts HTTP/1.1" 200 -
