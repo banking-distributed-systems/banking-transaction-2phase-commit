@@ -3,8 +3,9 @@ V-Bank 2PC Server - Flask Application
 Two-Phase Commit implementation cho giao dịch ngân hàng phân tán
 """
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
+import time
 
 from logger import logger
 from routes import register_routes
@@ -18,6 +19,22 @@ CORS(app)
 
 # Đăng ký routes
 register_routes(app)
+
+
+# Middleware đo thời gian xử lý request
+@app.before_request
+def before_request():
+    """Lưu thời gian bắt đầu request"""
+    request.start_time = time.time()
+
+
+@app.after_request
+def after_request(response):
+    """In thời gian xử lý sau mỗi request"""
+    if hasattr(request, 'start_time'):
+        elapsed = time.time() - request.start_time
+        logger.info(f"[TIMING] {request.method} {request.path} - Time: {elapsed:.4f}s")
+    return response
 
 
 @app.route('/')
