@@ -5,13 +5,13 @@ Module logging tập trung cho ứng dụng
 import logging
 from config import LOG_FILE
 
-# Cấu hình logging
+# Cấu hình logging - mode 'w' để ghi đè mỗi lần chạy
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s  %(levelname)-8s  %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
     handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, mode='w', encoding='utf-8'),
         logging.StreamHandler(),  # vẫn in ra terminal
     ]
 )

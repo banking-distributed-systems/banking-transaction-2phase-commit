@@ -88,9 +88,9 @@ DATABASE.md
 
 | Service | Port | Database |
 |---------|------|----------|
-| mysql1 | 5433 | bank1 |
-| mysql2 | 5434 | bank2 |
-| mysql3 | 5435 | bank3 |
+| mysql1 | 3306 | bank1 |
+| mysql2 | 3307 | bank2 |
+| mysql3 | 3308 | bank3 |
 
 ---
 

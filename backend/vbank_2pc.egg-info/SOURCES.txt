@@ -1,8 +1,0 @@
-README.md
-pyproject.toml
-backend/vbank_2pc.egg-info/PKG-INFO
-backend/vbank_2pc.egg-info/SOURCES.txt
-backend/vbank_2pc.egg-info/dependency_links.txt
-backend/vbank_2pc.egg-info/entry_points.txt
-backend/vbank_2pc.egg-info/requires.txt
-backend/vbank_2pc.egg-info/top_level.txt

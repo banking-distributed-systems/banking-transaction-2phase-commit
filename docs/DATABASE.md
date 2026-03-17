@@ -11,9 +11,9 @@ Hệ thống V-Bank sử dụng 3 MySQL containers với các database riêng bi
 
 | Container | Port | Database | Mục đích |
 |-----------|------|---------|----------|
-| `mysql1` | 5433 | `bank1` | Bank A - Tài khoản, giao dịch, log |
-| `mysql2` | 5434 | `bank2` | Bank B - Tài khoản, giao dịch |
-| `mysql3` | 5435 | `bank3` | Mở rộng |
+| `mysql1` | 3306 | `bank1` | Bank A - Tài khoản, giao dịch, log |
+| `mysql2` | 3307 | `bank2` | Bank B - Tài khoản, giao dịch |
+| `mysql3` | 3308 | `bank3` | Mở rộng |
 
 ---
 
@@ -261,7 +261,7 @@ Tương tự Bank B, có thể mở rộng khi cần thêm ngân hàng.
 # backend/config.py
 DB1_CONFIG = {
     'host': 'localhost',
-    'port': 5433,
+    'port': 3306,
     'user': 'root',
     'password': 'root',
     'database': 'bank1',
@@ -273,7 +273,7 @@ DB1_CONFIG = {
 
 DB2_CONFIG = {
     'host': 'localhost',
-    'port': 5434,
+    'port': 3307,
     'user': 'root',
     'password': 'root',
     'database': 'bank2',
@@ -292,7 +292,7 @@ services:
   mysql1:
     image: mysql:8
     ports:
-      - "5433:3306"
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: bank1
@@ -300,7 +300,7 @@ services:
   mysql2:
     image: mysql:8
     ports:
-      - "5434:3306"
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: bank2
@@ -308,7 +308,7 @@ services:
   mysql3:
     image: mysql:8
     ports:
-      - "5435:3306"
+      - "3308:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: bank3
@@ -359,11 +359,11 @@ CREATE INDEX idx_log_phase ON transaction_log(phase);
 
 ```bash
 # Backup database
-mysqldump -h localhost -P 5433 -u root -proot bank1 > bank1_backup.sql
-mysqldump -h localhost -P 5434 -u root -proot bank2 > bank2_backup.sql
+mysqldump -h localhost -P 3306 -u root -proot bank1 > bank1_backup.sql
+mysqldump -h localhost -P 3307 -u root -proot bank2 > bank2_backup.sql
 
 # Restore
-mysql -h localhost -P 5433 -u root -proot bank1 < bank1_backup.sql
+mysql -h localhost -P 3306 -u root -proot bank1 < bank1_backup.sql
 ```
 
 ### 8.2. Point-in-time Recovery

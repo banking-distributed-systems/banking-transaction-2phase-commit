@@ -125,3 +125,35 @@
 2026-03-17 20:52:31  INFO      127.0.0.1 - - [17/Mar/2026 20:52:31] "POST /api/transfer HTTP/1.1" 200 -
 2026-03-17 20:52:31  INFO      127.0.0.1 - - [17/Mar/2026 20:52:31] "GET /api/accounts HTTP/1.1" 200 -
 2026-03-17 20:52:33  INFO      127.0.0.1 - - [17/Mar/2026 20:52:33] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 20:59:27  ERROR     [TRANSFER] Lỗi lưu hóa đơn: Connection failed
+2026-03-17 20:59:29  ERROR     [DB] Lỗi thực thi query: Query failed
+2026-03-17 20:59:29  INFO      [TRANSFER] ── Giao dịch mới | tx=VB54D54C7C68 | 1029 3847 5612 → 2038 4756 9801 | 50000đ | "Test"
+2026-03-17 20:59:29  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB54D54C7C68 | 54d54c7c68c6 | 1029 3847 5612 → 2038 4756 9801 | 50000đ | "Test"
+2026-03-17 20:59:29  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB54D54C7C68
+2026-03-17 20:59:29  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB54D54C7C68
+2026-03-17 20:59:29  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB54D54C7C68
+2026-03-17 20:59:29  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB54D54C7C68
+2026-03-17 20:59:29  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB54D54C7C68 | 50000đ | 1029 3847 5612 → 2038 4756 9801
+2026-03-17 20:59:30  INFO      [TRANSFER] ── Giao dịch mới | tx=VBEA768AED5E | 102938475612 → 203847569801 | 50000đ | ""
+2026-03-17 20:59:30  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VBEA768AED5E | ea768aed5eab | 102938475612 → 203847569801 | 50000đ | ""
+2026-03-17 20:59:30  ERROR     [PHASE] Lỗi ghi transaction_log (PREPARING): 'name'
+2026-03-17 20:59:30  ERROR     [TRANSFER] tx=VBEA768AED5E: Phase 1 thất bại | lỗi=(1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
+2026-03-17 20:59:30  WARNING   [PHASE] Phase *  ✖ ABORTED     — Giao dịch bị hủy (Rollback) | tx=VBEA768AED5E
+2026-03-17 20:59:30  WARNING   [XA] Lỗi XA ROLLBACK (bank1): (1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
+2026-03-17 20:59:30  WARNING   [XA] Lỗi XA ROLLBACK (bank2): (1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
+2026-03-17 20:59:30  INFO      [TRANSFER] ── Giao dịch mới | tx=VB4E56158807 | 102938475612 → 203847569801 | 50000đ | ""
+2026-03-17 20:59:30  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB4E56158807 | 4e561588077a | 102938475612 → 203847569801 | 50000đ | ""
+2026-03-17 20:59:30  ERROR     [PHASE] Lỗi ghi transaction_log (PREPARING): 'name'
+2026-03-17 20:59:30  ERROR     [TRANSFER] tx=VB4E56158807: Phase 1 thất bại | lỗi=(1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
+2026-03-17 20:59:30  WARNING   [PHASE] Phase *  ✖ ABORTED     — Giao dịch bị hủy (Rollback) | tx=VB4E56158807
+2026-03-17 20:59:30  WARNING   [XA] Lỗi XA ROLLBACK (bank1): (1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
+2026-03-17 20:59:30  WARNING   [XA] Lỗi XA ROLLBACK (bank2): (1045, "Access denied for user 'phuoc'@'172.17.0.1' (using password: NO)")
+2026-03-17 20:59:30  INFO      [TRANSFER] ── Giao dịch mới | tx=VB522ED0E03A | 1029 3847 5612 → 2038 4756 9801 | 999999999đ | "Large transfer"
+2026-03-17 20:59:30  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB522ED0E03A | 522ed0e03a59 | 1029 3847 5612 → 2038 4756 9801 | 999999999đ | "Large transfer"
+2026-03-17 20:59:30  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB522ED0E03A
+2026-03-17 20:59:30  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB522ED0E03A
+2026-03-17 20:59:30  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB522ED0E03A
+2026-03-17 20:59:30  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB522ED0E03A
+2026-03-17 20:59:30  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB522ED0E03A | 999999999đ | 1029 3847 5612 → 2038 4756 9801
+2026-03-17 20:59:30  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-17 20:59:30  INFO      [RECOVERY] Không có giao dịch treo.
