@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vbank-2pc"
+version = "1.0.0"
+description = "V-Bank Two-Phase Commit Server for distributed banking transactions"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [
+    {name = "V-Bank Team"}
+]
+keywords = ["banking", "two-phase-commit", "distributed-transaction", "flask"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "flask>=2.0.0",
+    "flask-cors>=3.0.0",
+    "pymysql>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/vbank/2pc"
+Repository = "https://github.com/vbank/2pc"
+
+[project.scripts]
+vbank-server = "backend.app:main"
+
+[tool.setuptools]
+package-dir = {"" = "backend"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*", "config*", "logger*", "database*", "account_service*", "two_phase_commit*", "routes*"]
+
