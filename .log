@@ -1,39 +1,59 @@
-2026-03-17 22:29:31  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 22:29:31  INFO                    V-Bank 2PC Server đang khởi động...              
-2026-03-17 22:29:31  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 22:29:31  INFO      [STARTUP] Đang kiểm tra kết nối database...
-2026-03-17 22:29:31  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
-2026-03-17 22:29:31  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
-2026-03-17 22:29:31  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
-2026-03-17 22:29:31  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
-2026-03-17 22:29:31  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
-2026-03-17 22:29:31  INFO      [RECOVERY] Không có giao dịch treo.
-2026-03-17 22:29:31  INFO      [STARTUP] ✓ Không có giao dịch treo nào
-2026-03-17 22:29:31  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 22:29:31  INFO        🎉 V-Bank 2PC Server khởi động thành công!
-2026-03-17 22:29:31  INFO        📍 Server chạy tại: http://localhost:5000
-2026-03-17 22:29:31  INFO        📍 API Base URL:    http://localhost:5000/api
-2026-03-17 22:29:31  INFO        🗄  Database:       bank1/bank2/bank3
-2026-03-17 22:29:31  INFO        ⏱  Prepare Timeout: 10 giây
-2026-03-17 22:29:31  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-17 22:29:31  WARNING    * Debugger is active!
-2026-03-17 22:29:31  INFO       * Debugger PIN: 535-083-205
-2026-03-17 22:29:44  INFO      127.0.0.1 - - [17/Mar/2026 22:29:44] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:29:53  INFO      127.0.0.1 - - [17/Mar/2026 22:29:53] "[33mGET /api/ HTTP/1.1[0m" 404 -
-2026-03-17 22:29:59  INFO      127.0.0.1 - - [17/Mar/2026 22:29:59] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:29:59  INFO      127.0.0.1 - - [17/Mar/2026 22:29:59] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:30:20  INFO      127.0.0.1 - - [17/Mar/2026 22:30:20] "[33mGET /api/ HTTP/1.1[0m" 404 -
-2026-03-17 22:30:29  INFO      127.0.0.1 - - [17/Mar/2026 22:30:29] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:30:35  INFO      127.0.0.1 - - [17/Mar/2026 22:30:35] "POST /api/login HTTP/1.1" 200 -
-2026-03-17 22:30:45  INFO      127.0.0.1 - - [17/Mar/2026 22:30:45] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:30:45  INFO      127.0.0.1 - - [17/Mar/2026 22:30:45] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:30:58  INFO      127.0.0.1 - - [17/Mar/2026 22:30:58] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:30:59  INFO      127.0.0.1 - - [17/Mar/2026 22:30:59] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:31:17  INFO      127.0.0.1 - - [17/Mar/2026 22:31:17] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:31:17  INFO      127.0.0.1 - - [17/Mar/2026 22:31:17] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:32:48  INFO      127.0.0.1 - - [17/Mar/2026 22:32:48] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:32:48  INFO      127.0.0.1 - - [17/Mar/2026 22:32:48] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:32:59  INFO      127.0.0.1 - - [17/Mar/2026 22:32:59] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:32:59  INFO      127.0.0.1 - - [17/Mar/2026 22:32:59] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:33:18  INFO      127.0.0.1 - - [17/Mar/2026 22:33:18] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-17 22:33:18  INFO      127.0.0.1 - - [17/Mar/2026 22:33:18] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:38:10  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-17 22:38:10  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-03-17 22:38:10  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-17 22:38:10  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-03-17 22:38:10  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-03-17 22:38:10  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-03-17 22:38:10  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-03-17 22:38:10  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-03-17 22:38:10  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-17 22:38:10  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-17 22:38:10  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-03-17 22:38:10  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-17 22:38:10  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-03-17 22:38:10  INFO        📍 Server chạy tại: http://localhost:5000
+2026-03-17 22:38:10  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-03-17 22:38:10  INFO        🗄  Database:       bank1/bank2/bank3
+2026-03-17 22:38:10  INFO        ⏱  Prepare Timeout: 10 giây
+2026-03-17 22:38:10  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-17 22:38:10  WARNING    * Debugger is active!
+2026-03-17 22:38:10  INFO       * Debugger PIN: 535-083-205
+2026-03-17 22:38:15  INFO      127.0.0.1 - - [17/Mar/2026 22:38:15] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:38:16  INFO      127.0.0.1 - - [17/Mar/2026 22:38:16] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:38:26  INFO      127.0.0.1 - - [17/Mar/2026 22:38:26] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:38:55  INFO      127.0.0.1 - - [17/Mar/2026 22:38:55] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:39:12  INFO      127.0.0.1 - - [17/Mar/2026 22:39:12] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:40:37  INFO      127.0.0.1 - - [17/Mar/2026 22:40:37] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:41:12  INFO      127.0.0.1 - - [17/Mar/2026 22:41:12] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:47:32  INFO      127.0.0.1 - - [17/Mar/2026 22:47:32] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:47:38  INFO      127.0.0.1 - - [17/Mar/2026 22:47:38] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:47:38  INFO      127.0.0.1 - - [17/Mar/2026 22:47:38] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:47:56  INFO      127.0.0.1 - - [17/Mar/2026 22:47:56] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:47:56  INFO      127.0.0.1 - - [17/Mar/2026 22:47:56] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:48:23  INFO      127.0.0.1 - - [17/Mar/2026 22:48:23] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:48:23  INFO      127.0.0.1 - - [17/Mar/2026 22:48:23] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:50:09  INFO      127.0.0.1 - - [17/Mar/2026 22:50:09] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:50:09  INFO      127.0.0.1 - - [17/Mar/2026 22:50:09] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:50:16  INFO      127.0.0.1 - - [17/Mar/2026 22:50:16] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:50:16  INFO      127.0.0.1 - - [17/Mar/2026 22:50:16] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:50:44  INFO      127.0.0.1 - - [17/Mar/2026 22:50:44] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:50:44  INFO      127.0.0.1 - - [17/Mar/2026 22:50:44] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:50:59  INFO      127.0.0.1 - - [17/Mar/2026 22:50:59] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:50:59  INFO      127.0.0.1 - - [17/Mar/2026 22:50:59] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:51:48  INFO      127.0.0.1 - - [17/Mar/2026 22:51:48] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:51:48  INFO      127.0.0.1 - - [17/Mar/2026 22:51:48] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:51:58  INFO      127.0.0.1 - - [17/Mar/2026 22:51:58] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:51:58  INFO      127.0.0.1 - - [17/Mar/2026 22:51:58] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:54:45  INFO      127.0.0.1 - - [17/Mar/2026 22:54:45] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:54:45  INFO      127.0.0.1 - - [17/Mar/2026 22:54:45] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:55:02  INFO      127.0.0.1 - - [17/Mar/2026 22:55:02] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:55:02  INFO      127.0.0.1 - - [17/Mar/2026 22:55:02] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:55:16  INFO      127.0.0.1 - - [17/Mar/2026 22:55:16] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:55:16  INFO      127.0.0.1 - - [17/Mar/2026 22:55:16] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:57:07  INFO      127.0.0.1 - - [17/Mar/2026 22:57:07] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:58:04  INFO      127.0.0.1 - - [17/Mar/2026 22:58:04] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:58:04  INFO      127.0.0.1 - - [17/Mar/2026 22:58:04] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:58:13  INFO      127.0.0.1 - - [17/Mar/2026 22:58:13] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:58:13  INFO      127.0.0.1 - - [17/Mar/2026 22:58:13] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:58:50  INFO      127.0.0.1 - - [17/Mar/2026 22:58:50] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-17 22:58:50  INFO      127.0.0.1 - - [17/Mar/2026 22:58:50] "GET /api/accounts HTTP/1.1" 200 -

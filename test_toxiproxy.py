@@ -10,11 +10,27 @@ import json
 API_VIA_PROXY = "http://localhost:8666/api"
 API_DIRECT = "http://localhost:5000/api"
 
+# Giá trị mặc định
+DEFAULT_LATENCY = 10000   # 10 giây
+DEFAULT_TIMEOUT = 5000     # 5 giây
+
 
 def print_response(res):
     """In response đẹp"""
     print(json.dumps(res, indent=2, ensure_ascii=False))
     print()
+
+
+def get_input(prompt, default_value, input_type=int):
+    """Lấy input từ user với giá trị mặc định"""
+    try:
+        value = input(f"{prompt} (default: {default_value}): ").strip()
+        if not value:
+            return default_value
+        return input_type(value)
+    except ValueError:
+        print(f"  → Giá trị không hợp lệ, dùng mặc định: {default_value}")
+        return default_value
 
 
 def create_proxy():
@@ -45,7 +61,7 @@ def create_proxy():
         )
         if res.status_code in [200, 201]:
             print("✅ Tạo proxy thành công!")
-            print(f"   Listen: 127.0.0.1:8666")
+            print(f"   Listen: 0.0.0.0:8666")
             print(f"   Upstream: host.docker.internal:5000")
         else:
             print(f"❌ Lỗi: {res.status_code} - {res.text}")
@@ -70,16 +86,19 @@ def delete_proxy():
 
 
 def add_latency():
-    """Thêm latency toxic"""
+    """Thêm latency toxic với giá trị từ user"""
     print("\n" + "=" * 60)
-    print("THÊM LATENCY (10 giây)")
+    print("THÊM LATENCY (Network Delay)")
     print("=" * 60)
+
+    # Lấy latency từ user
+    latency = get_input("Nhập latency (ms)", DEFAULT_LATENCY)
 
     toxic = {
         "name": "latency",
         "type": "latency",
         "attributes": {
-            "latency": 10000
+            "latency": latency
         }
     }
 
@@ -91,7 +110,7 @@ def add_latency():
         )
         if res.status_code in [200, 201]:
             print("✅ Thêm latency thành công!")
-            print("   Latency: 10000ms (10 giây)")
+            print(f"   Latency: {latency}ms ({latency/1000:.1f} giây)")
         else:
             print(f"❌ Lỗi: {res.status_code} - {res.text}")
     except Exception as e:
@@ -99,16 +118,19 @@ def add_latency():
 
 
 def add_timeout():
-    """Thêm timeout toxic"""
+    """Thêm timeout toxic với giá trị từ user"""
     print("\n" + "=" * 60)
-    print("THÊM TIMEOUT (5 giây)")
+    print("THÊM TIMEOUT (Connection Timeout)")
     print("=" * 60)
+
+    # Lấy timeout từ user
+    timeout = get_input("Nhập timeout (ms)", DEFAULT_TIMEOUT)
 
     toxic = {
         "name": "timeout",
         "type": "timeout",
         "attributes": {
-            "timeout": 5000
+            "timeout": timeout
         }
     }
 
@@ -120,9 +142,93 @@ def add_timeout():
         )
         if res.status_code in [200, 201]:
             print("✅ Thêm timeout thành công!")
-            print("   Timeout: 5000ms (5 giây)")
+            print(f"   Timeout: {timeout}ms ({timeout/1000:.1f} giây)")
         else:
             print(f"❌ Lỗi: {res.status_code} - {res.text}")
+    except Exception as e:
+        print(f"❌ Lỗi: {e}")
+
+
+def add_both_latency_and_timeout():
+    """Thêm cả latency và timeout, giải thích sự khác biệt"""
+    print("\n" + "=" * 60)
+    print("THÊM LATENCY VÀ TIMEOUT CÙNG LÚC")
+    print("=" * 60)
+
+    # Lấy giá trị từ user
+    latency = get_input("Nhập latency (ms)", DEFAULT_LATENCY)
+    timeout = get_input("Nhập timeout (ms)", DEFAULT_TIMEOUT)
+
+    print("\n" + "-" * 60)
+    print("📊 SO SÁNH LATENCY vs TIMEOUT:")
+    print("-" * 60)
+
+    if latency > timeout:
+        print(f"""
+⚠️  LATENCY ({latency}ms) > TIMEOUT ({timeout}ms)
+
+→ Request sẽ bị TIMEOUT trước khi nhận được response!
+→ Server không kịp phản hồi trong thời gian timeout
+→ Kết quả: Connection timeout error
+""")
+    elif latency == timeout:
+        print(f"""
+⚖️  LATENCY ({latency}ms) = TIMEOUT ({timeout}ms)
+
+→ Request có thể thành công hoặc timeout tùy timing
+→ Rất nhạy cảm với timing
+""")
+    else:
+        print(f"""
+✅ LATENCY ({latency}ms) < TIMEOUT ({timeout}ms)
+
+→ Request sẽ hoàn thành trước khi timeout!
+→ Server có đủ thời gian để phản hồi
+""")
+
+    print("-" * 60)
+
+    # Thêm latency
+    toxic_latency = {
+        "name": "latency",
+        "type": "latency",
+        "attributes": {
+            "latency": latency
+        }
+    }
+
+    # Thêm timeout
+    toxic_timeout = {
+        "name": "timeout",
+        "type": "timeout",
+        "attributes": {
+            "timeout": timeout
+        }
+    }
+
+    try:
+        # Thêm latency
+        res1 = requests.post(
+            "http://localhost:8474/proxies/vbank_api/toxics",
+            json=toxic_latency,
+            timeout=5
+        )
+        if res1.status_code in [200, 201]:
+            print(f"✅ Thêm latency: {latency}ms")
+        else:
+            print(f"❌ Lỗi thêm latency: {res1.status_code}")
+
+        # Thêm timeout
+        res2 = requests.post(
+            "http://localhost:8474/proxies/vbank_api/toxics",
+            json=toxic_timeout,
+            timeout=5
+        )
+        if res2.status_code in [200, 201]:
+            print(f"✅ Thêm timeout: {timeout}ms")
+        else:
+            print(f"❌ Lỗi thêm timeout: {res2.status_code}")
+
     except Exception as e:
         print(f"❌ Lỗi: {e}")
 
@@ -134,11 +240,35 @@ def clear_toxics():
     print("=" * 60)
 
     try:
-        res = requests.delete("http://localhost:8474/proxies/vbank_api/toxics", timeout=5)
-        if res.status_code in [200, 204]:
-            print("✅ Xóa tất cả toxic thành công!")
-        else:
-            print(f"❌ Lỗi: {res.status_code}")
+        # Lấy danh sách toxics
+        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=5)
+
+        if res.status_code != 200:
+            print(f"❌ Không lấy được proxy: {res.status_code}")
+            return
+
+        data = res.json()
+        toxics = data.get("toxics", [])
+
+        if not toxics:
+            print("⚪ Không có toxic nào để xóa")
+            return
+
+        # Xóa từng toxic
+        for toxic in toxics:
+            name = toxic.get("name")
+            del_res = requests.delete(
+                f"http://localhost:8474/proxies/vbank_api/toxics/{name}",
+                timeout=5
+            )
+
+            if del_res.status_code in [200, 204]:
+                print(f"✅ Đã xóa toxic: {name}")
+            else:
+                print(f"❌ Lỗi xóa {name}: {del_res.status_code}")
+
+        print("\n🎉 Đã xóa toàn bộ toxics!")
+
     except Exception as e:
         print(f"❌ Lỗi: {e}")
 
@@ -188,6 +318,83 @@ def check_services():
     except Exception as e:
         print(f"    ❌ Proxy ERROR: {e}")
         print("    → Proxy chưa được tạo hoặc upstream không đúng")
+
+
+def show_proxy_info():
+    """Xem thông tin chi tiết của proxy hiện tại"""
+    print("\n" + "=" * 60)
+    print("THÔNG TIN PROXY HIỆN TẠI")
+    print("=" * 60)
+
+    try:
+        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=5)
+        if res.status_code == 404:
+            print("❌ Proxy chưa được tạo!")
+            print("   Vui lòng chọn 'A' để tạo proxy")
+            return
+
+        if res.status_code != 200:
+            print(f"❌ Lỗi: {res.status_code}")
+            return
+
+        data = res.json()
+
+        print(f"\n📋 Tên proxy: {data.get('name', 'N/A')}")
+        print(f"   Listen: {data.get('listen', 'N/A')}")
+        print(f"   Upstream: {data.get('upstream', 'N/A')}")
+        print(f"   Enabled: {data.get('enabled', 'N/A')}")
+        print(f"   Mode: {data.get('mode', 'N/A')}")
+
+        # Hiển thị toxics
+        toxics = data.get('toxics', [])
+        print(f"\n📦 Toxics ({len(toxics)} active):")
+
+        if not toxics:
+            print("   ⚪ Không có toxic nào")
+        else:
+            for toxic in toxics:
+                print(f"\n   🔸 {toxic.get('name', 'N/A')}")
+                print(f"      Type: {toxic.get('type', 'N/A')}")
+                print(f"      Stream: {toxic.get('stream', 'N/A')}")
+                print(f"      Enabled: {toxic.get('enabled', 'N/A')}")
+
+                # Hiển thị attributes
+                attrs = toxic.get('attributes', {})
+                if 'latency' in attrs:
+                    latency_val = attrs['latency']
+                    print(f"      Latency: {latency_val}ms ({latency_val/1000:.1f} giây)")
+                if 'timeout' in attrs:
+                    timeout_val = attrs['timeout']
+                    print(f"      Timeout: {timeout_val}ms ({timeout_val/1000:.1f} giây)")
+                if 'jitter' in attrs:
+                    print(f"      Jitter: {attrs['jitter']}ms")
+                if 'bytes' in attrs:
+                    print(f"      Bytes: {attrs['bytes']}")
+
+        # Phân tích latency vs timeout
+        latency_ms = 0
+        timeout_ms = 0
+        for t in toxics:
+            attrs = t.get('attributes', {})
+            if t.get('type') == 'latency':
+                latency_ms = attrs.get('latency', 0)
+            elif t.get('type') == 'timeout':
+                timeout_ms = attrs.get('timeout', 0)
+
+        if latency_ms > 0 and timeout_ms > 0:
+            print(f"\n📊 PHÂN TÍCH:")
+            if latency_ms > timeout_ms:
+                print(f"   ⚠️  Latency ({latency_ms}ms) > Timeout ({timeout_ms}ms)")
+                print(f"   → Request SẼ bị TIMEOUT!")
+            elif latency_ms == timeout_ms:
+                print(f"   ⚖️  Latency ({latency_ms}ms) = Timeout ({timeout_ms}ms)")
+                print(f"   → Kết quả không nhất quán")
+            else:
+                print(f"   ✅ Latency ({latency_ms}ms) < Timeout ({timeout_ms}ms)")
+                print(f"   → Request sẽ thành công (chậm hơn)")
+
+    except Exception as e:
+        print(f"❌ Lỗi: {e}")
 
 
 def test_health_check():
@@ -267,63 +474,81 @@ def test_transfer():
         print("\n💡 Gợi ý: Chạy test '7' để kiểm tra services trước")
 
 
-def test_transfer_with_latency():
-    """Test 5: Transfer với latency"""
+def test_transfer_with_current_toxics():
+    """Test 5: Transfer với toxics hiện tại"""
     print("\n" + "=" * 60)
-    print("TEST 5: Transfer với Latency 10s")
+    print("TEST 5: Transfer với Toxics hiện tại")
     print("=" * 60)
-    print("⚠️  ĐẢM BẢO ĐÃ THÊM LATENCY TRONG TOXIPROXY TRƯỚC!")
-    print("   Nhập 'C' trong menu để thêm latency")
-    print()
+
+    # Lấy thông tin toxic hiện tại
+    latency_ms = 0
+    timeout_ms = 0
+
+    try:
+        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=5)
+        if res.status_code == 200:
+            data = res.json()
+            toxics = data.get('toxics', [])
+
+            for t in toxics:
+                attrs = t.get('attributes', {})
+                if t.get('type') == 'latency':
+                    latency_ms = attrs.get('latency', 0)
+                elif t.get('type') == 'timeout':
+                    timeout_ms = attrs.get('timeout', 0)
+
+            if latency_ms > 0 or timeout_ms > 0:
+                print(f"📊 Toxics đang active:")
+                if latency_ms > 0:
+                    print(f"   Latency: {latency_ms}ms ({latency_ms/1000:.1f}s)")
+                if timeout_ms > 0:
+                    print(f"   Timeout: {timeout_ms}ms ({timeout_ms/1000:.1f}s)")
+
+                # Phân tích
+                if latency_ms > timeout_ms:
+                    print(f"\n⚠️  PHÂN TÍCH: Latency > Timeout")
+                    print(f"   Request sẽ bị TIMEOUT!")
+                elif latency_ms > 0 and timeout_ms > 0:
+                    print(f"\n✅ PHÂN TÍCH: Latency < Timeout")
+                    print(f"   Request sẽ thành công (chậm hơn bình thường)")
+            else:
+                print("⚠️  Không có toxics nào đang active!")
+                print("   Vui lòng thêm latency/timeout trước khi test")
+                return
+        else:
+            print("❌ Không lấy được thông tin proxy")
+            return
+    except Exception as e:
+        print(f"Lỗi lấy thông tin toxic: {e}")
+        return
 
     data = {
         "from_account_number": "102938475612",
         "to_account_number": "203847569801",
         "amount": 20000,
-        "description": "Test latency"
+        "description": "Test với toxics"
     }
 
     try:
         start = time.time()
-        print(f"Bắt đầu: {time.strftime('%H:%M:%S')}")
+        print(f"\n🚀 Bắt đầu transfer lúc: {time.strftime('%H:%M:%S')}")
         res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=30)
         elapsed = time.time() - start
-        print(f"Hoàn thành: {time.strftime('%H:%M:%S')}")
+        print(f"🏁 Hoàn thành lúc: {time.strftime('%H:%M:%S')}")
         print(f"Status: {res.status_code}")
         print(f"Thời gian: {elapsed:.2f}s")
+
+        # Phân tích kết quả
+        if elapsed > (timeout_ms / 1000) and timeout_ms > 0:
+            print(f"\n❌ KẾT QUẢ: Request bị TIMEOUT!")
+            print(f"   Thời gian thực ({elapsed:.2f}s) > Timeout ({timeout_ms/1000}s)")
+        else:
+            print(f"\n✅ KẾT QUẢ: Request thành công!")
+
         print_response(res.json())
     except requests.exceptions.Timeout:
-        print("Timeout! Request bị delay quá lâu")
-    except Exception as e:
-        print(f"Lỗi: {e}")
-        print("\n💡 Gợi ý: Chạy test '7' để kiểm tra services trước")
-
-
-def test_transfer_timeout():
-    """Test 6: Kịch bản 5 - Timeout"""
-    print("\n" + "=" * 60)
-    print("TEST 6: Kịch bản 5 - Timeout")
-    print("=" * 60)
-    print("⚠️  ĐẢM BẢO ĐÃ THÊM TIMEOUT TRONG TOXIPROXY TRƯỚC!")
-    print("   Nhập 'D' trong menu để thêm timeout")
-    print()
-
-    data = {
-        "from_account_number": "102938475612",
-        "to_account_number": "203847569801",
-        "amount": 30000,
-        "description": "Test timeout"
-    }
-
-    try:
-        start = time.time()
-        res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=30)
-        elapsed = time.time() - start
-        print(f"Status: {res.status_code}")
-        print(f"Time: {elapsed:.2f}s")
-        print_response(res.json())
-    except requests.exceptions.Timeout:
-        print("Timeout! Request bị timeout")
+        print(f"\n❌ KẾT QUẢ: Request bị TIMEOUT exception!")
+        print(f"   Request không nhận được response trong timeout")
     except Exception as e:
         print(f"Lỗi: {e}")
 
@@ -338,13 +563,14 @@ def menu():
         print("2. Get Accounts")
         print("3. Login")
         print("4. Transfer (bình thường)")
-        print("5. Transfer với Latency 10s")
-        print("6. Transfer với Timeout (Kịch bản 5)")
+        print("5. Transfer với Toxics hiện tại")
         print("---")
         print("A. Tạo Proxy")
         print("B. Xóa Proxy")
-        print("C. Thêm Latency (10s)")
-        print("D. Thêm Timeout (5s)")
+        print("C. Thêm Latency (nhập ms)")
+        print("D. Thêm Timeout (nhập ms)")
+        print("F. Thêm CẢ Latency + Timeout (có giải thích)")
+        print("S. Xem thông tin Proxy & Toxics")
         print("E. Xóa tất cả Toxics")
         print("7. KIỂM TRA SERVICES")
         print("0. Thoát")
@@ -364,9 +590,7 @@ def menu():
         elif choice == "4":
             test_transfer()
         elif choice == "5":
-            test_transfer_with_latency()
-        elif choice == "6":
-            test_transfer_timeout()
+            test_transfer_with_current_toxics()
         elif choice == "A":
             create_proxy()
         elif choice == "B":
@@ -375,6 +599,10 @@ def menu():
             add_latency()
         elif choice == "D":
             add_timeout()
+        elif choice == "F":
+            add_both_latency_and_timeout()
+        elif choice == "S":
+            show_proxy_info()
         elif choice == "E":
             clear_toxics()
         elif choice == "7":
@@ -387,6 +615,7 @@ if __name__ == "__main__":
     print("""
     ╔══════════════════════════════════════════════════════════╗
     ║       V-Bank 2PC - Toxiproxy Test Script             ║
+    ║       Hỗ trợ nhập Latency/Timeout tùy chỉnh        ║
     ╚══════════════════════════════════════════════════════════╝
     """)
 
