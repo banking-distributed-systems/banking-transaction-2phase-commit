@@ -7,6 +7,7 @@ CREATE TABLE accounts (
     account_number VARCHAR(20),
     account_type VARCHAR(50) DEFAULT 'STANDARD'
 ) ENGINE=InnoDB;
+SET @@auto_increment_increment = 3;
 
 CREATE TABLE transactions (
     id INT AUTO_INCREMENT PRIMARY KEY,

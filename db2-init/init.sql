@@ -8,5 +8,7 @@ CREATE TABLE accounts (
     account_type VARCHAR(50) DEFAULT 'STANDARD'
 ) ENGINE=InnoDB;
 
+SET @@auto_increment_increment = 3;
+
 INSERT INTO accounts (id, name, balance, phone, password, account_number, account_type)
 VALUES (2, 'Trần Thị B', 2000000, '0912345678', 'e10adc3949ba59abbe56e057f20f883e', '2038 4756 9801', 'GOLD');

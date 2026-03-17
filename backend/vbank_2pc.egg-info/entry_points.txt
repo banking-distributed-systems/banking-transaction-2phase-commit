@@ -1,0 +1,2 @@
+[console_scripts]
+vbank-server = backend.app:main
