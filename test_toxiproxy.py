@@ -13,7 +13,7 @@ API_DIRECT = "http://localhost:5000/api"
 # Giá trị mặc định
 DEFAULT_LATENCY = 10000   # 10 giây
 DEFAULT_TIMEOUT = 5000     # 5 giây
-
+REQUEST_TIMEOUT = 5  # Timeout cho request đến proxy (nên lớn hơn timeout của toxic)
 
 def print_response(res):
     """In response đẹp"""
@@ -41,7 +41,7 @@ def create_proxy():
 
     # Xóa proxy cũ nếu có
     try:
-        requests.delete("http://localhost:8474/proxies/vbank_api", timeout=5)
+        requests.delete("http://localhost:8474/proxies/vbank_api", timeout=REQUEST_TIMEOUT)
         print("Đã xóa proxy cũ")
     except:
         pass
@@ -57,7 +57,7 @@ def create_proxy():
         res = requests.post(
             "http://localhost:8474/proxies",
             json=proxy_config,
-            timeout=5
+            timeout=REQUEST_TIMEOUT
         )
         if res.status_code in [200, 201]:
             print("✅ Tạo proxy thành công!")
@@ -76,7 +76,7 @@ def delete_proxy():
     print("=" * 60)
 
     try:
-        res = requests.delete("http://localhost:8474/proxies/vbank_api", timeout=5)
+        res = requests.delete("http://localhost:8474/proxies/vbank_api", timeout=REQUEST_TIMEOUT)
         if res.status_code in [200, 204]:
             print("✅ Xóa proxy thành công!")
         else:
@@ -106,7 +106,7 @@ def add_latency():
         res = requests.post(
             "http://localhost:8474/proxies/vbank_api/toxics",
             json=toxic,
-            timeout=5
+            timeout=REQUEST_TIMEOUT
         )
         if res.status_code in [200, 201]:
             print("✅ Thêm latency thành công!")
@@ -138,7 +138,7 @@ def add_timeout():
         res = requests.post(
             "http://localhost:8474/proxies/vbank_api/toxics",
             json=toxic,
-            timeout=5
+            timeout=REQUEST_TIMEOUT
         )
         if res.status_code in [200, 201]:
             print("✅ Thêm timeout thành công!")
@@ -211,7 +211,7 @@ def add_both_latency_and_timeout():
         res1 = requests.post(
             "http://localhost:8474/proxies/vbank_api/toxics",
             json=toxic_latency,
-            timeout=5
+            timeout=REQUEST_TIMEOUT
         )
         if res1.status_code in [200, 201]:
             print(f"✅ Thêm latency: {latency}ms")
@@ -222,7 +222,7 @@ def add_both_latency_and_timeout():
         res2 = requests.post(
             "http://localhost:8474/proxies/vbank_api/toxics",
             json=toxic_timeout,
-            timeout=5
+            timeout=REQUEST_TIMEOUT
         )
         if res2.status_code in [200, 201]:
             print(f"✅ Thêm timeout: {timeout}ms")
@@ -241,7 +241,7 @@ def clear_toxics():
 
     try:
         # Lấy danh sách toxics
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=5)
+        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=REQUEST_TIMEOUT)
 
         if res.status_code != 200:
             print(f"❌ Không lấy được proxy: {res.status_code}")
@@ -259,7 +259,7 @@ def clear_toxics():
             name = toxic.get("name")
             del_res = requests.delete(
                 f"http://localhost:8474/proxies/vbank_api/toxics/{name}",
-                timeout=5
+                timeout=REQUEST_TIMEOUT
             )
 
             if del_res.status_code in [200, 204]:
@@ -282,7 +282,7 @@ def check_services():
     # 1. Kiểm tra backend trực tiếp
     print("\n[1] Kiểm tra backend (direct)...")
     try:
-        res = requests.get(f"{API_DIRECT}/accounts", timeout=5)
+        res = requests.get(f"{API_DIRECT}/accounts", timeout=REQUEST_TIMEOUT)
         print(f"    ✅ Backend OK - Status: {res.status_code}")
     except Exception as e:
         print(f"    ❌ Backend ERROR: {e}")
@@ -291,7 +291,7 @@ def check_services():
     # 2. Kiểm tra proxy
     print("\n[2] Kiểm tra Toxiproxy...")
     try:
-        res = requests.get("http://localhost:8474/proxies", timeout=5)
+        res = requests.get("http://localhost:8474/proxies", timeout=REQUEST_TIMEOUT)
         proxies = res.json()
         print(f"    ✅ Toxiproxy OK - Status: {res.status_code}")
 
@@ -313,7 +313,7 @@ def check_services():
     # 3. Kiểm tra proxy qua port 8666
     print("\n[3] Kiểm tra proxy (localhost:8666)...")
     try:
-        res = requests.get(f"{API_VIA_PROXY}/accounts", timeout=5)
+        res = requests.get(f"{API_VIA_PROXY}/accounts", timeout=REQUEST_TIMEOUT)
         print(f"    ✅ Proxy OK - Status: {res.status_code}")
     except Exception as e:
         print(f"    ❌ Proxy ERROR: {e}")
@@ -327,7 +327,7 @@ def show_proxy_info():
     print("=" * 60)
 
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=5)
+        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=REQUEST_TIMEOUT)
         if res.status_code == 404:
             print("❌ Proxy chưa được tạo!")
             print("   Vui lòng chọn 'A' để tạo proxy")
@@ -404,7 +404,7 @@ def test_health_check():
     print("=" * 60)
 
     try:
-        res = requests.get(f"{API_VIA_PROXY}/", timeout=5)
+        res = requests.get(f"{API_VIA_PROXY}/", timeout=REQUEST_TIMEOUT)
         print(f"Status: {res.status_code}")
         print_response(res.json())
     except Exception as e:
@@ -419,7 +419,7 @@ def test_get_accounts():
     print("=" * 60)
 
     try:
-        res = requests.get(f"{API_VIA_PROXY}/accounts", timeout=5)
+        res = requests.get(f"{API_VIA_PROXY}/accounts", timeout=REQUEST_TIMEOUT)
         print(f"Status: {res.status_code}")
         print_response(res.json())
     except Exception as e:
@@ -439,7 +439,7 @@ def test_login():
     }
 
     try:
-        res = requests.post(f"{API_VIA_PROXY}/login", json=data, timeout=5)
+        res = requests.post(f"{API_VIA_PROXY}/login", json=data, timeout=REQUEST_TIMEOUT)
         print(f"Status: {res.status_code}")
         print_response(res.json())
     except Exception as e:
@@ -462,7 +462,7 @@ def test_transfer():
 
     try:
         start = time.time()
-        res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=30)
+        res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
         print(f"Status: {res.status_code}")
         print(f"Time: {elapsed:.2f}s")
@@ -485,7 +485,7 @@ def test_transfer_with_current_toxics():
     timeout_ms = 0
 
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=5)
+        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=REQUEST_TIMEOUT)
         if res.status_code == 200:
             data = res.json()
             toxics = data.get('toxics', [])
@@ -532,7 +532,7 @@ def test_transfer_with_current_toxics():
     try:
         start = time.time()
         print(f"\n🚀 Bắt đầu transfer lúc: {time.strftime('%H:%M:%S')}")
-        res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=30)
+        res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
         print(f"🏁 Hoàn thành lúc: {time.strftime('%H:%M:%S')}")
         print(f"Status: {res.status_code}")
