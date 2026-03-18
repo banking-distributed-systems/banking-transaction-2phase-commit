@@ -84,7 +84,7 @@ Invoke-RestMethod -Uri "http://localhost:8474/proxies" `
   -Body '{
     "name": "vbank_api",
     "listen": "127.0.0.1:8666",
-    "upstream": "localhost:5000"
+    "upstream": "host.docker.internal:5000"
   }'
 ```
 

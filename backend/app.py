@@ -65,6 +65,12 @@ def check_database_connections():
 
     return results
 
+@app.route('/api/health')
+def api_health():
+    return jsonify({
+        "status": "ok",
+        "message": "API is running"
+    })
 
 def main():
     """Entry point cho pip install"""

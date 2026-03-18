@@ -1,67 +1,57 @@
-2026-03-18 00:26:36  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-18 00:26:36  INFO                    V-Bank 2PC Server đang khởi động...              
-2026-03-18 00:26:36  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-18 00:26:36  INFO      [STARTUP] Đang kiểm tra kết nối database...
-2026-03-18 00:26:36  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
-2026-03-18 00:26:36  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
-2026-03-18 00:26:36  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
-2026-03-18 00:26:36  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
-2026-03-18 00:26:36  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
-2026-03-18 00:26:36  INFO      [RECOVERY] Không có giao dịch treo.
-2026-03-18 00:26:36  INFO      [STARTUP] ✓ Không có giao dịch treo nào
-2026-03-18 00:26:36  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-18 00:26:36  INFO        🎉 V-Bank 2PC Server khởi động thành công!
-2026-03-18 00:26:36  INFO        📍 Server chạy tại: http://localhost:5000
-2026-03-18 00:26:36  INFO        📍 API Base URL:    http://localhost:5000/api
-2026-03-18 00:26:36  INFO        🗄  Database:       bank1/bank2/bank3
-2026-03-18 00:26:36  INFO        ⏱  Prepare Timeout: 10 giây
-2026-03-18 00:26:36  INFO      ═══════════════════════════════════════════════════════════════
-2026-03-18 00:26:36  WARNING    * Debugger is active!
-2026-03-18 00:26:36  INFO       * Debugger PIN: 535-083-205
-2026-03-18 00:26:47  INFO      [TIMING] GET /api/accounts - Time: 0.0360s
-2026-03-18 00:26:47  INFO      127.0.0.1 - - [18/Mar/2026 00:26:47] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:27:08  INFO      [TIMING] POST /api/login - Time: 0.0303s
-2026-03-18 00:27:08  INFO      127.0.0.1 - - [18/Mar/2026 00:27:08] "POST /api/login HTTP/1.1" 200 -
-2026-03-18 00:27:21  INFO      [TRANSFER] ── Giao dịch mới | tx=VB98F6DCCEB5 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Test qua proxy"
-2026-03-18 00:27:21  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB98F6DCCEB5 | 98f6dcceb57f | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Test qua proxy"
-2026-03-18 00:27:21  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB98F6DCCEB5
-2026-03-18 00:27:21  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB98F6DCCEB5
-2026-03-18 00:27:21  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB98F6DCCEB5
-2026-03-18 00:27:21  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB98F6DCCEB5
-2026-03-18 00:27:21  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB98F6DCCEB5 | 10000đ | 1029 3847 5612 → 2038 4756 9801
-2026-03-18 00:27:21  INFO      [TIMING] POST /api/transfer - Time: 0.2736s
-2026-03-18 00:27:21  INFO      127.0.0.1 - - [18/Mar/2026 00:27:21] "POST /api/transfer HTTP/1.1" 200 -
-2026-03-18 00:28:02  INFO      [TIMING] GET /api/accounts - Time: 0.0363s
-2026-03-18 00:28:02  INFO      127.0.0.1 - - [18/Mar/2026 00:28:02] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:28:02  INFO      [TIMING] GET /api/accounts - Time: 0.0446s
-2026-03-18 00:28:02  INFO      127.0.0.1 - - [18/Mar/2026 00:28:02] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:28:44  INFO      [TIMING] GET /api/accounts - Time: 0.0440s
-2026-03-18 00:28:44  INFO      127.0.0.1 - - [18/Mar/2026 00:28:44] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:28:45  INFO      [TIMING] GET /api/accounts - Time: 0.0586s
-2026-03-18 00:28:45  INFO      127.0.0.1 - - [18/Mar/2026 00:28:45] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:29:08  INFO      [TIMING] GET /api/accounts - Time: 0.0343s
-2026-03-18 00:29:08  INFO      127.0.0.1 - - [18/Mar/2026 00:29:08] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:29:08  INFO      [TIMING] GET /api/accounts - Time: 0.0293s
-2026-03-18 00:29:08  INFO      127.0.0.1 - - [18/Mar/2026 00:29:08] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:29:37  INFO      [TIMING] GET /api/accounts - Time: 0.0438s
-2026-03-18 00:29:37  INFO      127.0.0.1 - - [18/Mar/2026 00:29:37] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:29:37  INFO      [TIMING] GET /api/accounts - Time: 0.0433s
-2026-03-18 00:29:37  INFO      127.0.0.1 - - [18/Mar/2026 00:29:37] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:30:13  INFO      [TIMING] GET /api/accounts - Time: 0.0457s
-2026-03-18 00:30:13  INFO      127.0.0.1 - - [18/Mar/2026 00:30:13] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:30:13  INFO      [TIMING] GET /api/accounts - Time: 0.0443s
-2026-03-18 00:30:13  INFO      127.0.0.1 - - [18/Mar/2026 00:30:13] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:30:38  INFO      [TIMING] GET /api/accounts - Time: 0.0278s
-2026-03-18 00:30:38  INFO      127.0.0.1 - - [18/Mar/2026 00:30:38] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:41:42  INFO      [TIMING] GET /api/accounts - Time: 0.0818s
-2026-03-18 00:41:42  INFO      127.0.0.1 - - [18/Mar/2026 00:41:42] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:42:55  INFO      [TIMING] GET /api/accounts - Time: 0.0426s
-2026-03-18 00:42:55  INFO      127.0.0.1 - - [18/Mar/2026 00:42:55] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:42:55  INFO      [TIMING] GET /api/accounts - Time: 0.0616s
-2026-03-18 00:42:55  INFO      127.0.0.1 - - [18/Mar/2026 00:42:55] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:43:13  INFO      [TIMING] GET /api/accounts - Time: 0.0267s
-2026-03-18 00:43:13  INFO      127.0.0.1 - - [18/Mar/2026 00:43:13] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:44:03  INFO      [TIMING] GET /api/accounts - Time: 0.0523s
-2026-03-18 00:44:03  INFO      127.0.0.1 - - [18/Mar/2026 00:44:03] "GET /api/accounts HTTP/1.1" 200 -
-2026-03-18 00:45:08  INFO      [TIMING] GET /api/accounts - Time: 0.0305s
-2026-03-18 00:45:08  INFO      127.0.0.1 - - [18/Mar/2026 00:45:08] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 12:59:01  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-18 12:59:01  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-03-18 12:59:01  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-18 12:59:01  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-03-18 12:59:01  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-03-18 12:59:01  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-03-18 12:59:01  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-03-18 12:59:01  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-03-18 12:59:01  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-03-18 12:59:01  INFO      [RECOVERY] Không có giao dịch treo.
+2026-03-18 12:59:01  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-03-18 12:59:01  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-18 12:59:01  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-03-18 12:59:01  INFO        📍 Server chạy tại: http://localhost:5000
+2026-03-18 12:59:01  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-03-18 12:59:01  INFO        🗄  Database:       bank1/bank2/bank3
+2026-03-18 12:59:01  INFO        ⏱  Prepare Timeout: 10 giây
+2026-03-18 12:59:01  INFO      ═══════════════════════════════════════════════════════════════
+2026-03-18 12:59:01  WARNING    * Debugger is active!
+2026-03-18 12:59:01  INFO       * Debugger PIN: 535-083-205
+2026-03-18 13:00:54  INFO      [TIMING] GET /api/accounts - Time: 0.0536s
+2026-03-18 13:00:54  INFO      127.0.0.1 - - [18/Mar/2026 13:00:54] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:00:55  INFO      [TIMING] GET /api/accounts - Time: 0.0468s
+2026-03-18 13:00:55  INFO      127.0.0.1 - - [18/Mar/2026 13:00:55] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:00:58  INFO      [TIMING] GET /api/health - Time: 0.0001s
+2026-03-18 13:00:58  INFO      127.0.0.1 - - [18/Mar/2026 13:00:58] "GET /api/health HTTP/1.1" 200 -
+2026-03-18 13:01:05  INFO      [TIMING] GET /api/accounts - Time: 0.0344s
+2026-03-18 13:01:05  INFO      127.0.0.1 - - [18/Mar/2026 13:01:05] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:01:09  INFO      [TIMING] POST /api/login - Time: 0.0130s
+2026-03-18 13:01:09  INFO      127.0.0.1 - - [18/Mar/2026 13:01:09] "POST /api/login HTTP/1.1" 200 -
+2026-03-18 13:01:14  INFO      [TRANSFER] ── Giao dịch mới | tx=VBA13700514F | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Test qua proxy"
+2026-03-18 13:01:14  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VBA13700514F | a13700514f91 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Test qua proxy"
+2026-03-18 13:01:14  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VBA13700514F
+2026-03-18 13:01:14  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VBA13700514F
+2026-03-18 13:01:14  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VBA13700514F
+2026-03-18 13:01:14  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VBA13700514F
+2026-03-18 13:01:14  INFO      [TRANSFER] ✓ Hoàn tất | tx=VBA13700514F | 10000đ | 1029 3847 5612 → 2038 4756 9801
+2026-03-18 13:01:14  INFO      [TIMING] POST /api/transfer - Time: 0.3177s
+2026-03-18 13:01:14  INFO      127.0.0.1 - - [18/Mar/2026 13:01:14] "POST /api/transfer HTTP/1.1" 200 -
+2026-03-18 13:01:43  INFO      [TRANSFER] ── Giao dịch mới | tx=VB17DAB8DD2D | 1029 3847 5612 → 2038 4756 9801 | 20000đ | "Test với toxics"
+2026-03-18 13:01:43  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB17DAB8DD2D | 17dab8dd2da3 | 1029 3847 5612 → 2038 4756 9801 | 20000đ | "Test với toxics"
+2026-03-18 13:01:44  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB17DAB8DD2D
+2026-03-18 13:01:44  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB17DAB8DD2D
+2026-03-18 13:01:44  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB17DAB8DD2D
+2026-03-18 13:01:44  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB17DAB8DD2D
+2026-03-18 13:01:44  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB17DAB8DD2D | 20000đ | 1029 3847 5612 → 2038 4756 9801
+2026-03-18 13:01:44  INFO      [TIMING] POST /api/transfer - Time: 0.2829s
+2026-03-18 13:01:44  INFO      127.0.0.1 - - [18/Mar/2026 13:01:44] "POST /api/transfer HTTP/1.1" 200 -
+2026-03-18 13:02:15  INFO      [TRANSFER] ── Giao dịch mới | tx=VB5392F77AFE | 1029 3847 5612 → 2038 4756 9801 | 20000đ | "Test với toxics"
+2026-03-18 13:02:15  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB5392F77AFE | 5392f77afe60 | 1029 3847 5612 → 2038 4756 9801 | 20000đ | "Test với toxics"
+2026-03-18 13:02:15  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB5392F77AFE
+2026-03-18 13:02:15  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB5392F77AFE
+2026-03-18 13:02:15  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB5392F77AFE
+2026-03-18 13:02:15  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB5392F77AFE
+2026-03-18 13:02:15  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB5392F77AFE | 20000đ | 1029 3847 5612 → 2038 4756 9801
+2026-03-18 13:02:15  INFO      [TIMING] POST /api/transfer - Time: 0.2197s
+2026-03-18 13:02:15  INFO      127.0.0.1 - - [18/Mar/2026 13:02:15] "POST /api/transfer HTTP/1.1" 200 -

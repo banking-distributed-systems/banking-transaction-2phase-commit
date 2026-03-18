@@ -564,7 +564,7 @@ def test_health_check():
     print("=" * 60)
 
     try:
-        res = requests.get(f"{API_VIA_PROXY}/", timeout=REQUEST_TIMEOUT)
+        res = requests.get(f"{API_VIA_PROXY}/health", timeout=REQUEST_TIMEOUT)
         print(f"Status: {res.status_code}")
         print_response(res.json())
     except Exception as e:
