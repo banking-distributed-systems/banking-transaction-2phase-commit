@@ -217,6 +217,79 @@ def add_timeout():
         traceback.print_exc()
 
 
+def add_limit_data():
+    """Thêm limit_data toxic - Packet Loss (cắt response)"""
+    print("\n" + "=" * 60)
+    print("THÊM LIMIT DATA (Packet Loss)")
+    print("=" * 60)
+    print("📌 Limit Data: Cắt/giới hạn dữ liệu trả về")
+    print("   → Response bị truncated (mất dữ liệu cuối)")
+    print("   → Dùng để test xử lý response bị cắt")
+
+    # Lấy bytes từ user
+    bytes_val = get_input("Nhập số bytes giới hạn", 100)
+
+    toxic = {
+        "name": "limit_data",
+        "type": "limit_data",
+        "stream": "downstream",
+        "attributes": {
+            "bytes": bytes_val
+        }
+    }
+
+    try:
+        res = requests.post(
+            "http://localhost:8474/proxies/vbank_api/toxics",
+            json=toxic,
+            timeout=API_TIMEOUT
+        )
+        if res.status_code in [200, 201]:
+            print("✅ Thêm limit_data thành công!")
+            print(f"   Giới hạn: {bytes_val} bytes")
+            print(f"   Stream: downstream (cắt response từ server)")
+            print(f"   → Response sẽ bị cắt sau {bytes_val} bytes")
+        else:
+            print(f"❌ Lỗi: {res.status_code} - {res.text}")
+    except Exception as e:
+        print(f"❌ Lỗi: {e}")
+
+
+def add_close_stream():
+    """Thêm close_stream toxic - Hard Failure (server chết)"""
+    print("\n" + "=" * 60)
+    print("THÊM CLOSE STREAM (Hard Failure)")
+    print("=" * 60)
+    print("📌 Close Stream: Đóng connection ngay lập tức")
+    print("   → Simulate server crash/died")
+    print("   → Dùng để test kịch bản:")
+    print("      - Bank B chết giữa chừng (partial commit)")
+    print("      - Network failure hoàn toàn")
+    print("⚠️  CẢNH BÁO: Đây là hard failure - KHÔNG recovery!")
+
+    toxic = {
+        "name": "close_stream",
+        "type": "close_stream",
+        "stream": "downstream",
+        "attributes": {}
+    }
+
+    try:
+        res = requests.post(
+            "http://localhost:8474/proxies/vbank_api/toxics",
+            json=toxic,
+            timeout=API_TIMEOUT
+        )
+        if res.status_code in [200, 201]:
+            print("✅ Thêm close_stream thành công!")
+            print(f"   → Server/connection sẽ bị đóng NGAY LẬP TỨC")
+            print(f"   → Request nào gọi sẽ bị lỗi Connection Closed")
+        else:
+            print(f"❌ Lỗi: {res.status_code} - {res.text}")
+    except Exception as e:
+        print(f"❌ Lỗi: {e}")
+
+
 def add_both_latency_and_timeout():
     """Thêm cả latency và timeout với giải thích đúng"""
     print("\n" + "=" * 60)
@@ -233,25 +306,30 @@ def add_both_latency_and_timeout():
     print(f"   Latency: {latency}ms (downstream)")
     print(f"   Timeout: {timeout}ms (upstream)")
 
-    # Phân tích
+    # Phân tích - QUAN TRỌNG: timeout upstream KHÔNG phụ thuộc latency!
     backend_time = 2000  # Ước tính backend xử lý
     total_time = backend_time + latency
 
     print(f"\n📊 PHÂN TÍCH:")
     print(f"   Backend xử lý: ~{backend_time}ms")
-    print(f"   + Latency: {latency}ms")
-    print(f"   = Tổng: ~{total_time}ms")
-    print(f"   Timeout: {timeout}ms")
+    print(f"   + Latency: {latency}ms (downstream - KHÔNG ảnh hưởng timeout)")
+    print(f"   = Tổng response: ~{total_time}ms")
+    print(f"   Timeout: {timeout}ms (upstream - chỉ chờ backend bắt đầu phản hồi)")
+
+    print(f"\n🔥 QUAN TRỌNG:")
+    print(f"   Timeout upstream = chờ backend BẮT ĐẦU phản hồi")
+    print(f"   → KHÔNG phụ thuộc latency (latency chỉ ảnh hưởng downstream)")
+    print()
 
     if timeout < backend_time:
-        print(f"\n⚠️  CẢNH BÁO: Timeout ({timeout}ms) < Backend time ({backend_time}ms)")
-        print(f"   → Sẽ bị TIMEOUT ngay cả khi không có latency!")
-    elif timeout < total_time:
-        print(f"\n⚠️  CẢNH BÁO: Timeout ({timeout}ms) gần sát tổng thời gian ({total_time}ms)")
-        print(f"   → Dễ bị TIMEOUT do race condition!")
-    else:
-        print(f"\n✅ AN TOÀN: Timeout ({timeout}ms) > Tổng ({total_time}ms)")
-        print(f"   → Request sẽ thành công (chậm hơn)")
+        print(f"❌ CHẮC CHẮN TIMEOUT:")
+        print(f"   Timeout ({timeout}ms) < Backend time ({backend_time}ms)")
+        print(f"   → Backend chưa kịp bắt đầu phản hồi đã bị timeout!")
+    elif timeout > backend_time:
+        print(f"✅ CHẮC CHẮN KHÔNG TIMEOUT:")
+        print(f"   Timeout ({timeout}ms) > Backend time ({backend_time}ms)")
+        print(f"   → Backend đủ thời gian bắt đầu phản hồi")
+        print(f"   → Request sẽ thành công (chậm hơn do latency)")
 
     print("-" * 60)
 
@@ -1048,6 +1126,162 @@ def test_transfer_with_current_toxics():
         print(f"       Timeout: {timeout_str}")
 
 
+def test_retry_logic():
+    """Test Retry Logic - Tự động retry khi timeout"""
+    print("\n" + "=" * 60)
+    print("TEST RETRY LOGIC")
+    print("=" * 60)
+    print("📌 Test retry khi timeout/connection error")
+    print("   → Simulate: timeout → retry → success")
+
+    # Cấu hình retry
+    max_retries = get_input("Số lần retry tối đa", 3)
+    retry_delay = get_input("Delay giữa các lần retry (ms)", 1000)
+
+    # Lấy thông tin toxics
+    latency_ms, timeout_ms = get_toxic_info()
+
+    print(f"\n📊 Cấu hình:")
+    print(f"   Max retries: {max_retries}")
+    print(f"   Retry delay: {retry_delay}ms")
+
+    latency_str = f"{latency_ms}ms" if latency_ms else "Không"
+    timeout_str = f"{timeout_ms}ms" if timeout_ms else "Không"
+    print(f"   Latency toxic: {latency_str}")
+    print(f"   Timeout toxic: {timeout_str}")
+
+    print("\n" + "-" * 60)
+    print("🔄 Bắt đầu test với retry...")
+    print("-" * 60)
+
+    data = {
+        "from_account_number": "102938475612",
+        "to_account_number": "203847569801",
+        "amount": 10000,
+        "description": "Test retry"
+    }
+
+    start = time.time()
+    last_error = None
+
+    for attempt in range(1, max_retries + 1):
+        print(f"\n🔄 Attempt {attempt}/{max_retries}")
+
+        try:
+            res = requests.post(
+                f"{API_VIA_PROXY}/transfer",
+                json=data,
+                timeout=REQUEST_TIMEOUT
+            )
+            elapsed = time.time() - start
+            print(f"   ✅ SUCCESS sau {elapsed:.2f}s")
+            print(f"   Status: {res.status_code}")
+            print_response(res.json())
+
+            # Hiển thị thông tin toxics
+            latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+            print(f"   Latency: {latency_str}")
+            print(f"   Timeout: {timeout_str}")
+
+            return  # Thành công, thoát
+
+        except requests.exceptions.Timeout as e:
+            elapsed = time.time() - start
+            last_error = "TIMEOUT"
+            print(f"   ❌ TIMEOUT sau {elapsed:.2f}s (lần {attempt})")
+
+            # Hiển thị thông tin toxics
+            latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+            print(f"   Latency: {latency_str}")
+            print(f"   Timeout: {timeout_str}")
+
+        except requests.exceptions.ConnectionError as e:
+            elapsed = time.time() - start
+            last_error = "CONNECTION ERROR"
+
+            if "RemoteDisconnected" in str(e):
+                print(f"   💣 CONNECTION CLOSED sau {elapsed:.2f}s (lần {attempt})")
+                print(f"   → Proxy đã đóng connection")
+            else:
+                print(f"   💣 CONNECTION ERROR sau {elapsed:.2f}s (lần {attempt})")
+
+            # Hiển thị thông tin toxics
+            latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+            print(f"   Latency: {latency_str}")
+            print(f"   Timeout: {timeout_str}")
+
+        except Exception as e:
+            elapsed = time.time() - start
+            last_error = f"ERROR: {type(e).__name__}"
+            print(f"   ❌ ERROR sau {elapsed:.2f}s: {e}")
+            break
+
+        # Retry nếu còn lần
+        if attempt < max_retries:
+            print(f"   ⏳ Chờ {retry_delay}ms trước khi retry...")
+            time.sleep(retry_delay / 1000)
+
+    # Tất cả retries thất bại
+    print("\n" + "-" * 60)
+    print(f"❌ THẤT BẠI sau {max_retries} attempts!")
+    print(f"   Last error: {last_error}")
+    print("-" * 60)
+
+
+def test_fallback_data():
+    """Test Fallback Data - Dùng dữ liệu dự phòng khi API fail"""
+    print("\n" + "=" * 60)
+    print("TEST FALLBACK DATA")
+    print("=" * 60)
+    print("📌 Test dùng dữ liệu dự phòng khi API fail")
+    print("   → Simulate: API fail → dùng cache/local data")
+
+    # Lấy thông tin toxics
+    latency_ms, timeout_ms = get_toxic_info()
+
+    print("\n📊 Test 1: Gọi API bình thường...")
+    print("-" * 60)
+
+    try:
+        start = time.time()
+        res = requests.get(f"{API_VIA_PROXY}/accounts", timeout=REQUEST_TIMEOUT)
+        elapsed = time.time() - start
+
+        print(f"✅ API Response:")
+        print(f"   Status: {res.status_code}")
+        print(f"   Time: {elapsed:.2f}s")
+        print(f"   Data: {res.text[:200]}...")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"   Latency: {latency_str}")
+        print(f"   Timeout: {timeout_str}")
+
+    except Exception as e:
+        print(f"❌ API Error: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"   Latency: {latency_str}")
+        print(f"   Timeout: {timeout_str}")
+
+    print("\n📊 Test 2: Fallback với dữ liệu mẫu (khi API fail)...")
+    print("-" * 60)
+
+    # Simulate fallback data
+    fallback_data = [
+        {"account_number": "102938475612", "name": "Nguyen Van A", "balance": 100000},
+        {"account_number": "203847569801", "name": "Le Thi B", "balance": 50000},
+    ]
+
+    print("✅ Fallback Data (mock):")
+    print(json.dumps(fallback_data, indent=2, ensure_ascii=False))
+    print("\n→ Khi API fail, hệ thống có thể:")
+    print("   1. Dùng dữ liệu cache trước đó")
+    print("   2. Dùng dữ liệu mẫu (mock)")
+    print("   3. Hiển thị thông báo lỗi và yêu cầu thử lại")
+
+
 def configure_defaults():
     """Cấu hình giá trị mặc định"""
     global DEFAULT_LATENCY, DEFAULT_TIMEOUT, REQUEST_TIMEOUT
@@ -1266,9 +1500,14 @@ def menu():
         print("B. Xóa Proxy")
         print("C. Thêm Latency (nhập ms)")
         print("D. Thêm Timeout (nhập ms)")
+        print("L. Thêm Limit Data (Packet Loss)")
+        print("K. Thêm Close Stream (Server chết)")
         print("F. Thêm CẢ Latency + Timeout")
         print("S. Xem thông tin Proxy & Toxics")
         print("E. Xóa tất cả Toxics")
+        print("---")
+        print("R. Test Retry Logic (timeout → retry)")
+        print("W. Test Fallback Data (API fail → dùng dự phòng)")
         print("---")
         print("T. DEBUG CHUYÊN SÂU Timeout (theo dõi từng bước)")
         print("G. Cấu hình giá trị mặc định")
@@ -1299,12 +1538,20 @@ def menu():
             add_latency()
         elif choice == "D":
             add_timeout()
+        elif choice == "L":
+            add_limit_data()
+        elif choice == "K":
+            add_close_stream()
         elif choice == "F":
             add_both_latency_and_timeout()
         elif choice == "S":
             show_proxy_info()
         elif choice == "E":
             clear_toxics()
+        elif choice == "R":
+            test_retry_logic()
+        elif choice == "W":
+            test_fallback_data()
         elif choice == "T":
             deep_debug_timeout()
         elif choice == "G":
