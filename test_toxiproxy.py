@@ -25,12 +25,12 @@ def debug_print(msg):
 # ============================================================
 # CẤU HÌNH TIMEOUT - QUAN TRỌNG!
 # ============================================================
-API_TIMEOUT = 5           # Timeout cho việc quản lý proxy (giữ nguyên)
-REQUEST_TIMEOUT = 30       # Timeout cho request qua proxy (PHẢI > DEFAULT_TIMEOUT)
+API_TIMEOUT = 5           # thời gian client chấp nhận chờ api phản hồi khi gọi API Toxiproxy (ví dụ: tạo proxy, thêm toxic). Nếu vượt quá thì sẽ coi là lỗi.
+REQUEST_TIMEOUT = 30       # thời gian client chờ toàn bộ quá trình request hoàn tất, bao gồm đi qua proxy và backend. Nếu vượt quá thì client sẽ tự hủy request.
 
 # Giá trị mặc định cho toxic
 DEFAULT_LATENCY = 1000    # 1 giây - Network delay
-DEFAULT_TIMEOUT = 5000     # 5 giây - Backend timeout
+DEFAULT_TIMEOUT = 5000     # 5 giây - thời gian proxy chờ backend phải bắt đầu phản hồi, nếu backend ko gửi response trong thời gian này thì proxy sẽ đóng kết nối, thường là thời gian backend phản hồi + timeout > default timeout -> lỗi timeout, không phụ thuộc vào latency
 
 
 def print_response(res):
@@ -466,20 +466,86 @@ def check_services():
         print("    → docker run -d -p 8474:8474 -p 8666:8666 --name toxiproxy ghcr.io/shopify/toxiproxy")
 
     print("\n[3] Kiểm tra proxy (localhost:8666)...")
+    start = time.time()
+
+    # Lấy thông tin toxics từ proxy
+    latency_ms = None
+    timeout_ms = None
+
+    try:
+        proxy_res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        if proxy_res.status_code == 200:
+            proxy_data = proxy_res.json()
+            toxics = proxy_data.get('toxics', [])
+
+            for t in toxics:
+                attrs = t.get('attributes', {})
+                if t.get('type') == 'latency':
+                    latency_ms = attrs.get('latency')
+                elif t.get('type') == 'timeout':
+                    timeout_ms = attrs.get('timeout')
+    except:
+        pass  # Bỏ qua nếu không lấy được thông tin proxy
+
+    # Test kết nối
     try:
         debug_print("Testing proxy connection...")
-        start = time.time()
         res = requests.get(f"{API_VIA_PROXY}/accounts", timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
         debug_print(f"Proxy response: {res.status_code} in {elapsed:.3f}s")
+
         print(f"    ✅ Proxy OK - Status: {res.status_code}")
+
+        # Hiển thị thông tin latency và timeout
+        latency_str = f"{latency_ms}ms" if latency_ms is not None else "Chưa cấu hình"
+        timeout_str = f"{timeout_ms}ms" if timeout_ms is not None else "Chưa cấu hình"
+
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
     except requests.exceptions.Timeout:
-        print(f"    ❌ Proxy TIMEOUT! (>{REQUEST_TIMEOUT}s)")
-        debug_print("Timeout khi test proxy")
+        elapsed = time.time() - start
+        print(f"    ❌ CLIENT TIMEOUT")
+        print(f"    Time: {elapsed:.2f}s")
+        print(f"    → Client chờ vượt quá {REQUEST_TIMEOUT}s")
+
+        # Hiển thị thông tin toxics
+        latency_str = f"{latency_ms}ms" if latency_ms is not None else "Chưa cấu hình"
+        timeout_str = f"{timeout_ms}ms" if timeout_ms is not None else "Chưa cấu hình"
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
+    except requests.exceptions.ConnectionError as e:
+        elapsed = time.time() - start
+        print(f"    💣 CONNECTION CLOSED")
+        print(f"    Time: {elapsed:.2f}s")
+
+        if "RemoteDisconnected" in str(e):
+            print("    → Proxy đã đóng connection (timeout toxic)")
+        elif "Connection refused" in str(e):
+            print("    → Proxy hoặc backend chưa chạy")
+        else:
+            print("    → Lỗi network khác")
+
+        print(f"    → Chi tiết: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str = f"{latency_ms}ms" if latency_ms is not None else "Chưa cấu hình"
+        timeout_str = f"{timeout_ms}ms" if timeout_ms is not None else "Chưa cấu hình"
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
     except Exception as e:
-        print(f"    ❌ Proxy ERROR: {e}")
-        debug_print(f"Exception: {e}")
-        traceback.print_exc()
+        elapsed = time.time() - start
+        print(f"    ❌ UNKNOWN ERROR")
+        print(f"    Time: {elapsed:.2f}s")
+
+        # Hiển thị thông tin toxics
+        latency_str = f"{latency_ms}ms" if latency_ms is not None else "Chưa cấu hình"
+        timeout_str = f"{timeout_ms}ms" if timeout_ms is not None else "Chưa cấu hình"
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+        print(f"    → {type(e).__name__}: {e}")
 
 
 def show_proxy_info():
@@ -557,19 +623,102 @@ def show_proxy_info():
         print(f"❌ Lỗi: {e}")
 
 
+def get_toxic_info():
+    """Lấy thông tin latency và timeout từ proxy"""
+    latency_ms = None
+    timeout_ms = None
+
+    try:
+        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        if res.status_code == 200:
+            data = res.json()
+            toxics = data.get('toxics', [])
+
+            for t in toxics:
+                attrs = t.get('attributes', {})
+                if t.get('type') == 'latency':
+                    latency_ms = attrs.get('latency')
+                elif t.get('type') == 'timeout':
+                    timeout_ms = attrs.get('timeout')
+    except:
+        pass
+
+    return latency_ms, timeout_ms
+
+
+def format_toxic_info(latency_ms, timeout_ms):
+    """Format thông tin latency/timeout để hiển thị"""
+    latency_str = f"{latency_ms}ms" if latency_ms is not None else "Chưa cấu hình"
+    timeout_str = f"{timeout_ms}ms" if timeout_ms is not None else "Chưa cấu hình"
+    return latency_str, timeout_str
+
+
 def test_health_check():
     """Test 1: Health check"""
     print("\n" + "=" * 60)
     print("TEST 1: Health Check")
     print("=" * 60)
 
+    # Lấy thông tin toxics
+    latency_ms, timeout_ms = get_toxic_info()
+    start = time.time()
+
     try:
         res = requests.get(f"{API_VIA_PROXY}/health", timeout=REQUEST_TIMEOUT)
+        elapsed = time.time() - start
+
+        print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
+        print(f"Time: {elapsed:.2f}s")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
         print_response(res.json())
+
+    except requests.exceptions.Timeout:
+        elapsed = time.time() - start
+        print(f"❌ CLIENT TIMEOUT")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ Client chờ vượt quá {REQUEST_TIMEOUT}s")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
+    except requests.exceptions.ConnectionError as e:
+        elapsed = time.time() - start
+        print(f"💣 CONNECTION CLOSED")
+        print(f"Time: {elapsed:.2f}s")
+
+        # Phân tích nguyên nhân
+        if "RemoteDisconnected" in str(e):
+            print("→ Proxy đã đóng connection (timeout toxic)")
+        elif "Connection refused" in str(e):
+            print("→ Proxy hoặc backend chưa chạy")
+        else:
+            print("→ Lỗi network khác")
+
+        print(f"→ Chi tiết: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
     except Exception as e:
-        print(f"Lỗi: {e}")
-        print("\n💡 Gợi ý: Chạy test '7' để kiểm tra services trước")
+        elapsed = time.time() - start
+        print(f"❌ UNKNOWN ERROR")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ {type(e).__name__}: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
 
 
 def test_get_accounts():
@@ -578,13 +727,65 @@ def test_get_accounts():
     print("TEST 2: Get Accounts")
     print("=" * 60)
 
+    # Lấy thông tin toxics
+    latency_ms, timeout_ms = get_toxic_info()
+    start = time.time()
+
     try:
         res = requests.get(f"{API_VIA_PROXY}/accounts", timeout=REQUEST_TIMEOUT)
+        elapsed = time.time() - start
+
+        print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
+        print(f"Time: {elapsed:.2f}s")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
         print_response(res.json())
+
+    except requests.exceptions.Timeout:
+        elapsed = time.time() - start
+        print(f"❌ CLIENT TIMEOUT")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ Client chờ vượt quá {REQUEST_TIMEOUT}s")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
+    except requests.exceptions.ConnectionError as e:
+        elapsed = time.time() - start
+        print(f"💣 CONNECTION CLOSED")
+        print(f"Time: {elapsed:.2f}s")
+
+        if "RemoteDisconnected" in str(e):
+            print("→ Proxy đã đóng connection (timeout toxic)")
+        elif "Connection refused" in str(e):
+            print("→ Proxy hoặc backend chưa chạy")
+        else:
+            print("→ Lỗi network khác")
+
+        print(f"→ Chi tiết: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
     except Exception as e:
-        print(f"Lỗi: {e}")
-        print("\n💡 Gợi ý: Chạy test '7' để kiểm tra services trước")
+        elapsed = time.time() - start
+        print(f"❌ UNKNOWN ERROR")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ {type(e).__name__}: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
 
 
 def test_login():
@@ -598,13 +799,65 @@ def test_login():
         "password": "123456"
     }
 
+    # Lấy thông tin toxics
+    latency_ms, timeout_ms = get_toxic_info()
+    start = time.time()
+
     try:
         res = requests.post(f"{API_VIA_PROXY}/login", json=data, timeout=REQUEST_TIMEOUT)
+        elapsed = time.time() - start
+
+        print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
+        print(f"Time: {elapsed:.2f}s")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
         print_response(res.json())
+
+    except requests.exceptions.Timeout:
+        elapsed = time.time() - start
+        print(f"❌ CLIENT TIMEOUT")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ Client chờ vượt quá {REQUEST_TIMEOUT}s")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
+    except requests.exceptions.ConnectionError as e:
+        elapsed = time.time() - start
+        print(f"💣 CONNECTION CLOSED")
+        print(f"Time: {elapsed:.2f}s")
+
+        if "RemoteDisconnected" in str(e):
+            print("→ Proxy đã đóng connection (timeout toxic)")
+        elif "Connection refused" in str(e):
+            print("→ Proxy hoặc backend chưa chạy")
+        else:
+            print("→ Lỗi network khác")
+
+        print(f"→ Chi tiết: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
     except Exception as e:
-        print(f"Lỗi: {e}")
-        print("\n💡 Gợi ý: Chạy test '7' để kiểm tra services trước")
+        elapsed = time.time() - start
+        print(f"❌ UNKNOWN ERROR")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ {type(e).__name__}: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
 
 
 def test_transfer():
@@ -620,23 +873,67 @@ def test_transfer():
         "description": "Test qua proxy"
     }
 
+    # Lấy thông tin toxics
+    latency_ms, timeout_ms = get_toxic_info()
+    debug_print("Bắt đầu transfer...")
+    start = time.time()
+
     try:
-        debug_print("Bắt đầu transfer...")
-        start = time.time()
         res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
         debug_print(f"Transfer completed: {res.status_code} in {elapsed:.3f}s")
+
+        print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
         print(f"Time: {elapsed:.2f}s")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
         print_response(res.json())
+
     except requests.exceptions.Timeout:
-        print("Timeout! Server không phản hồi")
-        debug_print("Transfer bị TIMEOUT!")
+        elapsed = time.time() - start
+        print(f"❌ CLIENT TIMEOUT")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ Client chờ vượt quá {REQUEST_TIMEOUT}s")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
+    except requests.exceptions.ConnectionError as e:
+        elapsed = time.time() - start
+        print(f"💣 CONNECTION CLOSED")
+        print(f"Time: {elapsed:.2f}s")
+
+        if "RemoteDisconnected" in str(e):
+            print("→ Proxy đã đóng connection (timeout toxic)")
+        elif "Connection refused" in str(e):
+            print("→ Proxy hoặc backend chưa chạy")
+        else:
+            print("→ Lỗi network khác")
+
+        print(f"→ Chi tiết: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
     except Exception as e:
-        print(f"Lỗi: {e}")
-        debug_print(f"Exception: {e}")
-        traceback.print_exc()
-        print("\n💡 Gợi ý: Chạy test '7' để kiểm tra services trước")
+        elapsed = time.time() - start
+        print(f"❌ UNKNOWN ERROR")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ {type(e).__name__}: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
 
 
 def test_transfer_with_current_toxics():
@@ -685,14 +982,17 @@ def test_transfer_with_current_toxics():
         "description": "Test với toxics"
     }
 
+    start = time.time()
+    print(f"\n🚀 Bắt đầu transfer lúc: {time.strftime('%H:%M:%S')}")
+
     try:
-        start = time.time()
-        print(f"\n🚀 Bắt đầu transfer lúc: {time.strftime('%H:%M:%S')}")
         res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
         print(f"🏁 Hoàn thành lúc: {time.strftime('%H:%M:%S')}")
+
+        print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
-        print(f"Thời gian: {elapsed:.2f}s")
+        print(f"Time: {elapsed:.2f}s")
 
         if elapsed > REQUEST_TIMEOUT:
             print(f"\n❌ KẾT QUẢ: Client TIMEOUT!")
@@ -702,10 +1002,50 @@ def test_transfer_with_current_toxics():
             print(f"\n✅ KẾT QUẢ: Request thành công!")
 
         print_response(res.json())
+
     except requests.exceptions.Timeout:
-        print(f"\n❌ KẾT QUẢ: Request bị TIMEOUT!")
+        elapsed = time.time() - start
+        print(f"🏁 Hoàn thành lúc: {time.strftime('%H:%M:%S')}")
+        print(f"❌ CLIENT TIMEOUT")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ Client chờ vượt quá {REQUEST_TIMEOUT}s")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
+    except requests.exceptions.ConnectionError as e:
+        elapsed = time.time() - start
+        print(f"🏁 Hoàn thành lúc: {time.strftime('%H:%M:%S')}")
+        print(f"💣 CONNECTION CLOSED")
+        print(f"Time: {elapsed:.2f}s")
+
+        if "RemoteDisconnected" in str(e):
+            print("→ Proxy đã đóng connection (timeout toxic)")
+        elif "Connection refused" in str(e):
+            print("→ Proxy hoặc backend chưa chạy")
+        else:
+            print("→ Lỗi network khác")
+
+        print(f"→ Chi tiết: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
+
     except Exception as e:
-        print(f"Lỗi: {e}")
+        elapsed = time.time() - start
+        print(f"🏁 Hoàn thành lúc: {time.strftime('%H:%M:%S')}")
+        print(f"❌ UNKNOWN ERROR")
+        print(f"Time: {elapsed:.2f}s")
+        print(f"→ {type(e).__name__}: {e}")
+
+        # Hiển thị thông tin toxics
+        latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
+        print(f"       Latency: {latency_str}")
+        print(f"       Timeout: {timeout_str}")
 
 
 def configure_defaults():
@@ -854,21 +1194,40 @@ def deep_debug_timeout():
     print(f"  Đợi 1 giây để toxic ổn định...")
     time.sleep(1)
 
+    start = time.time()
+    print(f"  Gọi {API_VIA_PROXY}/ với timeout client = 10s...")
+
     try:
-        print(f"  Gọi {API_VIA_PROXY}/ với timeout client = 10s...")
-        start = time.time()
         res = requests.get(f"{API_VIA_PROXY}/", timeout=10)
         elapsed = time.time() - start
         print(f"  ✅ Response: {res.status_code} trong {elapsed:.3f}s")
         print(f"     Body: {res.text[:200]}")
+
     except requests.exceptions.Timeout:
         elapsed = time.time() - start
-        print(f"  ❌ TIMEOUT! Client timeout sau {elapsed:.3f}s")
-        print(f"     → Có thể proxy đã kill connection")
+        print(f"  ❌ CLIENT TIMEOUT")
+        print(f"  Time: {elapsed:.2f}s")
+        print(f"  → Client chờ vượt quá 10s")
+
+    except requests.exceptions.ConnectionError as e:
+        elapsed = time.time() - start
+        print(f"  💣 CONNECTION CLOSED")
+        print(f"  Time: {elapsed:.2f}s")
+
+        if "RemoteDisconnected" in str(e):
+            print("  → Proxy đã đóng connection (timeout toxic)")
+        elif "Connection refused" in str(e):
+            print("  → Proxy hoặc backend chưa chạy")
+        else:
+            print("  → Lỗi network khác")
+
+        print(f"  → Chi tiết: {e}")
+
     except Exception as e:
         elapsed = time.time() - start
-        print(f"  ❌ Exception sau {elapsed:.3f}s: {e}")
-        traceback.print_exc()
+        print(f"  ❌ UNKNOWN ERROR")
+        print(f"  Time: {elapsed:.2f}s")
+        print(f"  → {type(e).__name__}: {e}")
 
     # Bước 6: Kiểm tra proxy lần cuối
     print("\n📍 BƯỚC 6: Kiểm tra proxy lần cuối")
