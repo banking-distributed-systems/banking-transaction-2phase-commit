@@ -1,7 +1,7 @@
 # V-Bank 2PC — Documentation Index
 
-> **Phiên bản:** 1.0
-> **Ngày:** 17/03/2026
+> **Phiên bản:** 2.0
+> **Ngày cập nhật:** 18/03/2026
 
 ---
 
@@ -21,10 +21,12 @@
 | 4 | **[2PC-PROTOCOL.md](./2PC-PROTOCOL.md)** | Chi tiết giao thức Two-Phase Commit, XA commands |
 | 5 | **[ERROR-HANDLING.md](./ERROR-HANDLING.md)** | Xử lý lỗi, 5 kịch bản lỗi, recovery process |
 | 6 | **[DATABASE.md](./DATABASE.md)** | Thiết kế database, schema, indexes |
+| 7 | **[TOXIPROXY.md](./TOXIPROXY.md)** | Toxiproxy documentation - Network simulation, test cases, 2PC scenarios |
+| 8 | **[TEST-CASES.md](./TEST-CASES.md)** | Hướng dẫn test chi tiết - Cách sử dụng test_toxiproxy.py |
 
 ---
 
-## 🔀 Đọc theo luồng
+## 📖 Hướng dẫn đọc theo luồng
 
 ### Dành cho Developer mới
 
@@ -38,21 +40,31 @@
 4. DATABASE.md
 ```
 
+### Dành cho QA/Tester
+
+```
+1. TOXIPROXY.md
+   ↓
+2. ERROR-HANDLING.md
+   ↓
+3. 2PC-PROTOCOL.md
+```
+
+### Dành cho DevOps/Operation
+
+```
+1. TOXIPROXY.md
+   ↓
+2. ARCHITECTURE.md
+   ↓
+3. ERROR-HANDLING.md
+```
+
 ### Dành cho Technical Lead
 
 ```
 ARCHITECTURE.md
        ↓
-2PC-PROTOCOL.md
-       ↓
-ERROR-HANDLING.md
-       ↓
-DATABASE.md
-```
-
-### Dành cho người vận hành
-
-```
 2PC-PROTOCOL.md
        ↓
 ERROR-HANDLING.md

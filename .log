@@ -55,3 +55,42 @@
 2026-03-18 13:02:15  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB5392F77AFE | 20000đ | 1029 3847 5612 → 2038 4756 9801
 2026-03-18 13:02:15  INFO      [TIMING] POST /api/transfer - Time: 0.2197s
 2026-03-18 13:02:15  INFO      127.0.0.1 - - [18/Mar/2026 13:02:15] "POST /api/transfer HTTP/1.1" 200 -
+2026-03-18 13:37:40  INFO      [TIMING] GET /api/accounts - Time: 0.0371s
+2026-03-18 13:37:40  INFO      127.0.0.1 - - [18/Mar/2026 13:37:40] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:37:58  INFO      [TIMING] GET /api/accounts - Time: 0.0319s
+2026-03-18 13:37:58  INFO      127.0.0.1 - - [18/Mar/2026 13:37:58] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:37:58  INFO      [TIMING] GET /api/accounts - Time: 0.0296s
+2026-03-18 13:37:58  INFO      127.0.0.1 - - [18/Mar/2026 13:37:58] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:47:55  INFO      [TIMING] GET /api/accounts - Time: 0.0666s
+2026-03-18 13:47:55  INFO      127.0.0.1 - - [18/Mar/2026 13:47:55] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:48:24  INFO      [TIMING] GET /api/accounts - Time: 0.0821s
+2026-03-18 13:48:24  INFO      127.0.0.1 - - [18/Mar/2026 13:48:24] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:48:24  INFO      [TIMING] GET /api/accounts - Time: 0.0318s
+2026-03-18 13:48:24  INFO      127.0.0.1 - - [18/Mar/2026 13:48:24] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:59:14  INFO      [TIMING] GET /api/accounts - Time: 0.0280s
+2026-03-18 13:59:14  INFO      127.0.0.1 - - [18/Mar/2026 13:59:14] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:59:14  INFO      [TIMING] GET /api/accounts - Time: 0.0715s
+2026-03-18 13:59:14  INFO      127.0.0.1 - - [18/Mar/2026 13:59:14] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 13:59:40  INFO      [TIMING] GET /api/health - Time: 0.0001s
+2026-03-18 13:59:40  INFO      127.0.0.1 - - [18/Mar/2026 13:59:40] "GET /api/health HTTP/1.1" 200 -
+2026-03-18 13:59:57  INFO      [TIMING] GET /api/health - Time: 0.0002s
+2026-03-18 13:59:57  INFO      127.0.0.1 - - [18/Mar/2026 13:59:57] "GET /api/health HTTP/1.1" 200 -
+2026-03-18 14:00:06  INFO      [TIMING] POST /api/login - Time: 0.0188s
+2026-03-18 14:00:06  INFO      127.0.0.1 - - [18/Mar/2026 14:00:06] "POST /api/login HTTP/1.1" 200 -
+2026-03-18 14:00:59  INFO      [TIMING] GET /api/health - Time: 0.0001s
+2026-03-18 14:00:59  INFO      127.0.0.1 - - [18/Mar/2026 14:00:59] "GET /api/health HTTP/1.1" 200 -
+2026-03-18 14:01:37  INFO      [TIMING] GET /api/health - Time: 0.0001s
+2026-03-18 14:01:37  INFO      127.0.0.1 - - [18/Mar/2026 14:01:37] "GET /api/health HTTP/1.1" 200 -
+2026-03-18 14:38:50  INFO      [TIMING] GET /api/accounts - Time: 0.0950s
+2026-03-18 14:38:50  INFO      127.0.0.1 - - [18/Mar/2026 14:38:50] "GET /api/accounts HTTP/1.1" 200 -
+2026-03-18 14:40:30  INFO      [TRANSFER] ── Giao dịch mới | tx=VB2085D317F5 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Test retry"
+2026-03-18 14:40:30  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB2085D317F5 | 2085d317f513 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Test retry"
+2026-03-18 14:40:30  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB2085D317F5
+2026-03-18 14:40:30  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB2085D317F5
+2026-03-18 14:40:30  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB2085D317F5
+2026-03-18 14:40:30  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB2085D317F5
+2026-03-18 14:40:30  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB2085D317F5 | 10000đ | 1029 3847 5612 → 2038 4756 9801
+2026-03-18 14:40:30  INFO      [TIMING] POST /api/transfer - Time: 0.3859s
+2026-03-18 14:40:30  INFO      127.0.0.1 - - [18/Mar/2026 14:40:30] "POST /api/transfer HTTP/1.1" 200 -
+2026-03-18 14:41:23  INFO      [TIMING] GET /api/health - Time: 0.0001s
+2026-03-18 14:41:23  INFO      127.0.0.1 - - [18/Mar/2026 14:41:23] "GET /api/health HTTP/1.1" 200 -
