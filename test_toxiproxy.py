@@ -848,6 +848,7 @@ def test_health_check():
     latency_ms, timeout_ms = get_toxic_info()
     start = time.time()
 
+
     try:
         res = requests.get(f"{API_VIA_PROXY}/health", timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
@@ -862,8 +863,8 @@ def test_health_check():
         print(f"       Timeout: {timeout_str}")
 
         data = safe_json_response(res)
-if data:
-    print_response(data)
+        if data:
+            print_response(data)
 
     except requests.exceptions.Timeout:
         elapsed = time.time() - start
@@ -918,6 +919,7 @@ def test_get_accounts():
     latency_ms, timeout_ms = get_toxic_info()
     start = time.time()
 
+
     try:
         res = requests.get(f"{API_VIA_PROXY}/accounts", timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
@@ -932,8 +934,8 @@ def test_get_accounts():
         print(f"       Timeout: {timeout_str}")
 
         data = safe_json_response(res)
-if data:
-    print_response(data)
+        if data:
+            print_response(data)
 
     except requests.exceptions.Timeout:
         elapsed = time.time() - start
@@ -992,6 +994,7 @@ def test_login():
     latency_ms, timeout_ms = get_toxic_info()
     start = time.time()
 
+
     try:
         res = requests.post(f"{API_VIA_PROXY}/login", json=data, timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
@@ -1006,8 +1009,8 @@ def test_login():
         print(f"       Timeout: {timeout_str}")
 
         data = safe_json_response(res)
-if data:
-    print_response(data)
+        if data:
+            print_response(data)
 
     except requests.exceptions.Timeout:
         elapsed = time.time() - start
@@ -1069,6 +1072,7 @@ def test_transfer():
     debug_print("Bắt đầu transfer...")
     start = time.time()
 
+
     try:
         res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
@@ -1084,8 +1088,8 @@ def test_transfer():
         print(f"       Timeout: {timeout_str}")
 
         data = safe_json_response(res)
-if data:
-    print_response(data)
+        if data:
+            print_response(data)
 
     except requests.exceptions.Timeout:
         elapsed = time.time() - start
@@ -1178,6 +1182,7 @@ def test_transfer_with_current_toxics():
     start = time.time()
     print(f"\n🚀 Bắt đầu transfer lúc: {time.strftime('%H:%M:%S')}")
 
+
     try:
         res = requests.post(f"{API_VIA_PROXY}/transfer", json=data, timeout=REQUEST_TIMEOUT)
         elapsed = time.time() - start
@@ -1195,8 +1200,8 @@ def test_transfer_with_current_toxics():
             print(f"\n✅ KẾT QUẢ: Request thành công!")
 
         data = safe_json_response(res)
-if data:
-    print_response(data)
+        if data:
+            print_response(data)
 
     except requests.exceptions.Timeout:
         elapsed = time.time() - start
@@ -1281,6 +1286,7 @@ def test_retry_logic():
     start = time.time()
     last_error = None
 
+
     for attempt in range(1, max_retries + 1):
         print(f"\n🔄 Attempt {attempt}/{max_retries}")
 
@@ -1294,8 +1300,8 @@ def test_retry_logic():
             print(f"   ✅ SUCCESS sau {elapsed:.2f}s")
             print(f"   Status: {res.status_code}")
             data = safe_json_response(res)
-if data:
-    print_response(data)
+            if data:
+                print_response(data)
 
             # Hiển thị thông tin toxics
             latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
