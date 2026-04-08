@@ -26,3 +26,28 @@
 2026-04-08 07:53:27  INFO      127.0.0.1 - - [08/Apr/2026 07:53:27] "GET /api/accounts HTTP/1.1" 200 -
 2026-04-08 07:54:03  INFO      [TIMING] GET /api/health - Time: 0.0001s
 2026-04-08 07:54:03  INFO      127.0.0.1 - - [08/Apr/2026 07:54:03] "GET /api/health HTTP/1.1" 200 -
+2026-04-08 07:54:52  INFO      [TIMING] GET /api/accounts - Time: 0.0231s
+2026-04-08 07:54:52  INFO      127.0.0.1 - - [08/Apr/2026 07:54:52] "GET /api/accounts HTTP/1.1" 200 -
+2026-04-08 07:55:13  INFO      [TIMING] GET /api/health - Time: 0.0001s
+2026-04-08 07:55:13  INFO      127.0.0.1 - - [08/Apr/2026 07:55:13] "GET /api/health HTTP/1.1" 200 -
+2026-04-08 07:55:21  INFO      [TIMING] GET /api/accounts - Time: 0.0388s
+2026-04-08 07:55:21  INFO      127.0.0.1 - - [08/Apr/2026 07:55:21] "GET /api/accounts HTTP/1.1" 200 -
+2026-04-08 07:55:24  INFO      [TIMING] POST /api/login - Time: 0.0199s
+2026-04-08 07:55:24  INFO      127.0.0.1 - - [08/Apr/2026 07:55:24] "POST /api/login HTTP/1.1" 200 -
+2026-04-08 07:57:13  INFO      [TIMING] GET /api/health - Time: 0.0001s
+2026-04-08 07:57:13  INFO      127.0.0.1 - - [08/Apr/2026 07:57:13] "GET /api/health HTTP/1.1" 200 -
+2026-04-08 07:57:18  INFO      [TIMING] GET /api/health - Time: 0.0001s
+2026-04-08 07:57:18  INFO      127.0.0.1 - - [08/Apr/2026 07:57:18] "GET /api/health HTTP/1.1" 200 -
+2026-04-08 08:00:51  INFO      [TIMING] POST /api/login - Time: 0.0066s
+2026-04-08 08:00:51  INFO      127.0.0.1 - - [08/Apr/2026 08:00:51] "POST /api/login HTTP/1.1" 200 -
+2026-04-08 08:01:17  INFO      [TIMING] POST /api/login - Time: 0.0177s
+2026-04-08 08:01:17  INFO      127.0.0.1 - - [08/Apr/2026 08:01:17] "POST /api/login HTTP/1.1" 200 -
+2026-04-08 08:02:00  INFO      [TRANSFER] ── Giao dịch mới | tx=VBE83390AAE4 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Test qua proxy"
+2026-04-08 08:02:00  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VBE83390AAE4 | e83390aae4e7 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Test qua proxy"
+2026-04-08 08:02:00  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VBE83390AAE4
+2026-04-08 08:02:01  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VBE83390AAE4
+2026-04-08 08:02:01  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VBE83390AAE4
+2026-04-08 08:02:01  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VBE83390AAE4
+2026-04-08 08:02:01  INFO      [TRANSFER] ✓ Hoàn tất | tx=VBE83390AAE4 | 10000đ | 1029 3847 5612 → 2038 4756 9801
+2026-04-08 08:02:01  INFO      [TIMING] POST /api/transfer - Time: 0.2265s
+2026-04-08 08:02:01  INFO      127.0.0.1 - - [08/Apr/2026 08:02:01] "POST /api/transfer HTTP/1.1" 200 -

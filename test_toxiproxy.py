@@ -1819,7 +1819,7 @@ def menu():
         print("D. Thêm Timeout (nhập ms)")
         print("L. Thêm Limit Data (Packet Loss)")
         print("K. Thêm Close Stream (Server chết)")
-        print("B. Thêm Bandwidth (Slow network)")
+        print("M. Thêm Bandwidth (Slow network)")
         print("P. Thêm Slicer (Random packet loss)")
         print("F. Thêm CẢ Latency + Timeout")
         print("S. Xem thông tin Proxy & Toxics")
@@ -1864,7 +1864,7 @@ def menu():
             add_limit_data()
         elif choice == "K":
             add_close_stream()
-        elif choice == "B":
+        elif choice == "M":
             add_bandwidth()
         elif choice == "P":
             add_slicer()
