@@ -856,6 +856,8 @@ def test_health_check():
         print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
         print(f"Time: {elapsed:.2f}s")
+        debug_print(f"[Perf] Thời gian thực thi: {elapsed:.2f}s")
+        debug_print(f"[Toxic] Latency: {latency_str}, Timeout: {timeout_str}")
 
         # Hiển thị thông tin toxics
         latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
@@ -927,6 +929,8 @@ def test_get_accounts():
         print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
         print(f"Time: {elapsed:.2f}s")
+        debug_print(f"[Perf] Thời gian thực thi: {elapsed:.2f}s")
+        debug_print(f"[Toxic] Latency: {latency_str}, Timeout: {timeout_str}")
 
         # Hiển thị thông tin toxics
         latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
@@ -1002,6 +1006,8 @@ def test_login():
         print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
         print(f"Time: {elapsed:.2f}s")
+        debug_print(f"[Perf] Thời gian thực thi: {elapsed:.2f}s")
+        debug_print(f"[Toxic] Latency: {latency_str}, Timeout: {timeout_str}")
 
         # Hiển thị thông tin toxics
         latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
@@ -1081,6 +1087,8 @@ def test_transfer():
         print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
         print(f"Time: {elapsed:.2f}s")
+        debug_print(f"[Perf] Thời gian thực thi: {elapsed:.2f}s")
+        debug_print(f"[Toxic] Latency: {latency_str}, Timeout: {timeout_str}")
 
         # Hiển thị thông tin toxics
         latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
@@ -1191,6 +1199,8 @@ def test_transfer_with_current_toxics():
         print(f"✅ SUCCESS")
         print(f"Status: {res.status_code}")
         print(f"Time: {elapsed:.2f}s")
+        debug_print(f"[Perf] Thời gian thực thi: {elapsed:.2f}s")
+        debug_print(f"[Toxic] Latency: {latency_str}, Timeout: {timeout_str}")
 
         if elapsed > REQUEST_TIMEOUT:
             print(f"\n❌ KẾT QUẢ: Client TIMEOUT!")
@@ -1299,6 +1309,8 @@ def test_retry_logic():
             elapsed = time.time() - start
             print(f"   ✅ SUCCESS sau {elapsed:.2f}s")
             print(f"   Status: {res.status_code}")
+            debug_print(f"[Perf] Thời gian thực thi: {elapsed:.2f}s")
+            debug_print(f"[Toxic] Latency: {latency_str}, Timeout: {timeout_str}")
             data = safe_json_response(res)
             if data:
                 print_response(data)
