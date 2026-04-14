@@ -64,7 +64,7 @@ def log_phase(
     description: str = ''
 ):
     """
-    Ghi / cập nhật trạng thái phase vào transaction_log VÀ file .log
+    Ghi / cập nhật trạng thái phase vào transaction_log và output log trên console
 
     Args:
         tx_id: Transaction ID hiển thị

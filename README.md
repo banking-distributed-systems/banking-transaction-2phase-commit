@@ -289,7 +289,7 @@ curl -X POST http://localhost:8666/api/recover
   - Danh sách giao dịch gần nhất
   - Auto-refresh định kỳ
   - Nút recovery thủ công
-- **Toàn bộ 2PC** được ghi log chi tiết ra `transaction_log` (DB) và file `.log`
+- **Toàn bộ 2PC** được ghi log chi tiết ra `transaction_log` (DB) và console backend
 - **Recovery tự động** mỗi lần server khởi động
 - **Chuẩn hóa lỗi API** với `error.code`, `status_code`, `request_id` và header `X-Request-ID`
 
@@ -395,7 +395,9 @@ pip install -e .
 
 ```bash
 # Backend logs
-tail -f .log
+docker-compose logs -f toxiproxy
+
+# Hoặc xem trực tiếp terminal đang chạy backend/app.py
 
 # Docker logs
 docker-compose logs -f mysql1

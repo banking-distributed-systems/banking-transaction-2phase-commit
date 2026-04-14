@@ -15,13 +15,13 @@ Hệ thống V-Bank 2PC xử lý các kịch bản lỗi có thể xảy ra tron
 
 ### 2.1. Ma trận kịch bản
 
-| Kịch bản | Mô tả | Nguyên nhân | Xử lý |
-|-----------|--------|--------------|--------|
-| **KB 1** | TC sập sau PREPARE | Server down giữa Phase 1 & 2 | Recovery: XA COMMIT |
-| **KB 2** | TC sập ở PREPARING | Server down quá sớm | Recovery: XA ROLLBACK |
-| **KB 3** | TC sập đang COMMITTING | Server down trong Phase 2 | Recovery: XA COMMIT |
-| **KB 4** | Bank A commit, Bank B fail | Lỗi network DB B | Compensation (hoàn tiền A) |
-| **KB 5** | Bank B timeout | Network latency cao | Timeout + ROLLBACK |
+| Kịch bản | Mô tả                      | Nguyên nhân                  | Xử lý                      |
+| -------- | -------------------------- | ---------------------------- | -------------------------- |
+| **KB 1** | TC sập sau PREPARE         | Server down giữa Phase 1 & 2 | Recovery: XA COMMIT        |
+| **KB 2** | TC sập ở PREPARING         | Server down quá sớm          | Recovery: XA ROLLBACK      |
+| **KB 3** | TC sập đang COMMITTING     | Server down trong Phase 2    | Recovery: XA COMMIT        |
+| **KB 4** | Bank A commit, Bank B fail | Lỗi network DB B             | Compensation (hoàn tiền A) |
+| **KB 5** | Bank B timeout             | Network latency cao          | Timeout + ROLLBACK         |
 
 ---
 
@@ -51,6 +51,7 @@ Hệ thống V-Bank 2PC xử lý các kịch bản lỗi có thể xảy ra tron
 ```
 
 **Xử lý:**
+
 - Đọc `transaction_log` → phase = `PREPARED`
 - Kiểm tra `XA RECOVER` → Bank A, Bank B đang ở trạng thái PREPARED
 - Gửi `XA COMMIT` cho cả hai
@@ -78,6 +79,7 @@ Hệ thống V-Bank 2PC xử lý các kịch bản lỗi có thể xảy ra tron
 ```
 
 **Xử lý:**
+
 - Đọc `transaction_log` → phase = `PREPARING`
 - Không có XA transaction trong `XA RECOVER` (chưa kịp PREPARE)
 - Log: `ABORTED`
@@ -106,6 +108,7 @@ Hệ thống V-Bank 2PC xử lý các kịch bản lỗi có thể xảy ra tron
 ```
 
 **Xử lý:**
+
 - Đọc `transaction_log` → phase = `COMMITTING`
 - Kiểm tra `XA RECOVER` → Bank B vẫn PREPARED
 - Gửi `XA COMMIT` cho Bank B
@@ -156,6 +159,7 @@ def do_compensation(tx_id, xid, from_account_number, amount):
 ```
 
 **Đảm bảo:**
+
 - Bank A đã trừ tiền → Compensation cộng lại
 - Giao dịch compensation được ghi log riêng
 - Không mất tiền
@@ -308,12 +312,12 @@ def recover_in_doubt_transactions():
 
 ### 5.1. Log Types
 
-| Loại log | Đích | Nội dung |
-|----------|------|----------|
-| **Phase Log** | `.log` file + DB | Chi tiết từng phase |
-| **Transaction Log** | `transaction_log` DB | Trạng thái giao dịch |
-| **Transactions** | `transactions` DB | Lịch sử giao dịch thành công |
-| **Error Log** | `.log` file | Exception stack trace |
+| Loại log            | Đích                 | Nội dung                     |
+| ------------------- | -------------------- | ---------------------------- |
+| **Phase Log**       | Console backend + DB | Chi tiết từng phase          |
+| **Transaction Log** | `transaction_log` DB | Trạng thái giao dịch         |
+| **Transactions**    | `transactions` DB    | Lịch sử giao dịch thành công |
+| **Error Log**       | Console backend      | Exception stack trace        |
 
 ### 5.2. Log Format
 
@@ -332,14 +336,14 @@ def recover_in_doubt_transactions():
 
 ### 6.1. HTTP Status Codes
 
-| Code | Ý nghĩa | Kịch bản |
-|------|---------|----------|
-| `200` | OK | Thành công |
-| `400` | Bad Request | Validation error |
-| `401` | Unauthorized | Login failed |
-| `404` | Not Found | Tài khoản không tồn tại |
-| `408` | Request Timeout | Kịch bản 5 - Timeout |
-| `500` | Internal Error | Lỗi khác |
+| Code  | Ý nghĩa         | Kịch bản                |
+| ----- | --------------- | ----------------------- |
+| `200` | OK              | Thành công              |
+| `400` | Bad Request     | Validation error        |
+| `401` | Unauthorized    | Login failed            |
+| `404` | Not Found       | Tài khoản không tồn tại |
+| `408` | Request Timeout | Kịch bản 5 - Timeout    |
+| `500` | Internal Error  | Lỗi khác                |
 
 ### 6.2. Response Messages
 
@@ -375,27 +379,27 @@ def recover_in_doubt_transactions():
 
 ### 7.1. Prevention
 
-| Practice | Mô tả |
-|----------|-------|
-| Timeout hợp lý | 10s cho Phase 1 là đủ |
-| Retry logic | Thử lại network error trước khi báo lỗi |
-| Health check | Monitor DB connection thường xuyên |
+| Practice       | Mô tả                                   |
+| -------------- | --------------------------------------- |
+| Timeout hợp lý | 10s cho Phase 1 là đủ                   |
+| Retry logic    | Thử lại network error trước khi báo lỗi |
+| Health check   | Monitor DB connection thường xuyên      |
 
 ### 7.2. Detection
 
-| Practice | Mô tả |
-|----------|-------|
-| Alerting | Cảnh báo khi có timeout hoặc recovery |
-| Dashboard | Theo dõi số lượng giao dịch treo |
-| Log analysis | Phân tích log để phát hiện pattern |
+| Practice     | Mô tả                                 |
+| ------------ | ------------------------------------- |
+| Alerting     | Cảnh báo khi có timeout hoặc recovery |
+| Dashboard    | Theo dõi số lượng giao dịch treo      |
+| Log analysis | Phân tích log để phát hiện pattern    |
 
 ### 7.3. Recovery
 
-| Practice | Mô tả |
-|----------|-------|
-| Auto-recovery | Chạy khi server khởi động |
+| Practice        | Mô tả                                   |
+| --------------- | --------------------------------------- |
+| Auto-recovery   | Chạy khi server khởi động               |
 | Manual recovery | API `/api/recover` cho trigger thủ công |
-| Compensation | Luôn có cơ chế hoàn tiền |
+| Compensation    | Luôn có cơ chế hoàn tiền                |
 
 ---
 
