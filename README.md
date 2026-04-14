@@ -10,6 +10,7 @@
 - [Cài đặt](#cài-đặt)
 - [Chạy ứng dụng](#chạy-ứng-dụng)
 - [Chạy tests](#chạy-tests)
+- [Luồng cổng API](#luồng-cổng-api)
 - [Tài khoản demo](#tài-khoản-demo)
 - [API Endpoints](#api-endpoints)
 - [Tính năng](#tính-năng)
@@ -144,10 +145,12 @@ main()
 Sử dụng VS Code Live Server hoặc mở trực tiếp:
 
 ```
-http://localhost:5000/
+http://127.0.0.1:5500/index.html
 ```
 
 Hoặc mở file `index.html` ở thư mục gốc.
+
+Lưu ý: frontend đang gọi API qua Toxiproxy tại `http://localhost:8666/api`.
 
 ---
 
@@ -157,7 +160,7 @@ Hoặc mở file `index.html` ở thư mục gốc.
 
 ```bash
 # Từ thư mục gốc
-python -m pytest tests/ -v
+python -m pytest -v
 ```
 
 ### Chạy tests cụ thể
@@ -190,13 +193,24 @@ python -m pytest tests/ --cov=backend --cov-report=html
 ```
 ============================= test session starts =============================
 platform win32 -- Python 3.13.x, pytest-9.x.x
-collected 101 items
+collected 126 items
 
 tests/test_config.py::TestDatabaseConfig::test_db1_config_exists PASSED   [  1%]
 tests/test_config.py::TestDatabaseConfig::test_db1_config_has_required_fields PASSED [  2%]
 ...
-============================== 101 passed in 2.5s ==============================
+============================== 126 passed in 1.62s =============================
 ```
+
+---
+
+## Luồng cổng API
+
+Luồng runtime hiện tại:
+
+- Frontend -> `localhost:8666` (Toxiproxy)
+- Toxiproxy `vbank_api` -> `host.docker.internal:5000` (Flask backend)
+
+Điều này cho phép mô phỏng lỗi mạng/toxic trên cổng `8666` mà không đổi code backend.
 
 ---
 
@@ -212,34 +226,38 @@ tests/test_config.py::TestDatabaseConfig::test_db1_config_has_required_fields PA
 
 ## API Endpoints
 
-| Method | Endpoint              | Mô tả                         |
-| ------ | --------------------- | ----------------------------- |
-| `GET`  | `/`                   | Health check                  |
-| `POST` | `/api/login`          | Đăng nhập                     |
-| `GET`  | `/api/accounts`       | Lấy danh sách tài khoản       |
-| `POST` | `/api/lookup-account` | Tra cứu tên theo số tài khoản |
-| `POST` | `/api/transfer`       | Thực hiện chuyển tiền (2PC)   |
-| `POST` | `/api/recover`        | Kích hoạt recovery thủ công   |
+| Method | Endpoint                       | Mô tả                                        |
+| ------ | ------------------------------ | -------------------------------------------- |
+| `GET`  | `/`                            | Health check backend                         |
+| `GET`  | `/api/health`                  | Health check API                             |
+| `POST` | `/api/login`                   | Đăng nhập                                    |
+| `GET`  | `/api/accounts`                | Lấy danh sách tài khoản                      |
+| `POST` | `/api/lookup-account`          | Tra cứu tên theo số tài khoản                |
+| `POST` | `/api/transfer`                | Thực hiện chuyển tiền (2PC)                  |
+| `GET`  | `/api/transfer/status/<tx_id>` | Tra cứu phase/trạng thái theo mã giao dịch   |
+| `GET`  | `/api/transfer/recent`         | Lấy danh sách giao dịch gần nhất cho monitor |
+| `POST` | `/api/recover`                 | Kích hoạt recovery thủ công                  |
 
 ### Ví dụ API calls
 
 ```bash
-# Login
-curl -X POST http://localhost:5000/api/login \
+# Login (qua toxiproxy)
+curl -X POST http://localhost:8666/api/login \
   -H "Content-Type: application/json" \
   -d '{"phone": "0901234567", "password": "123456"}'
 
 # Get accounts
-curl http://localhost:5000/api/accounts
+curl http://localhost:8666/api/accounts
 
 # Lookup account
-curl -X POST http://localhost:5000/api/lookup-account \
+curl -X POST http://localhost:8666/api/lookup-account \
   -H "Content-Type: application/json" \
   -d '{"account_number": "203847569801"}'
 
 # Transfer
-curl -X POST http://localhost:5000/api/transfer \
+curl -X POST http://localhost:8666/api/transfer \
   -H "Content-Type: application/json" \
+  -H "Idempotency-Key: IDEMP-001" \
   -d '{
     "from_account_number": "102938475612",
     "to_account_number": "203847569801",
@@ -247,8 +265,14 @@ curl -X POST http://localhost:5000/api/transfer \
     "description": "Test transfer"
   }'
 
+# Transfer status
+curl http://localhost:8666/api/transfer/status/VB12345678
+
+# Recent transfers
+curl "http://localhost:8666/api/transfer/recent?limit=10"
+
 # Manual recovery
-curl -X POST http://localhost:5000/api/recover
+curl -X POST http://localhost:8666/api/recover
 ```
 
 ---
@@ -259,8 +283,15 @@ curl -X POST http://localhost:5000/api/recover
 - **Chuyển tiền** bằng số tài khoản, tra cứu tên chủ tài khoản trực tiếp
 - **Popup xác nhận** trước khi thực hiện giao dịch
 - **Hóa đơn giao dịch** sau khi chuyển thành công
+- **Idempotency cho chuyển tiền** qua header `Idempotency-Key` (chống double-submit)
+- **Monitor giao dịch 2PC** trên dashboard:
+  - Tra cứu trạng thái theo `tx_id`
+  - Danh sách giao dịch gần nhất
+  - Auto-refresh định kỳ
+  - Nút recovery thủ công
 - **Toàn bộ 2PC** được ghi log chi tiết ra `transaction_log` (DB) và file `.log`
 - **Recovery tự động** mỗi lần server khởi động
+- **Chuẩn hóa lỗi API** với `error.code`, `status_code`, `request_id` và header `X-Request-ID`
 
 ---
 
@@ -308,6 +339,7 @@ banking-transaction-2phase-commit/
 │   ├── test_account_service.py
 │   ├── test_auth.py
 │   ├── test_accounts_api.py
+│   ├── test_2pc_matrix.py
 │   ├── test_transfer.py
 │   └── conftest.py
 ├── docs/                     # Documentation
