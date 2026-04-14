@@ -1,0 +1,60 @@
+services:
+  mysql1:
+    image: mysql:latest
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bank1
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db1-init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+
+  mysql2:
+    image: mysql:latest
+    container_name: mysql2
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bank2
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db2-init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+
+  mysql3:
+    image: mysql:latest
+    container_name: mysql3
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bank3
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./db3-init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:2.12.0
+    container_name: toxiproxy
+    ports:
+      - "8474:8474"
+      - "8666:8666"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  toxiproxy-bootstrap:
+    image: curlimages/curl:8.7.1
+    container_name: toxiproxy-bootstrap
+    depends_on:
+      - toxiproxy
+    environment:
+      TOXIPROXY_API: http://toxiproxy:8474
+      PROXY_NAME: vbank_api
+      PROXY_LISTEN: 0.0.0.0:8666
+      PROXY_UPSTREAM: host.docker.internal:5000
+    volumes:
+      - ./scripts/bootstrap-toxiproxy.sh:/scripts/bootstrap-toxiproxy.sh:ro
+    entrypoint: ["sh", "/scripts/bootstrap-toxiproxy.sh"]
+    restart: "no"

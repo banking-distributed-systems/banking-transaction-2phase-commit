@@ -1,0 +1,20 @@
+2026-04-15 00:15:58  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-15 00:15:58  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-04-15 00:15:58  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-15 00:15:58  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-04-15 00:15:58  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-04-15 00:15:58  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-04-15 00:15:58  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-04-15 00:15:58  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-04-15 00:15:58  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-04-15 00:15:58  INFO      [RECOVERY] Không có giao dịch treo.
+2026-04-15 00:15:58  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-04-15 00:15:58  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-15 00:15:58  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-04-15 00:15:58  INFO        📍 Server chạy tại: http://localhost:5000
+2026-04-15 00:15:58  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-04-15 00:15:58  INFO        🗄  Database:       bank1/bank2/bank3
+2026-04-15 00:15:58  INFO        ⏱  Prepare Timeout: 10 giây
+2026-04-15 00:15:58  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-15 00:15:58  WARNING    * Debugger is active!
+2026-04-15 00:15:58  INFO       * Debugger PIN: 535-083-205
