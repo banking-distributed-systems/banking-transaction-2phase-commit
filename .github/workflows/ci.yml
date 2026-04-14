@@ -36,6 +36,12 @@ jobs:
           for container in mysql mysql2 mysql3; do
             echo "Waiting for ${container}..."
             for i in $(seq 1 90); do
+              if [ "$(docker inspect -f '{{.State.Running}}' "${container}" 2>/dev/null || echo false)" != "true" ]; then
+                echo "${container} is not running"
+                docker logs "${container}" || true
+                exit 1
+              fi
+
               if docker exec "${container}" mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; then
                 echo "${container} is ready"
                 break
@@ -106,6 +112,12 @@ jobs:
           for container in mysql mysql2 mysql3; do
             echo "Waiting for ${container}..."
             for i in $(seq 1 90); do
+              if [ "$(docker inspect -f '{{.State.Running}}' "${container}" 2>/dev/null || echo false)" != "true" ]; then
+                echo "${container} is not running"
+                docker logs "${container}" || true
+                exit 1
+              fi
+
               if docker exec "${container}" mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; then
                 echo "${container} is ready"
                 break
