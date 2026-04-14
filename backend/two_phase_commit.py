@@ -2,8 +2,10 @@
 Two-Phase Commit (2PC) implementation với Recovery
 """
 
-import uuid
 import concurrent.futures
+import logging
+import os
+import uuid
 from typing import Dict, Any, List, Optional, Tuple
 
 import pymysql
@@ -19,6 +21,33 @@ from database import get_connection, get_log_conn
 from logger import get_logger
 
 logger = get_logger(__name__)
+TC04_COMMIT_B_FAIL_TOKEN = 'TC04_B_COMMIT_FAIL'
+TC05_CRASH_AFTER_COMMIT_A_TOKEN = 'TC05_CRASH_AFTER_COMMIT_A'
+TC06_CRASH_BEFORE_COMMIT_TOKEN = 'TC06_CRASH_BEFORE_COMMIT'
+TC07_CRASH_AFTER_PREPARE_TOKEN = 'TC07_CRASH_AFTER_PREPARE'
+TC08_CRASH_DURING_COMMITTING_TOKEN = 'TC08_CRASH_DURING_COMMITTING'
+TC09_COMMIT_TWICE_TOKEN = 'TC09_COMMIT_TWICE'
+TC10_ROLLBACK_TWICE_TOKEN = 'TC10_ROLLBACK_TWICE'
+
+
+def has_demo_token(description: str, token: str) -> bool:
+    return token in (description or '').upper()
+
+
+def should_simulate_commit_b_failure(description: str) -> bool:
+    """Demo hook: force Bank B commit failure from the UI transfer note."""
+    return has_demo_token(description, TC04_COMMIT_B_FAIL_TOKEN)
+
+
+def should_simulate_coordinator_crash_after_commit_a(description: str) -> bool:
+    """Demo hook: crash the coordinator after Bank A commits."""
+    return has_demo_token(description, TC05_CRASH_AFTER_COMMIT_A_TOKEN)
+
+
+def crash_coordinator_for_demo(tx_id: str, reason: str):
+    logger.critical('[DEMO] tx=%s: %s', tx_id, reason)
+    logging.shutdown()
+    os._exit(1)
 
 
 # =============================================================================
@@ -461,11 +490,69 @@ def execute_transfer(
             )
 
     # ── Cả hai đã PREPARE thành công ───────────────────────────────────
+    if has_demo_token(description, TC06_CRASH_BEFORE_COMMIT_TOKEN):
+        crash_coordinator_for_demo(
+            tx_id,
+            'TC06 crash while log is PREPARING, before PREPARED/COMMIT'
+        )
+
     log_phase(tx_id, xid, 'PREPARED')
+
+    if has_demo_token(description, TC07_CRASH_AFTER_PREPARE_TOKEN):
+        crash_coordinator_for_demo(
+            tx_id,
+            'TC07 crash after PREPARED, before coordinator decision'
+        )
+
+    if has_demo_token(description, TC10_ROLLBACK_TWICE_TOKEN):
+        rollback_xa_all(xid, [from_config, to_config])
+        rollback_xa_all(xid, [from_config, to_config])
+        log_phase(tx_id, xid, 'ABORTED')
+        return (
+            False,
+            "TC10 demo: ROLLBACK được gửi 2 lần và hệ thống vẫn xử lý an toàn.",
+            tx_id,
+            {'demo_case': 'TC10', 'rollback_sent_twice': True}
+        )
 
     # ===== PHASE 2: COMMIT =====
     try:
         log_phase(tx_id, xid, 'COMMITTING')
+
+        if has_demo_token(description, TC08_CRASH_DURING_COMMITTING_TOKEN):
+            crash_coordinator_for_demo(
+                tx_id,
+                'TC08 crash while transaction is COMMITTING/in-doubt'
+            )
+
+        if has_demo_token(description, TC09_COMMIT_TWICE_TOKEN):
+            first_a = xa_commit(from_config, xid)
+            first_b = xa_commit(to_config, xid)
+            second_a = xa_commit(from_config, xid)
+            second_b = xa_commit(to_config, xid)
+
+            if not (first_a and first_b):
+                raise RuntimeError('TC09 demo: initial XA COMMIT failed')
+
+            log_phase(tx_id, xid, 'COMMITTED')
+            save_transaction(
+                tx_id=tx_id,
+                from_acc=from_acc,
+                to_acc=to_acc,
+                amount=amount,
+                description=description,
+                status='SUCCESS'
+            )
+            return (
+                True,
+                "TC09 demo: COMMIT được gửi nhiều lần; lần lặp lại không xử lý trùng.",
+                tx_id,
+                {
+                    'demo_case': 'TC09',
+                    'first_commit': {'source': first_a, 'destination': first_b},
+                    'repeated_commit': {'source': second_a, 'destination': second_b},
+                }
+            )
 
         # Bank A (nguồn) commit trước
         ca = get_connection({**from_config, 'autocommit': True})
@@ -475,6 +562,15 @@ def execute_transfer(
 
         log_phase(tx_id, xid, 'COMMIT_A')
         commit_a_done = True
+
+        if should_simulate_coordinator_crash_after_commit_a(description):
+            crash_coordinator_for_demo(
+                tx_id,
+                'TC05 crash after COMMIT_A, before COMMIT_B'
+            )
+
+        if should_simulate_commit_b_failure(description):
+            raise RuntimeError('Bank B commit failed by TC04 demo hook')
 
         # Bank B (đích) commit
         cb = get_connection({**to_config, 'autocommit': True})

@@ -54,12 +54,14 @@ pip install -r backend/requirements.txt
 - `pymysql` - MySQL driver
 - `pytest` - Testing framework (optional, cho dev)
 
-### 3. Khởi động database
+### 3. Khởi động database và Toxiproxy
 
 ```bash
-# Chạy Docker containers
+# Chạy Docker containers (MySQL + Toxiproxy + bootstrap tạo proxy)
 docker-compose up -d
 ```
+
+> Nếu trước đó bạn đã chạy Toxiproxy bằng `docker run` riêng, hãy dừng container cũ trước khi chạy compose để tránh trùng port `8474/8666`.
 
 **Database containers:**
 
@@ -68,6 +70,19 @@ docker-compose up -d
 | mysql1    | 3306        | 3306             | bank1 (Bank A) |
 | mysql2    | 3307        | 3306             | bank2 (Bank B) |
 | mysql3    | 3308        | 3306             | bank3 (Bank C) |
+
+**Toxiproxy containers:**
+
+| Container           | Port (Host) | Port (Container) | Vai trò                       |
+| ------------------- | ----------- | ---------------- | ----------------------------- |
+| toxiproxy           | 8474, 8666  | 8474, 8666       | Proxy server + HTTP admin API |
+| toxiproxy-bootstrap | -           | -                | Tự động tạo `vbank_api` proxy |
+
+Sau khi compose chạy xong, proxy mặc định đã sẵn sàng:
+
+- Name: `vbank_api`
+- Listen: `0.0.0.0:8666`
+- Upstream: `host.docker.internal:5000`
 
 ### 4. Kiểm tra database
 

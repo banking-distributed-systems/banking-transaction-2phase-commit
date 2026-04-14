@@ -10,7 +10,7 @@ from logger import get_logger
 logger = get_logger(__name__)
 
 
-def get_connection(config: Dict[str, Any]) -> pymysql.Connection:
+def get_connection(config: Dict[str, Any] = None, **kwargs) -> pymysql.Connection:
     """
     Tạo kết nối database mới
 
@@ -20,7 +20,10 @@ def get_connection(config: Dict[str, Any]) -> pymysql.Connection:
     Returns:
         PyMySQL connection
     """
-    return pymysql.connect(**config)
+    final_config = dict(config or {})
+    if kwargs:
+        final_config.update(kwargs)
+    return pymysql.connect(**final_config)
 
 
 def get_log_conn() -> pymysql.Connection:
@@ -30,7 +33,7 @@ def get_log_conn() -> pymysql.Connection:
     Returns:
         PyMySQL connection với autocommit=True
     """
-    return get_connection({**DB1_CONFIG, 'autocommit': True})
+    return get_connection(**{**DB1_CONFIG, 'autocommit': True})
 
 
 def execute_query(
@@ -96,7 +99,7 @@ def execute_query_autocommit(
     """
     conn = None
     try:
-        conn = get_connection({**config, 'autocommit': True})
+        conn = get_connection(**{**config, 'autocommit': True})
         with conn.cursor(pymysql.cursors.DictCursor) as cur:
             cur.execute(sql, params)
             if fetch_one:
@@ -136,3 +139,40 @@ def get_all_accounts() -> List[Dict[str, Any]]:
             logger.error('[ACCOUNTS] Lỗi kết nối %s: %s', db_name, e)
 
     return accounts
+
+
+def ensure_runtime_schema() -> None:
+    """Khởi tạo các bảng/phần schema cần cho runtime nếu chưa tồn tại."""
+    conn = None
+    try:
+        conn = get_log_conn()
+        with conn.cursor() as cur:
+            cur.execute(
+                "CREATE TABLE IF NOT EXISTS idempotency_keys ("
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY,"
+                "idem_key VARCHAR(128) NOT NULL UNIQUE,"
+                "request_hash CHAR(64) NOT NULL,"
+                "status VARCHAR(20) NOT NULL DEFAULT 'PROCESSING',"
+                "tx_id VARCHAR(30) DEFAULT NULL,"
+                "http_status INT NOT NULL DEFAULT 0,"
+                "response_json LONGTEXT DEFAULT NULL,"
+                "created_at DATETIME DEFAULT CURRENT_TIMESTAMP,"
+                "updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+                ") ENGINE=InnoDB"
+            )
+            cur.execute(
+                "SELECT 1 FROM information_schema.statistics "
+                "WHERE table_schema = DATABASE() "
+                "AND table_name = 'transaction_log' "
+                "AND index_name = 'idx_transaction_log_updated_at' "
+                "LIMIT 1"
+            )
+            if not cur.fetchone():
+                cur.execute(
+                    "CREATE INDEX idx_transaction_log_updated_at ON transaction_log(updated_at)"
+                )
+    except Exception as e:
+        logger.warning('[DB] Không thể ensure runtime schema: %s', e)
+    finally:
+        if conn:
+            conn.close()

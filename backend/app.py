@@ -6,16 +6,21 @@ Two-Phase Commit implementation cho giao dịch ngân hàng phân tán
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import time
+import uuid
+from werkzeug.exceptions import HTTPException
 
 from logger import logger
 from routes import register_routes
 from two_phase_commit import recover_in_doubt_transactions
 from config import DB1_CONFIG, DB2_CONFIG, DB3_CONFIG, ALL_DB_CONFIGS
-from database import get_connection
+from database import get_connection, ensure_runtime_schema
 
 # Khởi tạo Flask app
 app = Flask(__name__)
 CORS(app)
+app.config['PROPAGATE_EXCEPTIONS'] = False
+
+_runtime_schema_ready = False
 
 # Đăng ký routes
 register_routes(app)
@@ -25,16 +30,92 @@ register_routes(app)
 @app.before_request
 def before_request():
     """Lưu thời gian bắt đầu request"""
+    global _runtime_schema_ready
+    if not _runtime_schema_ready:
+        ensure_runtime_schema()
+        _runtime_schema_ready = True
+
     request.start_time = time.time()
+    request.request_id = uuid.uuid4().hex[:12]
 
 
 @app.after_request
 def after_request(response):
     """In thời gian xử lý sau mỗi request"""
+    request_id = getattr(request, 'request_id', None)
+    if request_id:
+        response.headers['X-Request-ID'] = request_id
     if hasattr(request, 'start_time'):
         elapsed = time.time() - request.start_time
-        logger.info(f"[TIMING] {request.method} {request.path} - Time: {elapsed:.4f}s")
+        if request_id:
+            logger.info(
+                f"[TIMING][{request_id}] {request.method} {request.path} - Time: {elapsed:.4f}s"
+            )
+        else:
+            logger.info(f"[TIMING] {request.method} {request.path} - Time: {elapsed:.4f}s")
     return response
+
+
+def _is_api_request() -> bool:
+    return request.path.startswith('/api/')
+
+
+def _error_payload(status_code: int, message: str, error_code: str, detail: str | None = None):
+    payload = {
+        'status': 'error',
+        'message': message,
+        'error': {
+            'code': error_code,
+            'status_code': status_code,
+            'request_id': getattr(request, 'request_id', None)
+        }
+    }
+
+    if detail and app.debug:
+        payload['error']['detail'] = detail
+
+    return payload
+
+
+@app.errorhandler(HTTPException)
+def handle_http_exception(error: HTTPException):
+    if not _is_api_request():
+        return error
+
+    status_code = error.code or 500
+    message = error.description or 'Yêu cầu không hợp lệ'
+    error_code = f'HTTP_{status_code}'
+
+    logger.warning(
+        '[API ERROR][%s] %s %s -> %s %s',
+        getattr(request, 'request_id', '-'),
+        request.method,
+        request.path,
+        status_code,
+        message,
+    )
+
+    return jsonify(_error_payload(status_code, message, error_code)), status_code
+
+
+@app.errorhandler(Exception)
+def handle_unexpected_exception(error: Exception):
+    status_code = 500
+    message = 'Lỗi nội bộ hệ thống'
+    error_code = 'INTERNAL_SERVER_ERROR'
+
+    logger.exception(
+        '[UNHANDLED][%s] %s %s - %s',
+        getattr(request, 'request_id', '-'),
+        request.method,
+        request.path,
+        error,
+    )
+
+    if _is_api_request():
+        return jsonify(_error_payload(status_code, message, error_code, str(error))), status_code
+
+    return jsonify(_error_payload(status_code, message, error_code)), status_code
 
 
 @app.route('/')
