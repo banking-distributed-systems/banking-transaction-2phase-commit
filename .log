@@ -248,3 +248,17 @@
 2026-04-14 18:27:20  INFO      127.0.0.1 - - [14/Apr/2026 18:27:20] "GET /api/accounts HTTP/1.1" 200 -
 2026-04-14 18:27:20  INFO      [TIMING] GET /api/accounts - Time: 0.0260s
 2026-04-14 18:27:20  INFO      127.0.0.1 - - [14/Apr/2026 18:27:20] "GET /api/accounts HTTP/1.1" 200 -
+2026-04-14 18:28:12  INFO      [TIMING] OPTIONS /api/login - Time: 0.0001s
+2026-04-14 18:28:12  INFO      127.0.0.1 - - [14/Apr/2026 18:28:12] "OPTIONS /api/login HTTP/1.1" 200 -
+2026-04-14 18:28:12  INFO      [TIMING] GET /api/health - Time: 0.0001s
+2026-04-14 18:28:12  INFO      127.0.0.1 - - [14/Apr/2026 18:28:12] "GET /api/health HTTP/1.1" 200 -
+2026-04-14 18:28:58  INFO      [TIMING] GET /api/accounts - Time: 0.0608s
+2026-04-14 18:28:58  INFO      127.0.0.1 - - [14/Apr/2026 18:28:58] "GET /api/accounts HTTP/1.1" 200 -
+2026-04-14 18:28:58  INFO      [TIMING] GET /api/accounts - Time: 0.0413s
+2026-04-14 18:28:58  INFO      127.0.0.1 - - [14/Apr/2026 18:28:58] "GET /api/accounts HTTP/1.1" 200 -
+2026-04-14 18:29:01  INFO      [TIMING] POST /api/login - Time: 0.0096s
+2026-04-14 18:29:01  INFO      127.0.0.1 - - [14/Apr/2026 18:29:01] "POST /api/login HTTP/1.1" 200 -
+2026-04-14 18:29:26  INFO      [TIMING] POST /api/login - Time: 0.0086s
+2026-04-14 18:29:26  INFO      127.0.0.1 - - [14/Apr/2026 18:29:26] "POST /api/login HTTP/1.1" 200 -
+2026-04-14 18:30:00  INFO      [TIMING] POST /api/login - Time: 0.0087s
+2026-04-14 18:30:00  INFO      127.0.0.1 - - [14/Apr/2026 18:30:00] "POST /api/login HTTP/1.1" 200 -
