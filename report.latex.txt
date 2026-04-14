@@ -61,24 +61,36 @@
 
 \begin{titlepage}
 \begin{center}
-    	{TRƯỜNG ĐẠI HỌC SÀI GÒN}\\
-    	{KHOA CÔNG NGHỆ THÔNG TIN}\\[1cm]
 
-    	{BÁO CÁO ĐỒ ÁN MÔN HỌC}\\
-    	{CƠ SỞ DỮ LIỆU PHÂN TÁN}\\[1.5cm]
+    {TRƯỜNG ĐẠI HỌC SÀI GÒN}\\
+    {KHOA CÔNG NGHỆ THÔNG TIN}\\[1cm]
+
+    {BÁO CÁO ĐỒ ÁN MÔN HỌC}\\
+    {CƠ SỞ DỮ LIỆU PHÂN TÁN}\\[1.5cm]
 
     {\LARGE {ĐỀ TÀI 6: CHUYỂN TIỀN NGÂN HÀNG BẰNG}\\[0.2cm]
-    	{GIAO THỨC TWO-PHASE COMMIT (2PC)}}\\[1.5cm]
+    {GIAO THỨC TWO-PHASE COMMIT (2PC)}}\\[1.5cm]
 
     \begin{tabular}{ll}
-        	{Sinh viên:} & Nguyen Phuoc Sang \\
-        {MSSV:} & ........................................ \\
-        	{Lớp:} & ........................................ \\
-        	{Giảng viên hướng dẫn:} & ........................................
+        Sinh viên 1: & Nguyen Phuoc Sang \\
+        MSSV: & 3123411255 \\[0.4cm]
+
+        Sinh viên 2: & ........................................ \\
+        MSSV: & ........................................ \\[0.4cm]
+
+        Sinh viên 3: & ........................................ \\
+        MSSV: & ........................................ \\[0.4cm]
+
+        Sinh viên 4: & ........................................ \\
+        MSSV: & ........................................ \\[0.4cm]
+
+        Lớp: & DCT123C3 \\
     \end{tabular}
 
     \vfill
-    TP. Ho Chi Minh, năm 2026
+
+    Giảng viên hướng dẫn: Vũ Ngọc Thanh Sang
+
 \end{center}
 \end{titlepage}
 
