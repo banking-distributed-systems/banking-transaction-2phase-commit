@@ -1,3 +1,5 @@
 Invoke-RestMethod -Uri "http://localhost:8474/proxies" -Method POST -ContentType "application/json" -Headers @{
     "User-Agent" = "curl"
   } ` -Body '{"name":"vbank_api","listen":"127.0.0.1:8666","upstream":"host.docker.internal:5000"}'
+
+kích thước response login: khoảng 398 bytes

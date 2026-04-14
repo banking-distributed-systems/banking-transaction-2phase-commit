@@ -22,6 +22,21 @@
 
 ## 1. Tổng quan về Toxiproxy
 
+### 1.0 Cách chạy trong dự án (không cần CLI riêng)
+
+Từ phiên bản hiện tại của đồ án, Toxiproxy đã được tích hợp trực tiếp vào `docker-compose.yml`:
+
+```bash
+docker-compose up -d
+```
+
+Compose sẽ tự khởi động:
+
+- service `toxiproxy` (port `8474`, `8666`)
+- service `toxiproxy-bootstrap` để tự tạo proxy mặc định `vbank_api`
+
+Nếu bạn đang chạy một container Toxiproxy riêng bằng CLI (`docker run ...`), hãy dừng container đó trước để tránh trùng cổng.
+
 ### 1.1 Toxiproxy là gì?
 
 **Toxiproxy** là một proxy network được phát triển bởi Shopify, cho phép mô phỏng các tình huống mạng không ổn định một cách có kiểm soát. Trong môi trường production, network có thể gặp nhiều vấn đề như:
@@ -56,12 +71,12 @@ Trong hệ thống **V-Bank 2PC**, giao dịch chuyển tiền giữa hai ngân 
 
 ### 1.3 Mục đích sử dụng
 
-| Mục đích | Mô tả |
-|-----------|-------|
-| **Test Failure Scenarios** | Mô phỏng các kịch bản lỗi (timeout, network failure) |
-| **2PC Protocol Testing** | Test giao thức Two-Phase Commit trong điều kiện mạng xấu |
-| **Resilience Testing** | Test khả năng phục hồi của hệ thống |
-| **Performance Testing** | Test hiệu năng với network chậm |
+| Mục đích                   | Mô tả                                                    |
+| -------------------------- | -------------------------------------------------------- |
+| **Test Failure Scenarios** | Mô phỏng các kịch bản lỗi (timeout, network failure)     |
+| **2PC Protocol Testing**   | Test giao thức Two-Phase Commit trong điều kiện mạng xấu |
+| **Resilience Testing**     | Test khả năng phục hồi của hệ thống                      |
+| **Performance Testing**    | Test hiệu năng với network chậm                          |
 
 ---
 
@@ -82,13 +97,14 @@ Trong hệ thống **V-Bank 2PC**, giao dịch chuyển tiền giữa hai ngân 
 }
 ```
 
-| Thuộc tính | Giá trị | Mô tả |
-|------------|---------|--------|
-| `type` | `latency` | Loại toxic |
-| `stream` | `downstream` | Tác động lên response từ server về client |
-| `latency` | `5000` | Độ trễ tính bằng **milliseconds** |
+| Thuộc tính | Giá trị      | Mô tả                                     |
+| ---------- | ------------ | ----------------------------------------- |
+| `type`     | `latency`    | Loại toxic                                |
+| `stream`   | `downstream` | Tác động lên response từ server về client |
+| `latency`  | `5000`       | Độ trễ tính bằng **milliseconds**         |
 
 **Nguyên lý hoạt động:**
+
 ```
 Client ──────▶ Request ──────▶ Server
                 (normal)
@@ -98,6 +114,7 @@ Server ──────▶ Response ◀───── Client
 ```
 
 **Trong 2PC:**
+
 - Dùng để mô phỏng **network chậm** giữa các ngân hàng
 - Test xem hệ thống có xử lý được delay hay không
 - **Không ảnh hưởng** đến timeout (timeout đo ở upstream)
@@ -117,18 +134,20 @@ Server ──────▶ Response ◀───── Client
 }
 ```
 
-| Thuộc tính | Giá trị | Mô tả |
-|------------|---------|--------|
-| `type` | `timeout` | Loại toxic |
-| `stream` | `upstream` | **QUAN TRỌNG:** Phải là `upstream` |
-| `timeout` | `3000` | Thời gian chờ tính bằng **milliseconds** |
+| Thuộc tính | Giá trị    | Mô tả                                    |
+| ---------- | ---------- | ---------------------------------------- |
+| `type`     | `timeout`  | Loại toxic                               |
+| `stream`   | `upstream` | **QUAN TRỌNG:** Phải là `upstream`       |
+| `timeout`  | `3000`     | Thời gian chờ tính bằng **milliseconds** |
 
 > **⚠️ QUAN TRỌNG NHẤT:**
+>
 > - `timeout` toxic chỉ áp dụng cho **upstream** (từ client đến server)
 > - Nó đo thời gian server **BẮT ĐẦU** phản hồi
 > - **KHÔNG phụ thuộc** vào latency (latency ở downstream)
 
 **Nguyên lý hoạt động:**
+
 ```
 Client ──────▶ Request ──────▶ Server
                 ↓
@@ -141,6 +160,7 @@ Client ──────▶ Request ──────▶ Server
 ```
 
 **Trong 2PC:**
+
 - Dùng để mô phỏng **Bank B không phản hồi** trong Phase 1
 - Test xử lý Kịch bản 4, 5 của 2PC
 - Kết quả: Client nhận `ConnectionError` (KHÔNG phải `Timeout`)
@@ -160,13 +180,14 @@ Client ──────▶ Request ──────▶ Server
 }
 ```
 
-| Thuộc tính | Giá trị | Mô tả |
-|------------|---------|--------|
-| `type` | `limit_data` | Loại toxic |
-| `stream` | `downstream` | Tác động lên response |
-| `bytes` | `100` | Số bytes tối đa được trả về |
+| Thuộc tính | Giá trị      | Mô tả                       |
+| ---------- | ------------ | --------------------------- |
+| `type`     | `limit_data` | Loại toxic                  |
+| `stream`   | `downstream` | Tác động lên response       |
+| `bytes`    | `100`        | Số bytes tối đa được trả về |
 
 **Nguyên lý hoạt động:**
+
 ```
 Server ──────▶ Full Response (1000 bytes)
                    │
@@ -181,6 +202,7 @@ Server ──────▶ Full Response (1000 bytes)
 ```
 
 **Trong 2PC:**
+
 - Test xử lý khi response bị cắt giữa chừng
 - Test khả năng phục hồi khi nhận dữ liệu không hoàn chỉnh
 - **Cẩn thận:** Có thể gây crash nếu không handle
@@ -198,13 +220,14 @@ Server ──────▶ Full Response (1000 bytes)
 }
 ```
 
-| Thuộc tính | Giá trị | Mô tả |
-|------------|---------|--------|
-| `type` | `close_stream` | Loại toxic |
-| `stream` | `downstream` | Tác động lên response |
-| `attributes` | `{}` | Không cần thuộc tính |
+| Thuộc tính   | Giá trị        | Mô tả                 |
+| ------------ | -------------- | --------------------- |
+| `type`       | `close_stream` | Loại toxic            |
+| `stream`     | `downstream`   | Tác động lên response |
+| `attributes` | `{}`           | Không cần thuộc tính  |
 
 **Nguyên lý hoạt động:**
+
 ```
 Client ──────▶ Request ──────▶ Server
                    │
@@ -219,6 +242,7 @@ Client ──────▶ Request ──────▶ Server
 ```
 
 **Trong 2PC:**
+
 - **RẤT QUAN TRỌNG** cho Kịch bản 4: Partial Commit
 - Mô phỏng Bank B **crash** giữa quá trình commit
 - Test cơ chế **compensation/rollback**
@@ -238,13 +262,14 @@ Client ──────▶ Request ──────▶ Server
 }
 ```
 
-| Thuộc tính | Giá trị | Mô tả |
-|------------|---------|--------|
-| `type` | `bandwidth` | Loại toxic |
-| `stream` | `downstream` | Tác động lên response |
-| `rate` | `1024` | Tốc độ bytes/giây |
+| Thuộc tính | Giá trị      | Mô tả                 |
+| ---------- | ------------ | --------------------- |
+| `type`     | `bandwidth`  | Loại toxic            |
+| `stream`   | `downstream` | Tác động lên response |
+| `rate`     | `1024`       | Tốc độ bytes/giây     |
 
 **Nguyên lý hoạt động:**
+
 ```
 Server ──────▶ Response (1MB)
                    │
@@ -257,6 +282,7 @@ Server ──────▶ Response (1MB)
 ```
 
 **Trong 2PC:**
+
 - Test với network chậm thật (không phải delay cố định)
 - Test timeout khi bandwidth thấp
 
@@ -275,13 +301,14 @@ Server ──────▶ Response (1MB)
 }
 ```
 
-| Thuộc tính | Giá trị | Mô tả |
-|------------|---------|--------|
-| `type` | `slicer` | Loại toxic |
-| `stream` | `downstream` | Tác động lên response |
-| `size` | `100` | Kích thước trung bình mỗi slice |
+| Thuộc tính | Giá trị      | Mô tả                           |
+| ---------- | ------------ | ------------------------------- |
+| `type`     | `slicer`     | Loại toxic                      |
+| `stream`   | `downstream` | Tác động lên response           |
+| `size`     | `100`        | Kích thước trung bình mỗi slice |
 
 **Nguyên lý hoạt động:**
+
 - Cắt response thành các **packages ngẫu nhiên**
 - Realistic hơn `limit_data` (cắt cố định)
 - Mô phỏng **network instability** thực tế
@@ -402,12 +429,12 @@ Content-Type: application/json
 }
 ```
 
-| Thuộc tính | Giá trị | Mô tả |
-|------------|---------|--------|
-| `name` | `vbank_api` | Tên proxy (duy nhất) |
-| `listen` | `0.0.0.0:8666` | Port để client kết nối |
-| `upstream` | `host.docker.internal:5000` | Địa chỉ backend thực |
-| `enabled` | `true` | Bật/tắt proxy |
+| Thuộc tính | Giá trị                     | Mô tả                  |
+| ---------- | --------------------------- | ---------------------- |
+| `name`     | `vbank_api`                 | Tên proxy (duy nhất)   |
+| `listen`   | `0.0.0.0:8666`              | Port để client kết nối |
+| `upstream` | `host.docker.internal:5000` | Địa chỉ backend thực   |
+| `enabled`  | `true`                      | Bật/tắt proxy          |
 
 ### 4.2 Kiểm tra Proxy
 
@@ -416,6 +443,7 @@ GET http://localhost:8474/proxies/vbank_api
 ```
 
 Response:
+
 ```json
 {
   "name": "vbank_api",
@@ -544,10 +572,12 @@ DEFAULT_TIMEOUT = 5000   # 5 giây - Backend timeout
 **Mục đích:** Kiểm tra kết nối cơ bản qua proxy
 
 **Cách chạy:**
+
 1. Chọn `A` để tạo proxy
 2. Chọn `1` để test Health Check
 
 **Kết quả mong đợi:**
+
 ```
 ============================================================
 TEST 1: Health Check
@@ -564,11 +594,13 @@ Time: 0.05s
 **Mục đích:** Mô phỏng network delay
 
 **Cách chạy:**
+
 1. Chọn `C` để thêm Latency
 2. Nhập `5000` (5 giây)
 3. Chọn `1` để test
 
 **Kết quả mong đợi:**
+
 ```
 ✅ SUCCESS
 Time: 5.05s
@@ -581,11 +613,13 @@ Time: 5.05s
 **Mục đích:** Mô phỏng server không phản hồi
 
 **Cách chạy:**
+
 1. Chọn `D` để thêm Timeout
 2. Nhập `1000` (1 giây - nhỏ hơn backend xử lý)
 3. Chọn `1` để test
 
 **Kết quả mong đợi:**
+
 ```
 💣 CONNECTION CLOSED
 Time: 1.02s
@@ -599,11 +633,13 @@ Time: 1.02s
 **Mục đích:** Mô phỏng packet loss, response bị cắt
 
 **Cách chạy:**
+
 1. Chọn `L` để thêm Limit Data
 2. Nhập `50` bytes
 3. Chọn `2` để test Get Accounts
 
 **Kết quả mong đợi:**
+
 ```
 ⚠️ Response bị cắt (truncated), không parse được JSON!
    Raw response (first 500 chars): {"accounts":[...
@@ -614,10 +650,12 @@ Time: 1.02s
 **Mục đích:** Mô phỏng server crash
 
 **Cách chạy:**
+
 1. Chọn `K` để thêm Close Stream
 2. Chọn `1` để test
 
 **Kết quả mong đợi:**
+
 ```
 💣 CONNECTION CLOSED
 Time: 0.05s
@@ -633,9 +671,11 @@ Time: 0.05s
 **Mô tả:** Bank A commit thành công, nhưng Bank B fail
 
 **Cách chạy:**
+
 1. Chọn `2` để chạy Scenario: Partial Commit
 
 **Flow:**
+
 ```
 1. Prepare: Client gửi PREPARE đến Bank A và Bank B
            │
@@ -654,11 +694,13 @@ Time: 0.05s
 **Mô tả:** Bank B không phản hồi trong thời gian quy định
 
 **Cách chạy:**
+
 1. Chọn `D` để thêm Timeout
 2. Nhập `1000` (1 giây - nhỏ hơn backend xử lý ~2 giây)
 3. Chọn `4` để test Transfer
 
 **Flow:**
+
 ```
 1. Prepare: Client gửi PREPARE đến Bank B
            │
@@ -675,6 +717,7 @@ Time: 0.05s
 **Mục đích:** Test retry khi timeout
 
 **Cách chạy:**
+
 1. Chọn `D` để thêm Timeout (ví dụ 2000ms)
 2. Chọn `R` để test Retry Logic
 3. Nhập số retries (3)
@@ -689,6 +732,7 @@ Time: 0.05s
 **Vấn đề:** Không thể kết nối qua proxy
 
 **Giải pháp:**
+
 ```bash
 # 1. Kiểm tra Toxiproxy đang chạy
 docker ps | findstr toxiproxy
@@ -705,6 +749,7 @@ curl http://localhost:8474/proxies
 **Vấn đề:** Proxy không thể kết nối đến backend
 
 **Giải pháp:**
+
 ```bash
 # 1. Kiểm tra backend đang chạy
 curl http://localhost:5000/api/health
@@ -718,6 +763,7 @@ curl http://localhost:8474/proxies/vbank_api
 **Vấn đề:** Thêm toxic nhưng không thấy hiệu lực
 
 **Giải pháp:**
+
 ```bash
 # 1. Kiểm tra toxics đã được thêm
 curl http://localhost:8474/proxies/vbank_api/toxics
@@ -731,8 +777,10 @@ curl -X DELETE http://localhost:8474/proxies/vbank_api/toxics
 **Vấn đề:** Response bị cắt, không parse được JSON
 
 **Giải pháp:**
+
 - Đây là behavior bình thường khi dùng `limit_data` toxic
 - Xử lý bằng cách thêm try-catch:
+
 ```python
 try:
     data = res.json()
@@ -760,14 +808,14 @@ docker rm toxiproxy
 
 ### B. Quick Reference
 
-| Action | Command |
-|--------|---------|
-| Tạo proxy | `POST /proxies` |
+| Action       | Command                                                                                   |
+| ------------ | ----------------------------------------------------------------------------------------- |
+| Tạo proxy    | `POST /proxies`                                                                           |
 | Thêm latency | `POST /proxies/vbank_api/toxics` `{type: "latency", stream: "downstream", latency: 5000}` |
-| Thêm timeout | `POST /proxies/vbank_api/toxics` `{type: "timeout", stream: "upstream", timeout: 3000}` |
-| Xem toxics | `GET /proxies/vbank_api/toxics` |
-| Xóa toxic | `DELETE /proxies/vbank_api/toxics/toxic_name` |
-| Xóa all | `DELETE /proxies/vbank_api/toxics` |
+| Thêm timeout | `POST /proxies/vbank_api/toxics` `{type: "timeout", stream: "upstream", timeout: 3000}`   |
+| Xem toxics   | `GET /proxies/vbank_api/toxics`                                                           |
+| Xóa toxic    | `DELETE /proxies/vbank_api/toxics/toxic_name`                                             |
+| Xóa all      | `DELETE /proxies/vbank_api/toxics`                                                        |
 
 ---
 

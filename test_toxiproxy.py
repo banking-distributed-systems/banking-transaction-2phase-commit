@@ -9,6 +9,19 @@ import json
 import sys
 import traceback
 
+from toxiproxy_manager import (
+    PROXY_LISTEN,
+    PROXY_NAME,
+    PROXY_UPSTREAM,
+    add_toxic as tp_add_toxic,
+    clear_toxics as tp_clear_toxics,
+    create_or_replace_proxy as tp_create_or_replace_proxy,
+    delete_proxy as tp_delete_proxy,
+    delete_toxic as tp_delete_toxic,
+    get_proxy as tp_get_proxy,
+    list_proxies as tp_list_proxies,
+)
+
 API_VIA_PROXY = "http://localhost:8666/api"
 API_DIRECT = "http://localhost:5000/api"
 
@@ -73,30 +86,13 @@ def create_proxy():
     print("TẠO PROXY")
     print("=" * 60)
 
-    # Xóa proxy cũ nếu có
     try:
-        requests.delete("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
-        print("Đã xóa proxy cũ")
-    except:
-        pass
-
-    # Tạo proxy mới
-    proxy_config = {
-        "name": "vbank_api",
-        "listen": "0.0.0.0:8666",
-        "upstream": "host.docker.internal:5000"
-    }
-
-    try:
-        res = requests.post(
-            "http://localhost:8474/proxies",
-            json=proxy_config,
-            timeout=API_TIMEOUT
-        )
+        res = tp_create_or_replace_proxy(timeout=API_TIMEOUT)
         if res.status_code in [200, 201]:
             print("✅ Tạo proxy thành công!")
-            print(f"   Listen: 0.0.0.0:8666")
-            print(f"   Upstream: host.docker.internal:5000")
+            print(f"   Name: {PROXY_NAME}")
+            print(f"   Listen: {PROXY_LISTEN}")
+            print(f"   Upstream: {PROXY_UPSTREAM}")
         else:
             print(f"❌ Lỗi: {res.status_code} - {res.text}")
     except Exception as e:
@@ -110,7 +106,7 @@ def delete_proxy():
     print("=" * 60)
 
     try:
-        res = requests.delete("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res = tp_delete_proxy(timeout=API_TIMEOUT)
         if res.status_code in [200, 204]:
             print("✅ Xóa proxy thành công!")
         else:
@@ -129,23 +125,12 @@ def add_latency():
     # Lấy latency từ user
     latency = get_input("Nhập latency (ms)", DEFAULT_LATENCY)
 
-    # Dùng timestamp để tránh trùng tên toxic
-    toxic_name = f"latency_{int(time.time())}"
-
-    toxic = {
-        "name": toxic_name,
-        "type": "latency",
-        "stream": "downstream",  # Latency ở downstream
-        "attributes": {
-            "latency": latency
-        }
-    }
-
     try:
-        res = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic,
-            timeout=API_TIMEOUT
+        _, res = tp_add_toxic(
+            toxic_type="latency",
+            stream="downstream",
+            attributes={"latency": latency},
+            timeout=API_TIMEOUT,
         )
         if res.status_code in [200, 201]:
             print("✅ Thêm latency thành công!")
@@ -177,7 +162,7 @@ def add_timeout():
     debug_print("=" * 50)
     debug_print("DEBUG: Kiểm tra proxy TRƯỚC KHI thêm timeout...")
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res = tp_get_proxy(timeout=API_TIMEOUT)
         debug_print(f"GET proxy status: {res.status_code}")
         if res.status_code == 200:
             proxy_data = res.json()
@@ -189,25 +174,17 @@ def add_timeout():
         debug_print(f"Lỗi kiểm tra proxy: {e}")
         traceback.print_exc()
 
-    # Dùng timestamp để tránh trùng tên toxic
-    toxic_name = f"timeout_{int(time.time())}"
-
-    toxic = {
-        "name": toxic_name,
-        "type": "timeout",
-        "stream": "upstream",  # 🔥 QUAN TRỌNG: phải là upstream!
-        "attributes": {
-            "timeout": timeout
-        }
-    }
-
-    debug_print(f"Gửi request thêm timeout toxic: {toxic}")
+    debug_print(
+        "Gửi request thêm timeout toxic: "
+        f"{{'type': 'timeout', 'stream': 'upstream', 'attributes': {{'timeout': {timeout}}}}}"
+    )
 
     try:
-        res = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic,
-            timeout=API_TIMEOUT
+        _, res = tp_add_toxic(
+            toxic_type="timeout",
+            stream="upstream",
+            attributes={"timeout": timeout},
+            timeout=API_TIMEOUT,
         )
         debug_print(f"Response status: {res.status_code}")
         debug_print(f"Response body: {res.text}")
@@ -223,7 +200,7 @@ def add_timeout():
         debug_print("=" * 50)
         debug_print("DEBUG: Kiểm tra proxy SAU KHI thêm timeout...")
         try:
-            res_check = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+            res_check = tp_get_proxy(timeout=API_TIMEOUT)
             if res_check.status_code == 200:
                 proxy_data = res_check.json()
                 debug_print(f"Proxy enabled: {proxy_data.get('enabled')}")
@@ -251,23 +228,12 @@ def add_limit_data():
     # Lấy bytes từ user
     bytes_val = get_input("Nhập số bytes giới hạn", 100)
 
-    # Dùng timestamp để tránh trùng tên toxic
-    toxic_name = f"limit_data_{int(time.time())}"
-
-    toxic = {
-        "name": toxic_name,
-        "type": "limit_data",
-        "stream": "downstream",
-        "attributes": {
-            "bytes": bytes_val
-        }
-    }
-
     try:
-        res = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic,
-            timeout=API_TIMEOUT
+        _, res = tp_add_toxic(
+            toxic_type="limit_data",
+            stream="downstream",
+            attributes={"bytes": bytes_val},
+            timeout=API_TIMEOUT,
         )
         if res.status_code in [200, 201]:
             print("✅ Thêm limit_data thành công!")
@@ -281,7 +247,7 @@ def add_limit_data():
 
 
 def add_close_stream():
-    """Thêm close_stream toxic - Hard Failure (server chết)"""
+    """Thêm reset_peer toxic - Hard Failure (server chết)"""
     print("\n" + "=" * 60)
     print("THÊM CLOSE STREAM (Hard Failure)")
     print("=" * 60)
@@ -292,24 +258,15 @@ def add_close_stream():
     print("      - Network failure hoàn toàn")
     print("⚠️  CẢNH BÁO: Đây là hard failure - KHÔNG recovery!")
 
-    # Dùng timestamp để tránh trùng tên toxic
-    toxic_name = f"close_stream_{int(time.time())}"
-
-    toxic = {
-        "name": toxic_name,
-        "type": "close_stream",
-        "stream": "downstream",
-        "attributes": {}
-    }
-
     try:
-        res = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic,
-            timeout=API_TIMEOUT
+        _, res = tp_add_toxic(
+            toxic_type="reset_peer",
+            stream="downstream",
+            attributes={},
+            timeout=API_TIMEOUT,
         )
         if res.status_code in [200, 201]:
-            print("✅ Thêm close_stream thành công!")
+            print("✅ Thêm reset_peer thành công!")
             print(f"   → Server/connection sẽ bị đóng NGAY LẬP TỨC")
             print(f"   → Request nào gọi sẽ bị lỗi Connection Closed")
         else:
@@ -325,31 +282,22 @@ def add_bandwidth():
     print("=" * 60)
     print("📌 Bandwidth: Giới hạn tốc độ mạng")
     print("   → Simulate mạng chậm (không phải delay giả)")
-    print("   → Rate = bytes/giây")
+    print("   → Rate = KB/giây")
 
     # Lấy rate từ user
-    rate = get_input("Nhập bandwidth (bytes/giây)", 1024)
-
-    toxic = {
-        "name": f"bandwidth_{int(time.time())}",
-        "type": "bandwidth",
-        "stream": "downstream",
-        "attributes": {
-            "rate": rate
-        }
-    }
+    rate = get_input("Nhập bandwidth (KB/giây)", 64)
 
     try:
-        res = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic,
-            timeout=API_TIMEOUT
+        _, res = tp_add_toxic(
+            toxic_type="bandwidth",
+            stream="downstream",
+            attributes={"rate": rate},
+            timeout=API_TIMEOUT,
         )
         if res.status_code in [200, 201]:
             print("✅ Thêm bandwidth thành công!")
-            print(f"   Rate: {rate} bytes/giây")
-            rate_kb = rate / 1024
-            print(f"   ≈ {rate_kb:.1f} KB/giây")
+            print(f"   Rate: {rate} KB/giây")
+            print(f"   ≈ {rate * 1024} bytes/giây")
             print(f"   → Mạng sẽ bị chậm đi")
         else:
             print(f"❌ Lỗi: {res.status_code} - {res.text}")
@@ -366,175 +314,32 @@ def add_slicer():
     print("   → Realistic hơn limit_data (cắt cố định)")
     print("   → Simulate network instability")
 
-    # Lấy size từ user
-    size = get_input("Nhập average size per slice (bytes)", 100)
-
-    toxic = {
-        "name": f"slicer_{int(time.time())}",
-        "type": "slicer",
-        "stream": "downstream",
-        "attributes": {
-            "size": size
-        }
-    }
+    # Lấy tham số từ user
+    average_size = get_input("Nhập average_size per slice (bytes)", 120)
+    size_variation = get_input("Nhập size_variation (bytes)", 40)
+    delay = get_input("Nhập delay mỗi slice (microseconds)", 5000)
 
     try:
-        res = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic,
-            timeout=API_TIMEOUT
+        _, res = tp_add_toxic(
+            toxic_type="slicer",
+            stream="downstream",
+            attributes={
+                "average_size": average_size,
+                "size_variation": size_variation,
+                "delay": delay,
+            },
+            timeout=API_TIMEOUT,
         )
         if res.status_code in [200, 201]:
             print("✅ Thêm slicer thành công!")
-            print(f"   Average size: {size} bytes/slice")
+            print(f"   average_size: {average_size} bytes/slice")
+            print(f"   size_variation: {size_variation} bytes")
+            print(f"   delay: {delay} microseconds/slice")
             print(f"   → Response sẽ bị cắt ngẫu nhiên")
         else:
             print(f"❌ Lỗi: {res.status_code} - {res.text}")
     except Exception as e:
         print(f"❌ Lỗi: {e}")
-
-
-def add_both_latency_and_timeout():
-    """Thêm cả latency và timeout với giải thích đúng"""
-    print("\n" + "=" * 60)
-    print("THÊM LATENCY VÀ TIMEOUT CÙNG LÚC")
-    print("=" * 60)
-
-    # Lấy giá trị từ user
-    latency = get_input("Nhập latency (ms)", DEFAULT_LATENCY)
-    timeout = get_input("Nhập timeout (ms)", DEFAULT_TIMEOUT)
-
-    print("\n" + "-" * 60)
-    print("📊 CẤU HÌNH:")
-    print("-" * 60)
-    print(f"   Latency: {latency}ms (downstream)")
-    print(f"   Timeout: {timeout}ms (upstream)")
-
-    # Phân tích - QUAN TRỌNG: timeout upstream KHÔNG phụ thuộc latency!
-    backend_time = 2000  # Ước tính backend xử lý
-    total_time = backend_time + latency
-
-    print(f"\n📊 PHÂN TÍCH:")
-    print(f"   Backend xử lý: ~{backend_time}ms")
-    print(f"   + Latency: {latency}ms (downstream - KHÔNG ảnh hưởng timeout)")
-    print(f"   = Tổng response: ~{total_time}ms")
-    print(f"   Timeout: {timeout}ms (upstream - chỉ chờ backend bắt đầu phản hồi)")
-
-    print(f"\n🔥 QUAN TRỌNG:")
-    print(f"   Timeout upstream = chờ backend BẮT ĐẦU phản hồi")
-    print(f"   → KHÔNG phụ thuộc latency (latency chỉ ảnh hưởng downstream)")
-    print()
-
-    if timeout < backend_time:
-        print(f"❌ CHẮC CHẮN TIMEOUT:")
-        print(f"   Timeout ({timeout}ms) < Backend time ({backend_time}ms)")
-        print(f"   → Backend chưa kịp bắt đầu phản hồi đã bị timeout!")
-    elif timeout > backend_time:
-        print(f"✅ CHẮC CHẮN KHÔNG TIMEOUT:")
-        print(f"   Timeout ({timeout}ms) > Backend time ({backend_time}ms)")
-        print(f"   → Backend đủ thời gian bắt đầu phản hồi")
-        print(f"   → Request sẽ thành công (chậm hơn do latency)")
-
-    print("-" * 60)
-
-    # DEBUG: Kiểm tra proxy trước khi thêm toxics
-    debug_print("=" * 50)
-    debug_print("DEBUG: Kiểm tra proxy TRƯỚC KHI thêm toxics...")
-    try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
-        debug_print(f"GET proxy status: {res.status_code}")
-        if res.status_code == 200:
-            proxy_data = res.json()
-            debug_print(f"Proxy enabled: {proxy_data.get('enabled')}")
-            debug_print(f"Proxy listen: {proxy_data.get('listen')}")
-            debug_print(f"Proxy upstream: {proxy_data.get('upstream')}")
-            debug_print(f"Proxy toxics: {proxy_data.get('toxics', [])}")
-    except Exception as e:
-        debug_print(f"Lỗi kiểm tra proxy: {e}")
-
-    # Dùng timestamp để tránh trùng tên toxic
-    ts = int(time.time())
-
-    # Thêm latency
-    toxic_latency = {
-        "name": f"latency_{ts}",
-        "type": "latency",
-        "stream": "downstream",
-        "attributes": {
-            "latency": latency
-        }
-    }
-
-    # Thêm timeout - QUAN TRỌNG: upstream!
-    toxic_timeout = {
-        "name": f"timeout_{ts}",
-        "type": "timeout",
-        "stream": "upstream",  # 🔥 QUAN TRỌNG
-        "attributes": {
-            "timeout": timeout
-        }
-    }
-
-    debug_print("Gửi request thêm latency...")
-    try:
-        res1 = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic_latency,
-            timeout=API_TIMEOUT
-        )
-        debug_print(f"Latency response: {res1.status_code} - {res1.text}")
-        if res1.status_code in [200, 201]:
-            print(f"✅ Thêm latency: {latency}ms (downstream)")
-        else:
-            print(f"❌ Lỗi thêm latency: {res1.status_code} - {res1.text}")
-
-    except Exception as e:
-        debug_print(f"Exception khi thêm latency: {e}")
-        traceback.print_exc()
-
-    debug_print("Gửi request thêm timeout...")
-    try:
-        res2 = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic_timeout,
-            timeout=API_TIMEOUT
-        )
-        debug_print(f"Timeout response: {res2.status_code} - {res2.text}")
-        if res2.status_code in [200, 201]:
-            print(f"✅ Thêm timeout: {timeout}ms (upstream)")
-        else:
-            print(f"❌ Lỗi thêm timeout: {res2.status_code} - {res2.text}")
-
-    except Exception as e:
-        debug_print(f"Exception khi thêm timeout: {e}")
-        traceback.print_exc()
-
-    # DEBUG: Kiểm tra proxy SAU KHI thêm toxics
-    debug_print("=" * 50)
-    debug_print("DEBUG: Kiểm tra proxy SAU KHI thêm toxics...")
-    try:
-        res_check = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
-        if res_check.status_code == 200:
-            proxy_data = res_check.json()
-            debug_print(f"Proxy enabled: {proxy_data.get('enabled')}")
-            debug_print(f"Proxy toxics: {json.dumps(proxy_data.get('toxics', []), indent=2)}")
-        else:
-            debug_print(f"Không lấy được proxy: {res_check.status_code}")
-    except Exception as e:
-        debug_print(f"Lỗi kiểm tra proxy sau khi thêm: {e}")
-
-    # DEBUG: Test ngay sau khi thêm toxics
-    debug_print("=" * 50)
-    debug_print("DEBUG: Test request ngay sau khi thêm toxics...")
-    try:
-        debug_print("Gọi health check...")
-        start_test = time.time()
-        res_test = requests.get(f"{API_VIA_PROXY}/", timeout=5)
-        elapsed = time.time() - start_test
-        debug_print(f"Health check response: {res_test.status_code} - Time: {elapsed:.3f}s")
-    except Exception as e:
-        debug_print(f"Lỗi test: {e}")
-        debug_print(traceback.format_exc())
 
 
 def clear_toxics():
@@ -547,7 +352,7 @@ def clear_toxics():
     debug_print("=" * 50)
     debug_print("DEBUG: Kiểm tra proxy TRƯỚC KHI xóa toxics...")
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res = tp_get_proxy(timeout=API_TIMEOUT)
 
         if res.status_code != 200:
             print(f"❌ Không lấy được proxy: {res.status_code}")
@@ -565,21 +370,12 @@ def clear_toxics():
             print("⚪ Không có toxic nào để xóa")
             return
 
-        for toxic in toxics:
-            name = toxic.get("name")
-            debug_print(f"Đang xóa toxic: {name} (type={toxic.get('type')}, stream={toxic.get('stream')})")
+        removed = tp_clear_toxics(timeout=API_TIMEOUT)
+        for name in removed:
+            print(f"✅ Đã xóa toxic: {name}")
 
-            del_res = requests.delete(
-                f"http://localhost:8474/proxies/vbank_api/toxics/{name}",
-                timeout=API_TIMEOUT
-            )
-
-            debug_print(f"Xóa {name}: {del_res.status_code} - {del_res.text}")
-
-            if del_res.status_code in [200, 204]:
-                print(f"✅ Đã xóa toxic: {name}")
-            else:
-                print(f"❌ Lỗi xóa {name}: {del_res.status_code}")
+        if len(removed) < len(toxics):
+            print("⚠️  Một số toxic không xóa được, kiểm tra log để biết chi tiết")
 
         print("\n🎉 Đã xóa toàn bộ toxics!")
 
@@ -592,7 +388,7 @@ def clear_toxics():
     debug_print("=" * 50)
     debug_print("DEBUG: Kiểm tra proxy SAU KHI xóa toxics...")
     try:
-        res_check = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res_check = tp_get_proxy(timeout=API_TIMEOUT)
         if res_check.status_code == 200:
             proxy_data = res_check.json()
             debug_print(f"Proxy enabled: {proxy_data.get('enabled')}")
@@ -619,7 +415,7 @@ def check_services():
 
     print("\n[2] Kiểm tra Toxiproxy...")
     try:
-        res = requests.get("http://localhost:8474/proxies", timeout=API_TIMEOUT)
+        res = tp_list_proxies(timeout=API_TIMEOUT)
         proxies = res.json()
         print(f"    ✅ Toxiproxy OK - Status: {res.status_code}")
 
@@ -648,7 +444,7 @@ def check_services():
     except Exception as e:
         print(f"    ❌ Toxiproxy ERROR: {e}")
         print("    → Cần khởi động Toxiproxy:")
-        print("    → docker run -d -p 8474:8474 -p 8666:8666 --name toxiproxy ghcr.io/shopify/toxiproxy")
+        print("    → docker compose up -d toxiproxy toxiproxy-bootstrap")
 
     print("\n[3] Kiểm tra proxy (localhost:8666)...")
     start = time.time()
@@ -658,7 +454,7 @@ def check_services():
     timeout_ms = None
 
     try:
-        proxy_res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        proxy_res = tp_get_proxy(timeout=API_TIMEOUT)
         if proxy_res.status_code == 200:
             proxy_data = proxy_res.json()
             toxics = proxy_data.get('toxics', [])
@@ -740,7 +536,7 @@ def show_proxy_info():
     print("=" * 60)
 
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res = tp_get_proxy(timeout=API_TIMEOUT)
         if res.status_code == 404:
             print("❌ Proxy chưa được tạo!")
             print("   Vui lòng chọn 'A' để tạo proxy")
@@ -814,7 +610,7 @@ def get_toxic_info():
     timeout_ms = None
 
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res = tp_get_proxy(timeout=API_TIMEOUT)
         if res.status_code == 200:
             data = res.json()
             toxics = data.get('toxics', [])
@@ -846,6 +642,7 @@ def test_health_check():
 
     # Lấy thông tin toxics
     latency_ms, timeout_ms = get_toxic_info()
+    latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
     start = time.time()
 
 
@@ -919,6 +716,7 @@ def test_get_accounts():
 
     # Lấy thông tin toxics
     latency_ms, timeout_ms = get_toxic_info()
+    latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
     start = time.time()
 
 
@@ -996,6 +794,7 @@ def test_login():
 
     # Lấy thông tin toxics
     latency_ms, timeout_ms = get_toxic_info()
+    latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
     start = time.time()
 
 
@@ -1075,6 +874,7 @@ def test_transfer():
 
     # Lấy thông tin toxics
     latency_ms, timeout_ms = get_toxic_info()
+    latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
     debug_print("Bắt đầu transfer...")
     start = time.time()
 
@@ -1151,7 +951,7 @@ def test_transfer_with_current_toxics():
     timeout_ms = 0
 
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res = tp_get_proxy(timeout=API_TIMEOUT)
         if res.status_code == 200:
             data = res.json()
             toxics = data.get('toxics', [])
@@ -1188,6 +988,7 @@ def test_transfer_with_current_toxics():
     }
 
     start = time.time()
+    latency_str, timeout_str = format_toxic_info(latency_ms, timeout_ms)
     print(f"\n🚀 Bắt đầu transfer lúc: {time.strftime('%H:%M:%S')}")
 
 
@@ -1443,20 +1244,15 @@ def scenario_timeout_then_retry():
 
     # Bước 1: Thêm timeout
     print("\n📍 Bước 1: Thêm timeout toxic...")
-    toxic = {
-        "name": f"timeout_{int(time.time())}",
-        "type": "timeout",
-        "stream": "upstream",
-        "attributes": {
-            "timeout": timeout_val
-        }
-    }
+    toxic_name = f"timeout_{int(time.time())}"
 
     try:
-        res = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic,
-            timeout=API_TIMEOUT
+        _, res = tp_add_toxic(
+            toxic_type="timeout",
+            stream="upstream",
+            attributes={"timeout": timeout_val},
+            name=toxic_name,
+            timeout=API_TIMEOUT,
         )
         if res.status_code in [200, 201]:
             print(f"   ✅ Đã thêm timeout: {timeout_val}ms")
@@ -1499,10 +1295,7 @@ def scenario_timeout_then_retry():
     # Bước 3: Xóa toxic
     print("\n📍 Bước 3: Xóa toxic...")
     try:
-        requests.delete(
-            f"http://localhost:8474/proxies/vbank_api/toxics/{toxic['name']}",
-            timeout=API_TIMEOUT
-        )
+        tp_delete_toxic(toxic_name, timeout=API_TIMEOUT)
         print("   ✅ Đã xóa toxic")
     except:
         pass
@@ -1524,7 +1317,7 @@ def scenario_partial_commit():
 
     print("\n📋 Kịch bản 2PC:")
     print("   1. Prepare: Gửi tiền từ A → B")
-    print("   2. Bank B bị chết (close_stream toxic)")
+    print("   2. Bank B bị chết (reset_peer toxic)")
     print("   3. Commit thất bại")
     print("   4. Rollback (A không bị trừ tiền)")
 
@@ -1539,24 +1332,21 @@ def scenario_partial_commit():
     except Exception as e:
         print(f"   ❌ Lỗi: {e}")
 
-    # Bước 2: Thêm close_stream (Bank B chết)
-    print("\n📍 Bước 2: Bank B chết (thêm close_stream)...")
+    # Bước 2: Thêm reset_peer (Bank B chết)
+    print("\n📍 Bước 2: Bank B chết (thêm reset_peer)...")
 
-    toxic = {
-        "name": f"close_stream_{int(time.time())}",
-        "type": "close_stream",
-        "stream": "downstream",
-        "attributes": {}
-    }
+    toxic_name = f"reset_peer_{int(time.time())}"
 
     try:
-        res = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic,
-            timeout=API_TIMEOUT
+        _, res = tp_add_toxic(
+            toxic_type="reset_peer",
+            stream="downstream",
+            attributes={},
+            name=toxic_name,
+            timeout=API_TIMEOUT,
         )
         if res.status_code in [200, 201]:
-            print("   ✅ Bank B đã 'chết' (close_stream)")
+            print("   ✅ Bank B đã 'chết' (reset_peer)")
         else:
             print(f"   ❌ Lỗi: {res.status_code}")
             return
@@ -1587,10 +1377,7 @@ def scenario_partial_commit():
     # Bước 4: Xóa toxic và kiểm tra
     print("\n📍 Bước 4: Xóa toxic và kiểm tra...")
     try:
-        requests.delete(
-            f"http://localhost:8474/proxies/vbank_api/toxics/{toxic['name']}",
-            timeout=API_TIMEOUT
-        )
+        tp_delete_toxic(toxic_name, timeout=API_TIMEOUT)
         print("   ✅ Đã xóa toxic (Bank B sống lại)")
     except:
         pass
@@ -1672,7 +1459,7 @@ def deep_debug_timeout():
     print("\n📍 BƯỚC 1: Kiểm tra trạng thái ban đầu")
     print("-" * 50)
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res = tp_get_proxy(timeout=API_TIMEOUT)
         if res.status_code == 200:
             data = res.json()
             print(f"  ✅ Proxy tồn tại")
@@ -1704,21 +1491,18 @@ def deep_debug_timeout():
     # Bước 3: Thêm timeout toxic
     print(f"\n📍 BƯỚC 3: Thêm timeout toxic ({timeout_ms}ms)")
     print("-" * 50)
-    toxic = {
-        "name": "timeout",
-        "type": "timeout",
-        "stream": "upstream",
-        "attributes": {
-            "timeout": timeout_ms
-        }
-    }
-    print(f"  Gửi: {json.dumps(toxic)}")
+    print(
+        "  Gửi: "
+        f"{json.dumps({'name': 'timeout', 'type': 'timeout', 'stream': 'upstream', 'attributes': {'timeout': timeout_ms}})}"
+    )
 
     try:
-        res = requests.post(
-            "http://localhost:8474/proxies/vbank_api/toxics",
-            json=toxic,
-            timeout=API_TIMEOUT
+        _, res = tp_add_toxic(
+            toxic_type="timeout",
+            stream="upstream",
+            attributes={"timeout": timeout_ms},
+            name="timeout",
+            timeout=API_TIMEOUT,
         )
         print(f"  Response: {res.status_code}")
         print(f"  Body: {res.text[:500]}")
@@ -1735,7 +1519,7 @@ def deep_debug_timeout():
     print("\n📍 BƯỚC 4: Kiểm tra proxy NGAY SAU KHI thêm toxic")
     print("-" * 50)
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res = tp_get_proxy(timeout=API_TIMEOUT)
         if res.status_code == 200:
             data = res.json()
             print(f"  ✅ Proxy OK")
@@ -1796,7 +1580,7 @@ def deep_debug_timeout():
     print("\n📍 BƯỚC 6: Kiểm tra proxy lần cuối")
     print("-" * 50)
     try:
-        res = requests.get("http://localhost:8474/proxies/vbank_api", timeout=API_TIMEOUT)
+        res = tp_get_proxy(timeout=API_TIMEOUT)
         if res.status_code == 200:
             data = res.json()
             toxics = data.get('toxics', [])
@@ -1833,15 +1617,14 @@ def menu():
         print("K. Thêm Close Stream (Server chết)")
         print("M. Thêm Bandwidth (Slow network)")
         print("P. Thêm Slicer (Random packet loss)")
-        print("F. Thêm CẢ Latency + Timeout")
         print("S. Xem thông tin Proxy & Toxics")
         print("E. Xóa tất cả Toxics")
         print("---")
         print("R. Test Retry Logic (timeout → retry)")
         print("W. Test Fallback Data (API fail → dùng dự phòng)")
         print("---")
-        print("1. Scenario: Timeout → Retry → Success")
-        print("2. Scenario: Partial Commit (Bank B chết)")
+        print("6. Scenario: Timeout → Retry → Success")
+        print("8. Scenario: Partial Commit (Bank B chết)")
         print("---")
         print("T. DEBUG CHUYÊN SÂU Timeout (theo dõi từng bước)")
         print("G. Cấu hình giá trị mặc định")
@@ -1880,8 +1663,6 @@ def menu():
             add_bandwidth()
         elif choice == "P":
             add_slicer()
-        elif choice == "F":
-            add_both_latency_and_timeout()
         elif choice == "S":
             show_proxy_info()
         elif choice == "E":
@@ -1890,9 +1671,9 @@ def menu():
             test_retry_logic()
         elif choice == "W":
             test_fallback_data()
-        elif choice == "1":
+        elif choice == "6":
             scenario_timeout_then_retry()
-        elif choice == "2":
+        elif choice == "8":
             scenario_partial_commit()
         elif choice == "T":
             deep_debug_timeout()
