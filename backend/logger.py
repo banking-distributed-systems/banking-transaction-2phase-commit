@@ -3,16 +3,14 @@ Module logging tập trung cho ứng dụng
 """
 
 import logging
-from config import LOG_FILE
 
-# Cấu hình logging - mode 'w' để ghi đè mỗi lần chạy
+# Cấu hình logging chỉ ra console
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s  %(levelname)-8s  %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
     handlers=[
-        logging.FileHandler(LOG_FILE, mode='w', encoding='utf-8'),
-        logging.StreamHandler(),  # vẫn in ra terminal
+        logging.StreamHandler(),
     ]
 )
 

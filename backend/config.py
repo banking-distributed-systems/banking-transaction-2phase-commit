@@ -2,8 +2,6 @@
 Cấu hình ứng dụng - Database config và constants
 """
 
-import os
-
 # ---------------------------------------------------------------------------
 # Thời gian chờ tối đa (giây) cho Phase 1 (PREPARE) — Kịch bản 5
 # ---------------------------------------------------------------------------
@@ -48,11 +46,6 @@ DB3_CONFIG = {
 
 # Danh sách tất cả database configs
 ALL_DB_CONFIGS = [DB1_CONFIG, DB2_CONFIG, DB3_CONFIG]
-
-# ---------------------------------------------------------------------------
-# File logger path
-# ---------------------------------------------------------------------------
-LOG_FILE = os.path.join(os.path.dirname(__file__), '..', '.log')
 
 # ---------------------------------------------------------------------------
 # Nhãn hiển thị cho từng phase trong 2PC

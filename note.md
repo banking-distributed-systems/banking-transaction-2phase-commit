@@ -15,105 +15,39 @@ Invoke-RestMethod -Uri "http://localhost:8474/proxies" -Method POST -ContentType
 
 ---
 
-**TC01 – Happy path (A/B prepare YES, commit thành công)**
-
-- Từ A: 102938475612
-- Đến B: 203847569801
-- Số tiền: 50000
-
-**Kỳ vọng:**
-
-- API trả `success`
-- `message` chứa: `Chuyển tiền thành công! (2-Phase Commit Hoàn tất)`
-- A bị trừ tiền, B được cộng tiền
-- `transaction_log` đi đủ phase:
-- PREPARING
-- PREPARED
-- COMMITTING
-- COMMIT_A
-- COMMITTED
-
----
-
-**TC02 – Bank A fail ở Phase 1 (prepare)**
-
-- Mô tả: participant nguồn (A) trả lỗi trong prepare
-
-**Kỳ vọng:**
-
-- API trả `error`
-- `message` chứa: `Giao dịch thất bại ở Phase 1`
-- Coordinator rollback toàn bộ participant
-- Không đổi số dư A/B
-- `transaction_log` kết thúc ở `ABORTED`
-
----
-
 **TC03 – B trả NO.**
 
-- cấu hình mô phỏng để Bank B từ chối giao dịch:
+- Cấu hình mô phỏng để Bank B từ chối giao dịch:
 
 ```bash
 docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_bank_b_prepare; CREATE TRIGGER reject_bank_b_prepare BEFORE UPDATE ON accounts FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Bank B rejected transaction (TC03)';"
 ```
 
-- cho phép bank B nhận giao dịch:
+- Cho phép Bank B nhận giao dịch lại:
 
 ```bash
 docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_bank_b_prepare;"
 ```
 
-**Kỳ vọng:**
-
-- API trả `error`
-- `message` chứa: `Giao dịch thất bại ở Phase 1`
-- Coordinator rollback toàn bộ
-- Không đổi số dư A/B
-- `transaction_log` kết thúc ở `ABORTED`
-
 ---
 
 **TC04 – Commit A thành công, B thất bại**
 
-- cấu hình để cho TC04 – Commit A thành công, B thất bại.
-- chuyển tiền với nội dung y như bên dưới:
-
+- Chuyển tiền với nội dung y như bên dưới:
 - Từ A: 102938475612
 - Đến B: 203847569801
 - Số tiền: 50000
 - Nội dung: TC04_B_COMMIT_FAIL
 
-**Kỳ vọng:**
-
-- API trả `error`
-- `message` chứa cụm: `Lỗi COMMIT lệch pha (Kịch bản 4)`
-- A đã commit trừ tiền trước, B commit lỗi
-- Hệ thống chạy compensation hoàn tiền lại cho A
-- `extra_data` có:
-- `partial_failure = true`
-- `compensation = true/false` (thực tế xử lý bù)
-- Nếu compensation thành công: số dư cuối cùng không bị lệch
-
 ---
 
 **TC05 – Coordinator chết sau khi commit A**
 
-- cấu hình để chạy TC05 – Coordinator chết sau khi commit A.
-- chuyển tiền với nội dung y như bên dưới:
-
+- Chuyển tiền với nội dung y như bên dưới:
 - Từ A: 102938475612
 - Đến B: 203847569801
 - Số tiền: 50000
 - Nội dung: TC05_CRASH_AFTER_COMMIT_A
-
-**Kỳ vọng:**
-
-- Backend crash ngay sau phase `COMMIT_A` (trước commit B)
-- Trước recovery: giao dịch ở trạng thái dở dang
-- Sau khi restart backend hoặc gọi `POST /api/recover`:
-- Recovery commit nốt Bank B
-- `transaction_log` chuyển sang `COMMITTED`
-- API recover trả action `COMMIT_B_COMPLETED` cho giao dịch này
 
 ---
 
@@ -198,7 +132,7 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
 
 ---
 
-**TC11 – Concurrent transfer**
+**TC11**
 
 - Mở 2 tab hoặc 2 trình duyệt
 - Cùng chuyển từ A sang B
@@ -235,7 +169,37 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
 
 ---
 
-**TC14 – Idempotency**
+**TC14**
+
+Mở PowerShell và chạy:
+
+```powershell
+$body = @{
+	from_account_number = "102938475612"
+	to_account_number = "203847569801"
+	amount = 20000
+	description = "TC14 double submit"
+} | ConvertTo-Json
+
+$key = "TC14-DEMO-001"
+
+$res1 = Invoke-RestMethod `
+	-Method POST `
+	-Uri "http://localhost:5000/api/transfer" `
+	-ContentType "application/json" `
+	-Headers @{ "Idempotency-Key" = $key } `
+	-Body $body
+
+$res2 = Invoke-RestMethod `
+	-Method POST `
+	-Uri "http://localhost:5000/api/transfer" `
+	-ContentType "application/json" `
+	-Headers @{ "Idempotency-Key" = $key } `
+	-Body $body
+
+$res1
+$res2
+```
 
 **Kỳ vọng:**
 
@@ -244,6 +208,15 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
 - Request sau trả lại response cũ
 - Có idempotent_replay = true
 - A/B chỉ đổi số dư 1 lần
+
+Ví dụ:
+
+```json
+{
+  "status": "success",
+  "tx_id": "VB..."
+}
+```
 
 ---
 
@@ -273,7 +246,7 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
 - TC08_CRASH_DURING_COMMITTING
 - Sau khi server crash:
 - Restart backend
-- hoặc gọi:
+- Hoặc gọi:
 
 ```powershell
 Invoke-RestMethod -Method POST -Uri "http://localhost:5000/api/recover"
