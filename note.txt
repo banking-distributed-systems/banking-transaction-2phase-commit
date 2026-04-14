@@ -122,6 +122,34 @@ Không chạy 2PC commit
 Không đổi số dư A/B
 
 Tc 14
+mở Powershell và chạy
+
+  $body = @{
+  from_account_number = "102938475612"
+  to_account_number = "203847569801"
+  amount = 20000
+  description = "TC14 double submit"
+} | ConvertTo-Json
+
+$key = "TC14-DEMO-001"
+
+$res1 = Invoke-RestMethod `
+  -Method POST `
+  -Uri "http://localhost:5000/api/transfer" `
+  -ContentType "application/json" `
+  -Headers @{ "Idempotency-Key" = $key } `
+  -Body $body
+
+$res2 = Invoke-RestMethod `
+  -Method POST `
+  -Uri "http://localhost:5000/api/transfer" `
+  -ContentType "application/json" `
+  -Headers @{ "Idempotency-Key" = $key } `
+  -Body $body
+
+$res1
+$res2
+
 Kỳ vọng:
 
 Request đầu xử lý thật
@@ -129,6 +157,12 @@ Request sau không tạo giao dịch mới
 Request sau trả lại response cũ
 Có idempotent_replay = true
 A/B chỉ đổi số dư 1 lần
+
+{
+  "status": "success",
+  "tx_id": "VB..."
+}
+
 
 
 TC15 – Logging phase đầy đủ
