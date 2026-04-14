@@ -364,20 +364,44 @@ class Test2PCIdempotencyAndConcurrency:
         assert all(r[0] is True for r in results)
         assert results[0][2] != results[1][2]
 
-    @pytest.mark.xfail(reason="Idempotency key/dedupe for double-submit is not implemented yet")
+    @patch("routes.transfer.parse_stored_response")
+    @patch("routes.transfer.finalize_record")
+    @patch("routes.transfer.create_processing_record", return_value=True)
+    @patch("routes.transfer.get_idempotency_record")
+    @patch("routes.transfer.build_request_hash", return_value="hash-tc14")
     @patch("routes.transfer.find_account_by_number")
     @patch("routes.transfer.execute_transfer")
     def test_tc14_double_submit_should_process_once(
-        self, mock_execute_transfer, mock_find_account, client
+        self,
+        mock_execute_transfer,
+        mock_find_account,
+        _mock_hash,
+        mock_get_record,
+        _mock_create_processing,
+        _mock_finalize,
+        mock_parse_stored,
+        client,
     ):
         """TC14: Desired behavior is one processing for double submit."""
         mock_find_account.side_effect = [
             ({"id": 1, "account_number": "102938475612"}, {"database": "bank1"}),
             ({"id": 2, "account_number": "203847569801"}, {"database": "bank2"}),
-            ({"id": 1, "account_number": "102938475612"}, {"database": "bank1"}),
-            ({"id": 2, "account_number": "203847569801"}, {"database": "bank2"}),
         ]
         mock_execute_transfer.return_value = (True, "ok", "VBIDEMPOTENT", None)
+        mock_get_record.side_effect = [
+            None,
+            {
+                "request_hash": "hash-tc14",
+                "status": "COMPLETED",
+                "http_status": 200,
+                "response_json": '{"status":"success","message":"ok","tx_id":"VBIDEMPOTENT"}',
+            },
+        ]
+        mock_parse_stored.return_value = {
+            "status": "success",
+            "message": "ok",
+            "tx_id": "VBIDEMPOTENT",
+        }
 
         payload = {
             "from_account_number": "102938475612",
@@ -385,10 +409,14 @@ class Test2PCIdempotencyAndConcurrency:
             "amount": 10000,
             "description": "double click",
         }
+        headers = {"Idempotency-Key": "IDEMP-TC14"}
 
-        client.post("/api/transfer", json=payload)
-        client.post("/api/transfer", json=payload)
+        r1 = client.post("/api/transfer", json=payload, headers=headers)
+        r2 = client.post("/api/transfer", json=payload, headers=headers)
 
+        assert r1.status_code == 200
+        assert r2.status_code == 200
+        assert r2.get_json().get("idempotent_replay") is True
         assert mock_execute_transfer.call_count == 1
 
 

@@ -121,6 +121,7 @@ def get_all_accounts_with_bank() -> List[Dict[str, Any]]:
         List of accounts với thông tin bank
     """
     accounts = []
+    seen = set()
 
     for config in ALL_DB_CONFIGS:
         db_name = config['database']
@@ -133,7 +134,16 @@ def get_all_accounts_with_bank() -> List[Dict[str, Any]]:
                     "SELECT id, name, balance, account_number, account_type, "
                     f"'{bank_label}' as bank FROM accounts"
                 )
-                accounts.extend(cursor.fetchall())
+                rows = cursor.fetchall()
+                for row in rows:
+                    dedupe_key = (
+                        row.get('id'),
+                        str(row.get('account_number') or ''),
+                    )
+                    if dedupe_key in seen:
+                        continue
+                    seen.add(dedupe_key)
+                    accounts.append(row)
             conn.close()
         except Exception as e:
             logger.error('[ACCOUNTS] Lỗi kết nối %s: %s', db_name, e)

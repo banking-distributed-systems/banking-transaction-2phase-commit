@@ -13,12 +13,14 @@ from logger import logger
 from routes import register_routes
 from two_phase_commit import recover_in_doubt_transactions
 from config import DB1_CONFIG, DB2_CONFIG, DB3_CONFIG, ALL_DB_CONFIGS
-from database import get_connection
+from database import get_connection, ensure_runtime_schema
 
 # Khởi tạo Flask app
 app = Flask(__name__)
 CORS(app)
 app.config['PROPAGATE_EXCEPTIONS'] = False
+
+_runtime_schema_ready = False
 
 # Đăng ký routes
 register_routes(app)
@@ -28,6 +30,11 @@ register_routes(app)
 @app.before_request
 def before_request():
     """Lưu thời gian bắt đầu request"""
+    global _runtime_schema_ready
+    if not _runtime_schema_ready:
+        ensure_runtime_schema()
+        _runtime_schema_ready = True
+
     request.start_time = time.time()
     request.request_id = uuid.uuid4().hex[:12]
 

@@ -5,6 +5,8 @@ let balanceVisible = false;
 let lookupTimer = null;
 let resolvedToAccount = null;
 let toastTimer = null;
+let pendingTransferIdempotencyKey = null;
+let txAutoRefreshTimer = null;
 
 function showToast(type, title, msg) {
   const toast = document.getElementById("toast");
@@ -70,6 +72,185 @@ function buildApiErrorMessage(response, payload, fallbackMessage) {
     fullMessage = `${fullMessage} (ref: ${requestId})`;
   }
   return fullMessage;
+}
+
+function mapPhaseHint(phase) {
+  const hints = {
+    PREPARING: "Đang chuẩn bị giao dịch ở cả 2 participant.",
+    PREPARED: "Đã sẵn sàng commit.",
+    COMMITTING: "Coordinator đang gửi commit.",
+    COMMIT_A: "A đã commit, B chưa commit xong.",
+    COMMITTED: "Giao dịch đã hoàn tất thành công.",
+    ABORTED: "Giao dịch đã rollback/hủy.",
+    TIMEOUT: "Giao dịch timeout ở Phase 1.",
+    COMPENSATING: "Hệ thống đang hoàn tiền bù.",
+    COMPENSATED: "Đã hoàn tiền bù thành công.",
+  };
+  return hints[phase] || "Trạng thái đang được cập nhật.";
+}
+
+function renderTxStatus(data) {
+  const box = document.getElementById("statusTxResult");
+  if (!box) return;
+
+  if (!data) {
+    box.textContent = "Không có dữ liệu giao dịch.";
+    return;
+  }
+
+  const lines = [
+    `TX: ${data.tx_id || "-"}`,
+    `Phase: ${data.phase || "-"}`,
+    `Chi tiết: ${data.phase_label || "-"}`,
+    `Thông điệp: ${data.message || mapPhaseHint(data.phase)}`,
+    `Nguồn -> Đích: ${data.from_account_number || "-"} -> ${data.to_account_number || "-"}`,
+    `Số tiền: ${(data.amount || 0).toLocaleString("vi-VN")} VND`,
+    `Cập nhật: ${data.updated_at || "-"}`,
+  ];
+
+  box.textContent = lines.join("\n");
+}
+
+function renderRecentTransactions(items = []) {
+  const box = document.getElementById("txRecentList");
+  if (!box) return;
+
+  if (!Array.isArray(items) || items.length === 0) {
+    box.textContent = "Chưa có giao dịch gần nhất.";
+    return;
+  }
+
+  box.innerHTML = "";
+  items.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "tx-recent-item";
+
+    const top = document.createElement("div");
+    top.className = "tx-recent-top";
+
+    const txId = document.createElement("strong");
+    txId.textContent = item.tx_id || "-";
+
+    const phase = document.createElement("span");
+    phase.className = `tx-phase-badge phase-${item.phase || "UNKNOWN"}`;
+    phase.textContent = item.phase || "UNKNOWN";
+
+    top.appendChild(txId);
+    top.appendChild(phase);
+
+    const detail = document.createElement("div");
+    detail.textContent = `${(item.amount || 0).toLocaleString("vi-VN")} VND | ${item.updated_at || "-"}`;
+
+    row.appendChild(top);
+    row.appendChild(detail);
+    row.addEventListener("click", () => lookupTransactionStatus(item.tx_id));
+    box.appendChild(row);
+  });
+}
+
+async function fetchRecentTransactions(limit = 8) {
+  try {
+    const res = await apiFetch(`${API_URL}/transfer/recent?limit=${encodeURIComponent(limit)}`, {}, "TX-RECENT");
+    const payload = await readJsonSafe(res);
+    if (!res.ok || payload?.status !== "success") {
+      renderRecentTransactions([]);
+      return;
+    }
+    renderRecentTransactions(payload.items || []);
+  } catch {
+    renderRecentTransactions([]);
+  }
+}
+
+async function lookupTransactionStatus(txIdOverride = null, options = {}) {
+  const { silent = false } = options;
+  const input = document.getElementById("statusTxIdInput");
+  const txId = (txIdOverride || input?.value || "").trim();
+  const box = document.getElementById("statusTxResult");
+
+  if (!txId) {
+    if (box) box.textContent = "Vui lòng nhập mã giao dịch.";
+    return;
+  }
+
+  if (input && txIdOverride) {
+    input.value = txId;
+  }
+
+  if (box && !silent) box.textContent = "Đang tra cứu trạng thái...";
+
+  try {
+    const res = await apiFetch(`${API_URL}/transfer/status/${encodeURIComponent(txId)}`, {}, "TX-STATUS");
+    const payload = await readJsonSafe(res);
+
+    if (!res.ok || payload?.status !== "success") {
+      const message = buildApiErrorMessage(res, payload, "Không thể tra cứu trạng thái giao dịch");
+      if (box) box.textContent = message;
+      return;
+    }
+
+    renderTxStatus(payload.data);
+  } catch (error) {
+    if (box) box.textContent = "Lỗi kết nối khi tra cứu trạng thái giao dịch.";
+  }
+}
+
+async function runManualRecovery() {
+  showToast("info", "Recovery", "Đang chạy recovery thủ công...");
+  try {
+    const res = await apiFetch(
+      `${API_URL}/recover`,
+      { method: "POST", headers: { "Content-Type": "application/json" } },
+      "RECOVERY",
+    );
+    const data = await readJsonSafe(res);
+    if (!res.ok || data?.status !== "success") {
+      const message = buildApiErrorMessage(res, data, "Không thể chạy recovery");
+      showToast("error", `Recovery lỗi (${res.status})`, message);
+      return;
+    }
+
+    showToast("success", "Recovery hoàn tất", `Đã xử lý ${data.count || 0} giao dịch treo.`);
+    await fetchRecentTransactions();
+    const txId = document.getElementById("statusTxIdInput")?.value?.trim();
+    if (txId) {
+      await lookupTransactionStatus(txId, { silent: true });
+    }
+  } catch {
+    showToast("error", "Recovery lỗi", "Không thể kết nối để chạy recovery.");
+  }
+}
+
+function stopTxAutoRefresh() {
+  if (txAutoRefreshTimer) {
+    clearInterval(txAutoRefreshTimer);
+    txAutoRefreshTimer = null;
+  }
+}
+
+function startTxAutoRefresh() {
+  stopTxAutoRefresh();
+  txAutoRefreshTimer = setInterval(async () => {
+    const dashboard = document.getElementById("dashboardScreen");
+    if (!dashboard || dashboard.style.display === "none") {
+      return;
+    }
+
+    await fetchRecentTransactions();
+    const txId = document.getElementById("statusTxIdInput")?.value?.trim();
+    if (txId) {
+      await lookupTransactionStatus(txId, { silent: true });
+    }
+  }, 8000);
+}
+
+function toggleTxAutoRefresh() {
+  const toggle = document.getElementById("txAutoRefresh");
+  if (toggle?.checked) {
+    startTxAutoRefresh();
+  } else {
+    stopTxAutoRefresh();
+  }
 }
 
 async function apiFetch(url, options = {}, label = "API") {
@@ -228,6 +409,11 @@ function showDashboard() {
   document.getElementById("mainBalance").textContent = "******* VND";
 
   fetchAccounts();
+  fetchRecentTransactions();
+  const autoToggle = document.getElementById("txAutoRefresh");
+  if (!autoToggle || autoToggle.checked) {
+    startTxAutoRefresh();
+  }
 }
 
 function showReceipt(txData) {
@@ -312,6 +498,7 @@ function openTransferModal() {
   document.getElementById("toAccountInput").value = "";
   document.getElementById("toAccountResult").innerHTML = "";
   resolvedToAccount = null;
+  pendingTransferIdempotencyKey = null;
 
   // Show current user as "from" account
   if (currentUser) {
@@ -348,25 +535,25 @@ function onToAccountInput() {
         },
         "LOOKUP",
       );
-        const data = await readJsonSafe(res);
+      const data = await readJsonSafe(res);
       if (res.ok && data?.status === "success") {
         resolvedToAccount = data.account;
         resultDiv.innerHTML = `<span class="lookup-found"><i class="fas fa-check-circle"></i> ${data.account.name}</span>`;
       } else {
-          const message = buildApiErrorMessage(
-            res,
-            data,
-            "Không tìm thấy tài khoản",
-          );
-          resultDiv.innerHTML = `<span class="lookup-error"><i class="fas fa-times-circle"></i> ${message}</span>`;
+        const message = buildApiErrorMessage(
+          res,
+          data,
+          "Không tìm thấy tài khoản",
+        );
+        resultDiv.innerHTML = `<span class="lookup-error"><i class="fas fa-times-circle"></i> ${message}</span>`;
       }
     } catch (err) {
-        let msg = "Lỗi kết nối khi tra cứu tài khoản";
-        if (err?.isResponseParseError) {
-          const statusPart = err.httpStatus ? `HTTP ${err.httpStatus}` : "HTTP unknown";
-          msg = `${statusPart}: Phản hồi không đọc được (có thể bị cắt do toxic limit_data).`;
-        } else if (err && err.name === "AbortError") {
-          msg = "Timeout khi tra cứu tài khoản";
+      let msg = "Lỗi kết nối khi tra cứu tài khoản";
+      if (err?.isResponseParseError) {
+        const statusPart = err.httpStatus ? `HTTP ${err.httpStatus}` : "HTTP unknown";
+        msg = `${statusPart}: Phản hồi không đọc được (có thể bị cắt do toxic limit_data).`;
+      } else if (err && err.name === "AbortError") {
+        msg = "Timeout khi tra cứu tài khoản";
       }
       resultDiv.innerHTML = `<span class="lookup-error"><i class="fas fa-exclamation-circle"></i> ${msg}</span>`;
     }
@@ -423,12 +610,19 @@ async function executeTransfer() {
 
   showToast("info", "Đang xử lý", "Đang thực hiện 2-Phase Commit...");
 
+  if (!pendingTransferIdempotencyKey) {
+    pendingTransferIdempotencyKey = `IDEMP-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+  }
+
   try {
     const response = await apiFetch(
       `${API_URL}/transfer`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": pendingTransferIdempotencyKey,
+        },
         body: JSON.stringify({
           from_account_number: currentUser.account_number,
           to_account_number: resolvedToAccount.account_number,
@@ -452,6 +646,8 @@ async function executeTransfer() {
       const txId =
         result?.tx_id || "VB" + Date.now().toString().slice(-10).toUpperCase();
 
+      lookupTransactionStatus(txId);
+
       closeToast();
       closeTransferModal();
       fetchAccounts();
@@ -465,12 +661,22 @@ async function executeTransfer() {
         toNum: resolvedToAccount.account_number,
         description,
       });
+      pendingTransferIdempotencyKey = null;
     } else {
       const message = buildApiErrorMessage(
         response,
         result,
         "Giao dịch thất bại",
       );
+
+      if (result?.tx_id) {
+        lookupTransactionStatus(result.tx_id);
+      }
+
+      if (result?.error_code !== "IDEMPOTENCY_REQUEST_IN_PROGRESS") {
+        pendingTransferIdempotencyKey = null;
+      }
+
       showToast(
         "error",
         `Giao dịch thất bại (${response.status})`,
