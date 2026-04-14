@@ -1,232 +1,170 @@
-# 📘 Test Cases – Hệ thống chuyển tiền 2-Phase Commit (2PC)
+# Test Cases - Two-Phase Commit (TC01-TC16)
 
-## 🎯 Mục tiêu
+## Muc tieu
 
-Đảm bảo tính **Atomicity (nguyên tử)** và **Consistency (toàn vẹn dữ liệu)** trong giao dịch phân tán giữa Bank A và Bank B.
+Dam bao tinh nguyen tu va nhat quan khi chuyen tien lien ngan hang bang 2PC, bao gom ca tinh huong loi, recovery, idempotency va concurrency.
 
----
+## Dieu kien chay
 
-# 🟢 I. Happy Path (Cơ bản)
+- Backend API chay o localhost:5000.
+- Neu test qua proxy, dung localhost:8666 (Toxiproxy) -> upstream localhost:5000.
+- Tai khoan demo mac dinh:
+  - A: 102938475612
+  - B: 203847569801
 
-## TC01 – Giao dịch thành công
+## Ma tran testcase
 
-**Mô tả:**
+### Nhom 1 - Happy path
 
-- Bank A prepare → YES
-- Bank B prepare → YES
-- Coordinator commit
+#### TC01 - A/B prepare YES, commit thanh cong
 
-**Kỳ vọng:**
+- Ky vong:
+  - API tra success.
+  - A bi tru tien, B duoc cong tien.
+  - transaction_log di du phase:
+    - PREPARING
+    - PREPARED
+    - COMMITTING
+    - COMMIT_A
+    - COMMITTED
 
-- A bị trừ tiền
-- B được cộng tiền
-- Log = COMMIT
+### Nhom 2 - Fail Phase 1 (prepare)
 
----
+#### TC02 - Bank A fail o prepare
 
-# ❌ II. Fail tại Phase 1 (Prepare)
+- Ky vong:
+  - API tra error voi thong diep that bai o Phase 1.
+  - Coordinator rollback toan bo participant.
+  - Khong doi so du A/B.
+  - transaction_log ket thuc ABORTED.
 
-## TC02 – Bank A không đủ tiền
+#### TC03 - Bank B tra NO
 
-**Mô tả:**
+- Ky vong:
+  - API tra error voi thong diep that bai o Phase 1.
+  - Rollback toan bo.
+  - Khong doi so du A/B.
+  - transaction_log ket thuc ABORTED.
 
-- A trả NO
+### Nhom 3 - Fail Phase 2 (commit)
 
-**Kỳ vọng:**
+#### TC04 - Commit A thanh cong, B that bai
 
-- Coordinator rollback
-- Không thay đổi dữ liệu
+- Ky vong:
+  - API tra error, thong diep co "Kich ban 4".
+  - A da commit tru tien, B commit loi.
+  - He thong chay compensation cho A.
+  - Response co flag:
+    - partial_failure = true
+    - compensation = true/false
 
----
+#### TC05 - Coordinator crash sau COMMIT_A
 
-## TC03 – Bank B từ chối giao dịch
+- Ky vong:
+  - Backend dung sau COMMIT_A, truoc commit B.
+  - Sau restart hoac goi /api/recover:
+    - Bank B duoc commit tiep.
+    - transaction_log thanh COMMITTED.
+    - Recovery action: COMMIT_B_COMPLETED.
 
-**Mô tả:**
+### Nhom 4 - Recovery
 
-- A → YES
-- B → NO
+#### TC06 - Crash truoc commit
 
-**Kỳ vọng:**
+- Ky vong:
+  - Recovery dua giao dich ve ABORTED.
+  - A khong bi tru, B khong duoc cong.
 
-- Rollback toàn bộ
+#### TC07 - Crash sau PREPARED
 
----
+- Ky vong:
+  - Recovery tiep tuc commit.
+  - transaction_log ve COMMITTED.
 
-# 💥 III. Fail tại Phase 2 (Commit)
+#### TC08 - In-doubt o COMMITTING
 
-## TC04 – Commit A thành công, B thất bại
+- Ky vong:
+  - Recovery tiep tuc commit.
+  - transaction_log ve COMMITTED.
 
-**Mô tả:**
+### Nhom 5 - Idempotency
 
-- A commit OK
-- B lỗi khi commit
+#### TC09 - Commit gui nhieu lan
 
-**Kỳ vọng:**
+- Ky vong:
+  - He thong khong crash.
+  - Khong nhan doi tien.
+  - Trang thai cuoi COMMITTED.
 
-- Không được lệch dữ liệu
-- Retry hoặc rollback
+#### TC10 - Rollback gui nhieu lan
 
----
+- Ky vong:
+  - He thong xu ly an toan, khong crash.
+  - Trang thai cuoi ABORTED.
 
-## TC05 – Coordinator chết sau khi commit A
+#### TC14 - Double submit cung Idempotency-Key
 
-**Mô tả:**
+- Ky vong:
+  - Request dau xu ly that.
+  - Request sau replay response cu, khong tao giao dich moi.
+  - idempotent_replay = true.
+  - tx_id cua 2 response giong nhau.
+  - So du A/B chi doi 1 lan.
 
-- Commit A xong
-- Chưa commit B → crash
+### Nhom 6 - Concurrency
 
-**Kỳ vọng:**
+#### TC11 - 2 giao dich dong thoi tu A sang B
 
-- Khi restart, commit B tiếp
+- Ky vong:
+  - Server khong crash.
+  - Moi request co tx_id rieng.
+  - Neu du so du, ca hai giao dich COMMITTED.
 
----
+### Nhom 7 - Business validation
 
-# 🔄 IV. Recovery (Phục hồi)
+#### TC12 - So tien <= 0
 
-## TC06 – Coordinator crash trước commit
+- Ky vong:
+  - API tra loi validation.
+  - Khong tao giao dich thanh cong.
+  - Khong doi so du A/B.
 
-**Mô tả:**
+#### TC13 - Tai khoan dich khong ton tai
 
-- Prepare xong
-- Chưa commit → crash
+- Ky vong:
+  - API tra loi tai khoan dich khong ton tai.
+  - Khong chay commit 2PC.
+  - Khong doi so du A/B.
 
-**Kỳ vọng:**
+### Nhom 8 - Logging va audit
 
-- Rollback sau khi restart
+#### TC15 - Day du phase log trong transaction_log
 
----
+- Ky vong (giao dich thanh cong):
+  - PREPARING
+  - PREPARED
+  - COMMITTING
+  - COMMIT_A
+  - COMMITTED
 
-## TC07 – Participant crash sau prepare
+#### TC16 - Recovery tu transaction_log
 
-**Mô tả:**
+- Ky vong theo phase:
+  - PREPARING -> recovery rollback -> ABORTED
+  - PREPARED -> recovery commit -> COMMITTED
+  - COMMITTING -> recovery commit -> COMMITTED
+  - COMMIT_A -> recovery commit B -> COMMITTED
 
-- A prepare xong → crash
+## Mapping voi test tu dong
 
-**Kỳ vọng:**
+- tests/test_2pc_matrix.py: cover logic matrix TC01-TC16 voi mock.
+- tests/test_transfer.py: cover API transfer, idempotency, transfer status, transfer recent.
+- tests/test_database.py: cover ket noi DB va truy van co ban.
+- tests/test_frontend_smoke.py: smoke test wiring UI monitor/recovery.
+- tests/test_toxiproxy_e2e.py: E2E qua localhost:8666 (marker e2e, RUN_TOXIPROXY_E2E=1).
 
-- A hỏi lại coordinator khi hồi phục
+## Goi y demo nhanh
 
----
-
-## TC08 – Giao dịch bị treo (In-doubt)
-
-**Mô tả:**
-
-- A đã prepare
-- Chưa nhận commit/rollback
-
-**Kỳ vọng:**
-
-- A chờ coordinator
-
----
-
-# 🔁 V. Idempotency
-
-## TC09 – Commit gửi nhiều lần
-
-**Mô tả:**
-
-- Coordinator gửi commit 2 lần
-
-**Kỳ vọng:**
-
-- Không xử lý trùng
-
----
-
-## TC10 – Rollback gửi nhiều lần
-
-**Kỳ vọng:**
-
-- Không gây lỗi
-
----
-
-# 🔒 VI. Concurrency
-
-## TC11 – 2 giao dịch cùng trừ tiền
-
-**Mô tả:**
-
-- 2 transaction cùng thao tác account A
-
-**Kỳ vọng:**
-
-- Không race condition
-- Có lock hợp lý
-
----
-
-# 🧠 VII. Business Logic
-
-## TC12 – Chuyển tiền 0 hoặc âm
-
-**Kỳ vọng:**
-
-- Bị từ chối
-
----
-
-## TC13 – Tài khoản không tồn tại
-
-**Kỳ vọng:**
-
-- Rollback
-
----
-
-## TC14 – Double submit (bấm 2 lần)
-
-**Kỳ vọng:**
-
-- Chỉ xử lý 1 transaction
-
----
-
-# 🧪 VIII. Logging & Audit
-
-## TC15 – Ghi log transaction
-
-**Kỳ vọng:**
-
-- Có log đầy đủ: prepare, commit, rollback
-
----
-
-## TC16 – Khôi phục từ log
-
-**Mô tả:**
-
-- Restart hệ thống
-
-**Kỳ vọng:**
-
-- Dựa vào log để xử lý tiếp
-
----
-
-# 🏆 Tổng kết
-
-| Nhóm         | Mục tiêu             |
-| ------------ | -------------------- |
-| Happy path   | Thành công           |
-| Prepare fail | Ngăn commit          |
-| Commit fail  | Tránh lệch dữ liệu   |
-| Recovery     | Phục hồi hệ thống    |
-| Idempotency  | Không xử lý trùng    |
-| Concurrency  | Tránh race condition |
-| Business     | Validate dữ liệu     |
-| Logging      | Theo dõi & khôi phục |
-
----
-
-# 🚀 Gợi ý demo
-
-Nên demo 3 case chính:
-
-1. Commit thành công
-2. Partial commit (B fail)
-3. Coordinator crash + recovery
-
-👉 Đảm bảo cover đầy đủ bản chất 2PC
+1. TC01: happy path.
+2. TC04: partial commit + compensation.
+3. TC05/TC16: crash + recovery tu log.

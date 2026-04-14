@@ -1,0 +1,757 @@
+% Biên dịch khuyến nghị: XeLaTeX hoặc LuaLaTeX (file vẫn tương thích pdfLaTeX)
+\documentclass[12pt,a4paper]{report}
+
+\usepackage{iftex}
+\ifPDFTeX
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese]{babel}
+\else
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\fi
+
+\usepackage{geometry}
+\geometry{left=3cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[unicode]{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usetikzlibrary{positioning, arrows.meta, shapes.multipart}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue,
+    pdftitle={Bao cao do an CSDL phan tan - Chuyen tien ngan hang bang 2PC},
+    pdfauthor={Nguyen Phuoc Sang}
+}
+
+\lstdefinelanguage{Pseudo}{
+    morekeywords={if,then,else,for,while,return,true,false,begin,end,parallel},
+    sensitive=false,
+    morecomment=[l]{//},
+    morestring=[b]"
+}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{teal!70!black},
+    stringstyle=\color{red!60!black},
+    breaklines=true,
+    frame=single,
+    tabsize=2,
+    showstringspaces=false
+}
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+    	{TRƯỜNG ĐẠI HỌC SÀI GÒN}\\
+    	{KHOA CÔNG NGHỆ THÔNG TIN}\\[1cm]
+
+    	{BÁO CÁO ĐỒ ÁN MÔN HỌC}\\
+    	{CƠ SỞ DỮ LIỆU PHÂN TÁN}\\[1.5cm]
+
+    {\LARGE {ĐỀ TÀI 6: CHUYỂN TIỀN NGÂN HÀNG BẰNG}\\[0.2cm]
+    	{GIAO THỨC TWO-PHASE COMMIT (2PC)}}\\[1.5cm]
+
+    \begin{tabular}{ll}
+        	{Sinh viên:} & Nguyen Phuoc Sang \\
+        {MSSV:} & ........................................ \\
+        	{Lớp:} & ........................................ \\
+        	{Giảng viên hướng dẫn:} & ........................................
+    \end{tabular}
+
+    \vfill
+    TP. Ho Chi Minh, năm 2026
+\end{center}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+% ==========================================================
+\chapter{Phần mở đầu}
+
+\section{Tên đề tài}
+{Đề tài 6 - Chuyển tiền Ngân hàng: Two-Phase Commit (2PC).}
+
+Đề tài mô phỏng bài toán chuyển tiền liên ngân hàng trong hệ thống phân tán, yêu cầu giao dịch phải đảm bảo tính nguyên tử:
+\begin{itemize}
+    \item Hoặc trừ tiền ở tài khoản nguồn {và} cộng tiền ở tài khoản đích đều thành công.
+    \item Hoặc toàn bộ giao dịch bị hủy, không để xảy ra tình trạng lệch dữ liệu.
+\end{itemize}
+
+\section{Phạm vi và đối tượng nghiên cứu}
+
+\subsection{Đối tượng nghiên cứu}
+
+Đối tượng nghiên cứu của đề tài là hệ thống cơ sở dữ liệu phân tán trong lĩnh vực ngân hàng, cụ thể là bài toán chuyển tiền giữa các tài khoản thuộc các chi nhánh khác nhau. Hệ thống được xây dựng nhằm mô phỏng hoạt động của các ngân hàng có nhiều site (chi nhánh) hoạt động độc lập nhưng vẫn đảm bảo tính nhất quán dữ liệu trên toàn hệ thống.
+
+Bên cạnh đó, đề tài tập trung nghiên cứu giao thức Two-Phase Commit (2PC) để xử lý các giao dịch phân tán, đảm bảo các tính chất ACID, đặc biệt là tính nguyên tử (Atomicity) trong quá trình chuyển tiền giữa các site.
+
+\subsection{Phạm vi nghiên cứu}
+
+Phạm vi của đề tài được giới hạn trong các nội dung sau:
+
+\begin{itemize}
+    \item Mô phỏng hệ thống gồm từ 2 đến 3 site ngân hàng, mỗi site quản lý một tập dữ liệu riêng biệt.
+    \item Xây dựng chức năng chuyển tiền giữa các tài khoản thuộc các site khác nhau thông qua giao dịch phân tán.
+    \item Áp dụng giao thức Two-Phase Commit (2PC) để đảm bảo tính toàn vẹn và nhất quán dữ liệu.
+    \item Sử dụng hệ quản trị cơ sở dữ liệu SQL Server kết hợp với cơ chế Linked Server để kết nối giữa các site.
+    \item Triển khai các stored procedure để thực hiện truy vấn và giao dịch phân tán.
+\end{itemize}
+
+Ngoài ra, đề tài không tập trung vào các vấn đề sau:
+
+\begin{itemize}
+    \item Không triển khai trên môi trường thực tế với quy mô lớn (production system).
+    \item Không xử lý các nghiệp vụ ngân hàng phức tạp như tín dụng, đầu tư hoặc quản lý rủi ro.
+    \item Không tối ưu hiệu năng ở mức cao hoặc xử lý đồng thời số lượng lớn giao dịch.
+\end{itemize}
+
+\section{Mục tiêu}
+\subsection{Mục tiêu tổng quát}
+Xây dựng hệ thống chuyển tiền liên ngân hàng có khả năng chịu lỗi, sử dụng giao thức Two-Phase Commit trên nhiều CSDL độc lập.
+
+\subsection{Mục tiêu cụ thể}
+\begin{itemize}
+    \item Triển khai được giao dịch phân tán giữa ít nhất 2 site ngân hàng.
+    \item Hỗ trợ các tình huống lỗi thường gặp: fail ở Phase 1, fail ở Phase 2, timeout, coordinator crash, participant crash.
+    \item Có cơ chế \textit{recovery} từ log để xử lý giao dịch treo.
+    \item Có cơ chế \textit{idempotency} để tránh double-submit.
+    \item Có bộ test matrix TC01-TC16 và CI để tự động hóa kiểm thử.
+\end{itemize}
+
+\section{Phạm vi hệ thống}
+\subsection{Phạm vi thực hiện}
+\begin{itemize}
+    \item {Backend:} Flask (Python), API REST.
+    \item {Database:} 3 MySQL site (bank1, bank2, bank3) chạy qua Docker Compose.
+    \item {Giao thức giao dịch phân tán:} XA transaction + 2PC do coordinator điều phối.
+    \item {Frontend:} HTML/CSS/JavaScript với màn hình monitor giao dịch.
+    \item {Mô phỏng lỗi mạng:} Toxiproxy (cấu hình qua cổng 8666).
+\end{itemize}
+
+\subsection{Ngoài phạm vi}
+\begin{itemize}
+    \item Chưa triển khai xác thực/phân quyền mức production (JWT/OAuth).
+    \item Chưa triển khai replication cấp CSDL để HA thực sự.
+    \item Chưa tối ưu cho tải cao quy mô lớn như production banking.
+\end{itemize}
+
+\section{Hệ thống đang ở mức demo hay production?}
+Hệ thống trong đề tài này ở mức {demo học thuật nâng cao (production-like)}:
+\begin{itemize}
+    \item {Đạt được:} có đầy đủ flow 2PC, recovery, compensation, idempotency, monitor, CI test.
+    \item {Chưa đạt production đầy đủ:} chưa có cluster HA thực sự, chưa hardening security, chưa có observability và disaster recovery cấp doanh nghiệp.
+\end{itemize}
+
+% ==========================================================
+\chapter{Cơ sở lý thuyết}
+
+\section{CSDL phân tán là gì}
+CSDL phân tán là hệ thống dữ liệu được lưu trữ trên nhiều nút (site), có thể phân bố địa lý khác nhau, nhưng đối với người dùng và ứng dụng nó vẫn được nhìn như một CSDL thống nhất.
+
+{Lợi ích chính:}
+\begin{itemize}
+    \item Tăng khả năng mở rộng và phân bố tải.
+    \item Tăng khả năng sẵn sàng và chịu lỗi cục bộ.
+    \item Gắn dữ liệu với nơi phát sinh nghiệp vụ (theo chi nhánh, khu vực).
+\end{itemize}
+
+{Thách thức chính:}
+\begin{itemize}
+    \item Đảm bảo nhất quán dữ liệu giữa các site.
+    \item Đồng bộ và xử lý xung đột.
+    \item Quản lý giao dịch phân tán và cơ chế recovery.
+\end{itemize}
+
+\section{Phân mảnh dữ liệu}
+
+\subsection{Horizontal Fragmentation}
+Là chia bảng theo {dòng} dựa trên điều kiện (predicate). Mỗi site giữ một tập dòng.
+
+{Ví dụ:}
+\begin{itemize}
+    \item Site A giữ tài khoản có account\_number thuộc nhóm A.
+    \item Site B giữ tài khoản có account\_number thuộc nhóm B.
+\end{itemize}
+
+\subsection{Vertical Fragmentation}
+Là chia bảng theo {cột}. Mỗi site giữ một nhóm cột phù hợp nghiệp vụ.
+
+{Ví dụ:}
+\begin{itemize}
+    \item Site 1 giữ cột nhận dạng và giao dịch.
+    \item Site 2 giữ cột thông tin mở rộng/phân tích.
+\end{itemize}
+
+\subsection{Hybrid Fragmentation}
+Là kết hợp horizontal và vertical fragmentation để đạt hiệu quả cao hơn theo từng nhóm nghiệp vụ.
+
+\section{Replication}
+
+\subsection{Snapshot Replication}
+Sao chép dữ liệu theo từng đợt, phù hợp dữ liệu ít thay đổi hoặc chấp nhận độ trễ cập nhật.
+
+\subsection{Transactional Replication}
+Sao chép theo luồng giao dịch gần-thời-gian-thực, phù hợp hệ thống cần độ trễ thấp và nhất quán cao hơn.
+
+{Nhận xét đối với đề tài:}
+Trong project hiện tại, trọng tâm là atomicity của giao dịch chuyển tiền, do đó 2PC được ưu tiên. Replication cấp CSDL chưa là tâm điểm triển khai.
+
+\section{Giao dịch phân tán}
+
+\subsection{ACID}
+\begin{itemize}
+    \item {Atomicity:} tất cả hoặc không gì cả.
+    \item {Consistency:} dữ liệu luôn hợp lệ sau giao dịch.
+    \item {Isolation:} giao dịch đồng thời không làm hỏng nhau.
+    \item {Durability:} đã commit thì phải bền vững.
+\end{itemize}
+
+\subsection{Two-Phase Commit (2PC)}
+2PC có 2 pha:
+\begin{enumerate}
+    \item {Phase 1 - Prepare:} coordinator yêu cầu tất cả participant chuẩn bị, participant trả lời YES/NO.
+    \item {Phase 2 - Commit/Abort:} nếu tất cả YES thì commit, ngược lại rollback.
+\end{enumerate}
+
+Trong đề tài, 2PC được triển khai thông qua XA command của MySQL (\texttt{XA START}, \texttt{XA END}, \texttt{XA PREPARE}, \texttt{XA COMMIT}, \texttt{XA ROLLBACK}).
+
+% ==========================================================
+\chapter{Phân tích hệ thống}
+
+\section{Phát biểu bài toán}
+
+Trong hệ thống ngân hàng hiện đại, các chi nhánh thường được triển khai dưới dạng các hệ cơ sở dữ liệu độc lập (distributed sites), mỗi site quản lý dữ liệu của một tập khách hàng riêng. Khi phát sinh nhu cầu chuyển tiền giữa các tài khoản thuộc hai chi nhánh khác nhau, hệ thống cần thực hiện một giao dịch phân tán (distributed transaction) liên quan đến nhiều site.
+
+Cụ thể, xét bài toán chuyển tiền từ tài khoản thuộc ngân hàng A (Site A) sang tài khoản thuộc ngân hàng B (Site B). Giao dịch này bao gồm hai thao tác chính:
+\begin{itemize}
+    \item Trừ tiền từ tài khoản nguồn tại Site A.
+    \item Cộng tiền vào tài khoản đích tại Site B.
+\end{itemize}
+
+Do hai thao tác này diễn ra trên hai hệ thống cơ sở dữ liệu khác nhau, hệ thống phải đảm bảo các yêu cầu nghiêm ngặt về tính toàn vẹn và nhất quán dữ liệu.
+
+Các yêu cầu đặt ra cho hệ thống bao gồm:
+
+\begin{itemize}
+    \item \textbf{Tính nguyên tử (Atomicity):} Giao dịch phải được thực hiện toàn bộ hoặc không thực hiện gì cả. Không được xảy ra tình trạng tiền bị trừ ở Site A nhưng không được cộng ở Site B, hoặc ngược lại.
+    
+    \item \textbf{Tính nhất quán (Consistency):} Sau khi giao dịch hoàn tất, dữ liệu tại các site phải luôn ở trạng thái hợp lệ, không vi phạm các ràng buộc (ví dụ: số dư tài khoản không được âm).
+    
+    \item \textbf{Khả năng chịu lỗi (Fault Tolerance):} Hệ thống phải có khả năng xử lý các tình huống lỗi như mất kết nối mạng, timeout, hoặc một site bị crash trong quá trình thực hiện giao dịch. Trong các trường hợp này, hệ thống phải có cơ chế rollback hoặc phục hồi phù hợp để đảm bảo dữ liệu không bị sai lệch.
+    
+    \item \textbf{Theo dõi và truy vết giao dịch:} Hệ thống cần lưu lại trạng thái của giao dịch theo từng giai đoạn (phase), bao gồm các bước như chuẩn bị (prepare), cam kết (commit) hoặc hủy (abort), nhằm phục vụ cho việc kiểm tra, debug và phục hồi khi có sự cố.
+    
+    \item \textbf{Tính đồng bộ giữa các site:} Các site tham gia giao dịch cần phối hợp chặt chẽ thông qua một cơ chế điều phối (coordinator) để đảm bảo tất cả cùng đạt trạng thái nhất quán cuối cùng.
+\end{itemize}
+
+Để giải quyết bài toán trên, đề tài áp dụng giao thức Two-Phase Commit (2PC), trong đó một site đóng vai trò điều phối (coordinator) và các site còn lại đóng vai trò tham gia (participants). Giao thức này giúp đảm bảo rằng tất cả các site hoặc cùng commit giao dịch, hoặc cùng rollback, từ đó duy trì tính toàn vẹn dữ liệu trong môi trường phân tán.
+
+\section{Mô hình nghiệp vụ tổng quát}
+\begin{enumerate}
+    \item Người dùng đăng nhập.
+    \item Nhập thông tin chuyển tiền.
+    \item Hệ thống tìm tài khoản đích.
+    \item Coordinator thực hiện 2PC.
+    \item Trả kết quả, lưu log phase và hóa đơn giao dịch.
+    \item Khi có lỗi/treo, hệ thống có recovery tự động hoặc thủ công.
+\end{enumerate}
+
+\section{Use case}
+\subsection{Tác nhân}
+\begin{itemize}
+    \item Người dùng (khách hàng).
+    \item Hệ thống coordinator (backend Flask).
+    \item Site ngân hàng A/B (MySQL participant).
+\end{itemize}
+
+\subsection{Danh sách use case}
+\begin{itemize}
+    \item Đăng nhập.
+    \item Tra cứu tài khoản.
+    \item Chuyển tiền 2PC.
+    \item Tra cứu trạng thái giao dịch theo tx\_id.
+    \item Xem danh sách giao dịch gần nhất.
+    \item Chạy recovery thủ công.
+\end{itemize}
+
+
+\documentclass{article} % Sử dụng cho mục đích kiểm thử, bạn hãy copy đoạn tikzpicture vào file của bạn
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+
+
+\begin{center}
+\begin{tikzpicture}[
+    node distance=1.5cm and 2.5cm,
+    % Sử dụng rectangle split để chia ngăn cho ô
+    entity/.style={
+        draw, 
+        rectangle split, 
+        rectangle split parts=2, 
+        rounded corners, 
+        minimum width=5cm, 
+        align=left, 
+        font=\small
+    },
+    rel/.style={-Latex, thick}
+]
+
+% --- CÁC NÚT THỰC THỂ (Ngăn trên là tên, ngăn dưới là thuộc tính) ---
+
+% 1. Accounts
+\node[entity] (accounts) {
+    \textbf{\large accounts}
+    \nodepart{second}
+    \underline{id}, name, balance,\\ phone, account\_number
+};
+
+% 2. Transactions (đặt dưới accounts)
+\node[entity, below=2cm of accounts] (transactions) {
+    \textbf{\large transactions}
+    \nodepart{second}
+    \underline{tx\_id}, from\_account\_number,\\ to\_account\_number, amount, status
+};
+
+% 3. Transaction_log (bên trái transactions)
+\node[entity, left=of transactions] (log) {
+    \textbf{\large transaction\_log}
+    \nodepart{second}
+    \underline{tx\_id}, xid, phase, updated\_at
+};
+
+% 4. Idempotency_keys (dưới transactions)
+\node[entity, below=2cm of transactions] (idem) {
+    \textbf{\large idempotency\_keys}
+    \nodepart{second}
+    \underline{idem\_key}, request\_hash, status, tx\_id
+};
+
+% --- CÁC ĐƯỜNG NỐI ---
+\draw[rel] (accounts) -- (transactions);
+\draw[rel] (transactions) -- (log);
+\draw[rel] (transactions) -- (idem);
+
+\end{tikzpicture}
+\end{center}
+
+
+
+\section{Lược đồ quan hệ}
+\begin{itemize}
+    \item {accounts} (id PK, name, balance, phone, password, account\_number, account\_type)
+    \item {transactions} (id PK, tx\_id UNIQUE, from\_account\_number, to\_account\_number, amount, description, status, created\_at)
+    \item {transaction\_log} (id PK, tx\_id UNIQUE, xid, from\_account\_number, to\_account\_number, amount, phase, created\_at, updated\_at)
+    \item {idempotency\_keys} (id PK, idem\_key UNIQUE, request\_hash, status, tx\_id, http\_status, response\_json, timestamps)
+\end{itemize}
+
+% ==========================================================
+\chapter{Thiết kế CSDL phân tán}
+
+\section{Phân tích Sites}
+Hệ thống được phân thành 3 site CSDL và 1 site ứng dụng điều phối:
+
+\begin{longtable}{p{2.6cm}p{2.2cm}p{2.7cm}p{6.5cm}}
+    \toprule
+    {Site} & {Port} & {Database} & {Vai trò} \\
+    \midrule
+\endhead
+Site A & 3306 & bank1 & Participant nguồn, lưu log giao dịch 2PC (transaction\_log), lưu idempotency\_keys \\
+Site B & 3307 & bank2 & Participant đích, xử lý cộng tiền \\
+Site C & 3308 & bank3 & Site mở rộng cho kịch bản tăng trưởng \\
+Coordinator & 5000 & Flask app & Điều phối 2PC, API, recovery, monitor \\
+\bottomrule
+\end{longtable}
+
+\section{Chiến lược phân mảnh}
+
+\subsection{Horizontal fragmentation}
+{Bảng accounts} được phân bổ theo site ngân hàng. Điều kiện phân mảnh nghiệp vụ có thể biểu diễn:
+\begin{itemize}
+    \item Fragment F\textsubscript{A}: tài khoản thuộc Bank A (lưu tại bank1).
+    \item Fragment F\textsubscript{B}: tài khoản thuộc Bank B (lưu tại bank2).
+    \item Fragment F\textsubscript{C}: tài khoản thuộc Bank C (lưu tại bank3).
+\end{itemize}
+
+{Predicate ví dụ (mức demo):}
+\begin{itemize}
+    \item account\_number bắt đầu bằng nhóm số của từng chi nhánh/ngân hàng.
+    \item Hoặc ánh xạ theo bảng config site thay vì hard-code predicate trong SQL.
+\end{itemize}
+
+\subsection{Vertical fragmentation (có chủ đích)}
+Không chia cột theo nghĩa truyền thống trên cùng một bảng, nhưng về kiến trúc:
+\begin{itemize}
+    \item Dữ liệu vận hành giao dịch tập trung log ở bank1: transaction\_log, idempotency\_keys.
+    \item Dữ liệu tài khoản gốc nằm tại từng site participant.
+\end{itemize}
+
+\subsection{Hybrid fragmentation}
+Hệ thống hiện tại có thể xem là {hybrid practical}:
+\begin{itemize}
+    \item Horizontal cho dữ liệu tài khoản theo site.
+    \item Tách lớp metadata giao dịch (log/idempotency) về site coordinator.
+\end{itemize}
+
+\section{Giải thích lựa chọn thiết kế}
+\subsection{Tại sao phân theo chi nhánh/site ngân hàng?}
+\begin{itemize}
+    \item Phân bổ đúng theo ownership dữ liệu (mỗi ngân hàng sở hữu số dư tài khoản của mình).
+    \item Giảm độ phụ thuộc chéo và giảm tải cho một CSDL tập trung.
+    \item Gần với bài toán thực tế liên ngân hàng.
+\end{itemize}
+
+\subsection{Tại sao không replicate full toàn bộ accounts?}
+\begin{itemize}
+    \item Replicate full làm tăng chi phí đồng bộ và rủi ro conflict.
+    \item Bài toán chính cần đảm bảo atomicity giao dịch, không phải sao chép toàn bộ dữ liệu read-heavy.
+    \item 2PC + log/recovery đã đáp ứng mục tiêu môn học rõ ràng hơn replication toàn phần.
+\end{itemize}
+
+\section{Sơ đồ phân tán (site giữ bảng nào)}
+\begin{longtable}{p{2.4cm}p{10.5cm}}
+    \toprule
+    {Site} & {Bảng dữ liệu} \\
+    \midrule
+\endhead
+bank1 & accounts, transactions, transaction\_log, idempotency\_keys \\
+bank2 & accounts \\
+bank3 & accounts (mở rộng) \\
+\bottomrule
+\end{longtable}
+
+\section{Chiến lược đồng bộ dữ liệu}
+\subsection{Đồng bộ nghiệp vụ tiền tệ}
+\begin{itemize}
+    \item {Đồng bộ đồng bộ (synchronous)} qua 2PC.
+    \item Chỉ commit khi tất cả participant prepare thành công.
+\end{itemize}
+
+\subsection{Xử lý conflict}
+\begin{itemize}
+    \item Conflict write được giảm nhờ lock cấp transaction XA.
+    \item Conflict yêu cầu lặp lại (double submit) được xử lý bằng idempotency\_keys.
+    \item Trường hợp lệch pha COMMIT\_A được xử lý bằng compensation/recovery.
+\end{itemize}
+
+% ==========================================================
+\chapter{Cài đặt và cấu hình}
+
+\section{Công nghệ sử dụng}
+\begin{itemize}
+    \item Python 3 + Flask + flask-cors.
+    \item MySQL (InnoDB, XA transaction).
+    \item Docker Compose để dựng nhanh 3 site CSDL + Toxiproxy.
+    \item Pytest cho test tự động, GitHub Actions cho CI.
+\end{itemize}
+
+\section{Cấu hình kết nối phân tán}
+\subsection{Database}
+\begin{itemize}
+    \item bank1: localhost:3306
+    \item bank2: localhost:3307
+    \item bank3: localhost:3308
+\end{itemize}
+
+\subsection{Coordinator backend}
+\begin{itemize}
+    \item Flask app chạy cổng 5000.
+    \item Route chính: /api/login, /api/accounts, /api/lookup-account, /api/transfer, /api/transfer/status/\{tx\_id\}, /api/transfer/recent, /api/recover.
+\end{itemize}
+
+\subsection{Toxiproxy để mô phỏng lỗi mạng}
+\begin{itemize}
+    \item Admin API: 8474
+    \item Proxy service: 8666
+    \item Mapping: 8666 -> 5000
+\end{itemize}
+
+\section{Sơ đồ kết nối giữa các server}
+\begin{center}
+\begin{tikzpicture}[
+    box/.style={draw, rounded corners, minimum width=2.8cm, minimum height=0.9cm, align=center},
+    arr/.style={-Latex, thick},
+    node distance=1.9cm
+]
+\node[box] (ui) {Frontend\\(Live Server)};
+\node[box, right=of ui] (proxy) {Toxiproxy\\8666};
+\node[box, right=of proxy] (api) {Flask API\\5000};
+\node[box, below=of api, xshift=-2.2cm] (db1) {MySQL bank1\\3306};
+\node[box, below=of api] (db2) {MySQL bank2\\3307};
+\node[box, below=of api, xshift=2.2cm] (db3) {MySQL bank3\\3308};
+
+\draw[arr] (ui) -- (proxy);
+\draw[arr] (proxy) -- (api);
+\draw[arr] (api) -- (db1);
+\draw[arr] (api) -- (db2);
+\draw[arr] (api) -- (db3);
+\end{tikzpicture}
+\end{center}
+
+\section{Liên hệ với template SQL Server/Linked Server/Replication}
+Form môn học đề xuất SQL Server + Linked Server + Replication. Tuy nhiên project này triển khai tương đương trên MySQL + XA:
+\begin{itemize}
+    \item Linked Server được thay bằng coordinator app-level (Flask) + nhiều kết nối DB.
+    \item Distributed transaction được thực hiện bằng XA command và 2PC.
+    \item Replication không phải mục tiêu bắt buộc của đề tài này; thay vào đó tập trung atomicity + recovery.
+\end{itemize}
+
+% ==========================================================
+\chapter{Xây dựng và Demo}
+
+\section{Store Procedure phân tán (tương đương trong project hiện tại)}
+Project hiện tại không viết SP SQL thuần cho toàn bộ luồng 2PC mà triển khai ở tầng ứng dụng (\texttt{execute\_transfer()} trong backend). Về mặt thuật toán, nó tương đương một stored-procedure phân tán:
+
+\begin{lstlisting}[language=Pseudo,caption={Giả mã xử lý giao dịch 2PC cấp ứng dụng}]
+begin transfer_2pc(from_acc, to_acc, amount, description)
+    create xid, tx_id
+    log_phase(PREPARING)
+
+    parallel:
+        prepare participant A
+        prepare participant B
+    wait with timeout
+
+    if any participant fail or timeout then
+        rollback all
+        log_phase(ABORTED or TIMEOUT)
+        return error
+    end if
+
+    log_phase(PREPARED)
+    log_phase(COMMITTING)
+
+    commit A
+    log_phase(COMMIT_A)
+
+    commit B
+    log_phase(COMMITTED)
+    save receipt
+    return success
+
+on phase-2 partial failure:
+    rollback participant chua commit
+    do compensation cho participant da commit
+    return error with partial_failure
+end
+\end{lstlisting}
+
+\section{Distributed Transaction 2PC}
+\subsection{Lệnh XA chính được sử dụng}
+\begin{lstlisting}[language=SQL,caption={Tập lệnh XA trong MySQL}]
+XA START 'xid';
+UPDATE accounts SET balance = balance - :amount WHERE id = :from_id;
+XA END 'xid';
+XA PREPARE 'xid';
+
+XA START 'xid';
+UPDATE accounts SET balance = balance + :amount WHERE id = :to_id;
+XA END 'xid';
+XA PREPARE 'xid';
+
+XA COMMIT 'xid';
+-- or XA ROLLBACK 'xid';
+\end{lstlisting}
+
+\subsection{Các endpoint demo chính}
+\begin{itemize}
+    \item POST /api/transfer
+    \item GET /api/transfer/status/\{tx\_id\}
+    \item GET /api/transfer/recent
+    \item POST /api/recover
+\end{itemize}
+
+\section{Test case}
+
+\subsection{Bảng test case tổng hợp}
+\begin{longtable}{p{1.6cm}p{5.0cm}p{7.2cm}}
+    \toprule
+    {Case} & {Mô tả} & {Kết quả kỳ vọng} \\
+    \midrule
+\endhead
+TC01 & Happy path 2PC & COMMITTED, A trừ tiền, B cộng tiền \\
+TC02 & Bank A fail ở prepare & ABORTED, rollback toàn bộ \\
+TC03 & Bank B trả NO ở prepare & ABORTED, rollback toàn bộ \\
+TC04 & Commit A OK, commit B fail & partial\_failure=true, compensation được kích hoạt \\
+TC05 & Coordinator crash sau COMMIT\_A & Recovery commit tiếp B, action COMMIT\_B\_COMPLETED \\
+TC06 & Crash trước commit & Recovery -> ABORTED \\
+TC07 & Crash sau PREPARED & Recovery -> COMMITTED \\
+TC08 & In-doubt ở COMMITTING & Recovery -> COMMITTED \\
+TC09 & Commit gửi nhiều lần & Không nhân đôi tiền, COMMITTED \\
+TC10 & Rollback gửi nhiều lần & Hệ thống không crash, ABORTED \\
+TC11 & 2 giao dịch đồng thời & Mỗi request có tx\_id riêng, hệ thống ổn định \\
+TC12 & Amount <= 0 & Validation error \\
+TC13 & Tài khoản đích không tồn tại & Validation error, không commit \\
+TC14 & Double submit cùng Idempotency-Key & Request sau replay, idempotent\_replay=true, không tạo tx mới \\
+TC15 & Audit phase log & Đầy đủ PREPARING->PREPARED->COMMITTING->COMMIT\_A->COMMITTED \\
+TC16 & Recovery từ log & Xử lý đúng theo phase pending \\
+\bottomrule
+\end{longtable}
+
+\subsection{Kết quả tự động hóa kiểm thử}
+\begin{itemize}
+    \item Non-E2E suite: 128 passed (marker not e2e).
+    \item Có bộ test E2E qua Toxiproxy (opt-in qua biến RUN\_TOXIPROXY\_E2E=1).
+    \item Có smoke test frontend monitor/recovery.
+\end{itemize}
+
+\subsection{Node chết / network delay / rollback scenario}
+Trong đề tài đã mô phỏng được các trường hợp ăn điểm:
+\begin{itemize}
+    \item {Node chết:} TC05/TC06/TC07/TC08.
+    \item {Network delay:} mô phỏng bằng toxiproxy latency/timeout.
+    \item {Kết quả:} hệ thống commit đúng, rollback đúng, hoặc recovery đúng theo phase.
+\end{itemize}
+
+\section{Giao diện (screenshot)}
+Do file báo cáo này không đính kèm ảnh, có thể chèn screenshot khi xuất PDF:
+\begin{itemize}
+    \item Màn hình đăng nhập.
+    \item Dashboard và monitor giao dịch 2PC.
+    \item Màn hình kết quả transfer và tra cứu tx\_id.
+    \item Kết quả bấm recovery thủ công.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.85\textwidth}{\centering Đặt screenshot giao diện tại đây (đăng nhập / dashboard / monitor)}}
+\caption{Vị trí chèn screenshot giao diện demo}
+\end{figure}
+
+% ==========================================================
+\chapter{Đánh giá hệ thống}
+
+\section{Ưu điểm}
+\begin{itemize}
+    \item Triển khai được full flow 2PC trên nhiều site CSDL.
+    \item Có xử lý trường hợp partial commit bằng compensation.
+    \item Có cơ chế recovery từ transaction\_log khi khởi động hoặc gọi API thủ công.
+    \item Có idempotency để chống double submit trong API transfer.
+    \item Có monitor UI để theo dõi phase theo tx\_id và danh sách recent.
+    \item Có CI tự động hóa test core + e2e qua toxiproxy.
+\end{itemize}
+
+\section{Nhược điểm}
+\begin{itemize}
+    \item Chưa có cơ chế leader election cho coordinator.
+    \item Chưa có replication cấp CSDL để đảm bảo HA đầy đủ.
+    \item Chưa có test stress dài hạn và benchmark hiệu năng chi tiết.
+    \item Bảo mật đang mức demo (chưa JWT, chưa mã hóa dữ liệu nhạy cảm).
+\end{itemize}
+
+\section{So sánh với hệ tập trung}
+\begin{longtable}{p{4.0cm}p{5.8cm}p{5.0cm}}
+    \toprule
+    {Tiêu chí} & {Hệ tập trung} & {Hệ phân tán 2PC (đề tài)} \\
+    \midrule
+\endhead
+Độ phức tạp triển khai & Thấp & Cao hơn (coordinator + participant + recovery) \\
+Atomicity liên site & Không cần xử lý liên site & Được đảm bảo bằng 2PC \\
+Khả năng mở rộng & Hạn chế & Tốt hơn theo site \\
+Rủi ro điểm nghẽn/cô đơn & Dễ xảy ra & Giảm theo từng site dữ liệu \\
+Chi phí vận hành & Thấp & Cao hơn do thêm cơ chế đồng bộ/chịu lỗi \\
+\bottomrule
+\end{longtable}
+
+% ==========================================================
+\chapter{Kết luận và hướng phát triển}
+
+\section{Tổng kết}
+Đề tài đã đạt được mục tiêu môn học CSDL phân tán:
+\begin{itemize}
+    \item Triển khai bài toán chuyển tiền liên site bằng 2PC.
+    \item Có xử lý lỗi và recovery theo phase.
+    \item Có bộ testcase đầy đủ TC01-TC16 và tự động hóa qua CI.
+\end{itemize}
+
+\section{Hướng phát triển}
+\begin{itemize}
+    \item Nâng cấp coordinator thành multi-instance (active-passive/consensus).
+    \item Bổ sung replication và backup/restore tự động cho transaction\_log.
+    \item Tích hợp observability đầy đủ: metrics, tracing, alerting.
+    \item Bổ sung test stress và chaos testing theo kịch bản thực tế hơn.
+    \item Tăng cường bảo mật: bcrypt/argon2, token auth, rate limiting.
+\end{itemize}
+
+% ==========================================================
+\chapter{Tài liệu tham khảo}
+
+\begin{thebibliography}{9}
+
+\bibitem{sgu-slides}
+Tài liệu môn học Cơ sở dữ liệu phân tán,
+Trường Đại học Sài Gòn (SGU), 2026.
+
+\bibitem{mysql-xa}
+Oracle,
+\textit{MySQL Reference Manual - XA Transactions},
+\url{https://dev.mysql.com/doc/refman/8.0/en/xa.html}.
+
+\bibitem{ms-distributed}
+Microsoft,
+\textit{Distributed Data and Transactions - Documentation},
+\url{https://learn.microsoft.com/}.
+
+\bibitem{flask-doc}
+Pallets,
+\textit{Flask Documentation},
+\url{https://flask.palletsprojects.com/}.
+
+\bibitem{project-docs}
+Tài liệu nội bộ project V-Bank 2PC:
+README, Architecture, Database, API, Error Handling, 2PC Protocol,
+truy cập trong thư mục docs của project.
+
+\end{thebibliography}
+
+\appendix
+\chapter{Phụ lục A - Trích đoạn API quan trọng}
+
+\begin{lstlisting}[language=Pseudo,caption={Transfer API yêu cầu idempotency}]
+POST /api/transfer
+Headers:
+    Content-Type: application/json
+    Idempotency-Key: <client-generated-key>
+
+Body:
+{
+    "from_account_number": "102938475612",
+    "to_account_number": "203847569801",
+    "amount": 50000,
+    "description": "..."
+}
+\end{lstlisting}
+
+\chapter{Phụ lục B - Ma trận test và CI}
+
+\begin{itemize}
+    \item Pytest marker \texttt{e2e} cho bộ test qua Toxiproxy.
+    \item CI gồm 2 job:
+    \begin{itemize}
+        \item Core tests (không e2e)
+        \item Toxiproxy E2E (dùng backend thật + proxy 8666)
+    \end{itemize}
+\end{itemize}
+
+\end{document}
