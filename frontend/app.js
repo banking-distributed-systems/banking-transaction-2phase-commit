@@ -47,6 +47,31 @@ function parseRequestBody(body) {
   }
 }
 
+async function readJsonSafe(response) {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+function buildApiErrorMessage(response, payload, fallbackMessage) {
+  const messageFromPayload =
+    payload?.message || payload?.error?.message || payload?.error?.detail;
+  const message = messageFromPayload || fallbackMessage;
+  const errorCode = payload?.error?.code;
+  const requestId = payload?.error?.request_id || response.headers.get("X-Request-ID");
+
+  let fullMessage = message;
+  if (errorCode) {
+    fullMessage = `[${errorCode}] ${fullMessage}`;
+  }
+  if (requestId) {
+    fullMessage = `${fullMessage} (ref: ${requestId})`;
+  }
+  return fullMessage;
+}
+
 async function apiFetch(url, options = {}, label = "API") {
   const method = options.method || "GET";
   const start = Date.now();
@@ -149,40 +174,29 @@ async function doLogin() {
       },
       "LOGIN",
     );
-    let data = {};
-    try {
-      data = await res.json();
-    } catch {
-      data = {};
-    }
-    if (res.ok && data.status === "success") {
+    const data = await readJsonSafe(res);
+    if (res.ok && data?.status === "success") {
       currentUser = data.user;
       showDashboard();
-    } else if (res.status === 504 || res.status === 408) {
-      showToast(
-        "error",
-        "Timeout",
-        "Timeout khi kết nối tới server (có thể do toxic timeout hoặc mạng chậm)!",
-      );
-    } else if (res.status === 502 || res.status === 503) {
-      showToast(
-        "error",
-        "Lỗi proxy/backend",
-        "Proxy hoặc backend không phản hồi!",
-      );
     } else {
+      const message = buildApiErrorMessage(
+        res,
+        data,
+        "Đăng nhập thất bại",
+      );
       showToast(
         "error",
-        "Đăng nhập thất bại",
-        data.message || "Thông tin đăng nhập không hợp lệ",
+        `Đăng nhập thất bại (${res.status})`,
+        message,
       );
     }
   } catch (e) {
     if (e?.isResponseParseError) {
+      const statusPart = e.httpStatus ? `HTTP ${e.httpStatus}` : "HTTP unknown";
       showToast(
         "error",
         "Lỗi xử lý dữ liệu",
-        "⚠️ Có lỗi xảy ra khi xử lý dữ liệu. Vui lòng thử lại.",
+        `${statusPart}: Server trả dữ liệu không đọc được. Có thể phản hồi bị cắt do lỗi mạng/toxic.`,
       );
       return;
     }
@@ -258,12 +272,18 @@ function copyAccountNumber() {
 async function fetchAccounts() {
   try {
     const response = await apiFetch(`${API_URL}/accounts`, {}, "ACCOUNTS");
-    let accounts = [];
-    try {
-      accounts = await response.json();
-    } catch {
-      accounts = [];
+    const data = await readJsonSafe(response);
+    if (!response.ok) {
+      const message = buildApiErrorMessage(
+        response,
+        data,
+        "Không thể tải danh sách tài khoản",
+      );
+      showToast("error", `Lỗi tải dữ liệu (${response.status})`, message);
+      return;
     }
+
+    const accounts = Array.isArray(data) ? data : [];
     // Update current user balance
     if (currentUser) {
       const me = accounts.find((a) => a.id === currentUser.id);
@@ -328,27 +348,25 @@ function onToAccountInput() {
         },
         "LOOKUP",
       );
-      let data = {};
-      try {
-        data = await res.json();
-      } catch {
-        data = {};
-      }
-      if (res.ok && data.status === "success") {
+        const data = await readJsonSafe(res);
+      if (res.ok && data?.status === "success") {
         resolvedToAccount = data.account;
         resultDiv.innerHTML = `<span class="lookup-found"><i class="fas fa-check-circle"></i> ${data.account.name}</span>`;
-      } else if (res.status === 504 || res.status === 408) {
-        resultDiv.innerHTML = `<span class="lookup-error"><i class="fas fa-exclamation-circle"></i> Timeout khi kết nối tới server (có thể do toxic timeout hoặc mạng chậm)!</span>`;
-      } else if (res.status === 502 || res.status === 503) {
-        resultDiv.innerHTML = `<span class="lookup-error"><i class="fas fa-exclamation-circle"></i> Proxy hoặc backend không phản hồi!</span>`;
       } else {
-        resultDiv.innerHTML = `<span class="lookup-error"><i class="fas fa-times-circle"></i> Không tìm thấy tài khoản</span>`;
+          const message = buildApiErrorMessage(
+            res,
+            data,
+            "Không tìm thấy tài khoản",
+          );
+          resultDiv.innerHTML = `<span class="lookup-error"><i class="fas fa-times-circle"></i> ${message}</span>`;
       }
     } catch (err) {
-      // Phân biệt lỗi mạng/toxic phổ biến
-      let msg = "Lỗi kết nối";
-      if (err && err.name === "AbortError") {
-        msg = "Timeout khi lookup (có thể do toxic timeout hoặc mạng chậm)!";
+        let msg = "Lỗi kết nối khi tra cứu tài khoản";
+        if (err?.isResponseParseError) {
+          const statusPart = err.httpStatus ? `HTTP ${err.httpStatus}` : "HTTP unknown";
+          msg = `${statusPart}: Phản hồi không đọc được (có thể bị cắt do toxic limit_data).`;
+        } else if (err && err.name === "AbortError") {
+          msg = "Timeout khi tra cứu tài khoản";
       }
       resultDiv.innerHTML = `<span class="lookup-error"><i class="fas fa-exclamation-circle"></i> ${msg}</span>`;
     }
@@ -420,12 +438,7 @@ async function executeTransfer() {
       },
       "TRANSFER",
     );
-    let result = {};
-    try {
-      result = await response.json();
-    } catch {
-      result = {};
-    }
+    const result = await readJsonSafe(response);
     if (response.ok) {
       const now = new Date();
       const timeStr = now.toLocaleString("vi-VN", {
@@ -437,7 +450,7 @@ async function executeTransfer() {
         year: "numeric",
       });
       const txId =
-        result.tx_id || "VB" + Date.now().toString().slice(-10).toUpperCase();
+        result?.tx_id || "VB" + Date.now().toString().slice(-10).toUpperCase();
 
       closeToast();
       closeTransferModal();
@@ -452,30 +465,33 @@ async function executeTransfer() {
         toNum: resolvedToAccount.account_number,
         description,
       });
-    } else if (response.status === 504 || response.status === 408) {
-      showToast(
-        "error",
-        "Timeout",
-        "Giao dịch bị timeout (có thể do toxic timeout hoặc mạng chậm)!",
-      );
-    } else if (response.status === 502 || response.status === 503) {
-      showToast(
-        "error",
-        "Lỗi proxy/backend",
-        "Proxy hoặc backend không phản hồi!",
-      );
     } else {
+      const message = buildApiErrorMessage(
+        response,
+        result,
+        "Giao dịch thất bại",
+      );
       showToast(
         "error",
-        "Giao dịch thất bại",
-        result.message || "Lỗi không xác định!",
+        `Giao dịch thất bại (${response.status})`,
+        message,
       );
     }
   } catch (error) {
+    if (error?.isResponseParseError) {
+      const statusPart = error.httpStatus ? `HTTP ${error.httpStatus}` : "HTTP unknown";
+      showToast(
+        "error",
+        "Lỗi dữ liệu phản hồi",
+        `${statusPart}: Dữ liệu trả về không đọc được (có thể bị cắt do toxic limit_data).`,
+      );
+      return;
+    }
+
     showToast(
       "error",
       "Lỗi kết nối",
-      "⚠️ Không thể kết nối đến hệ thống lúc này.Vui lòng kiểm tra mạng hoặc thử lại sau. (có thể do toxic hoặc mạng chậm)! (2)",
+      "Không thể kết nối đến hệ thống lúc này. Vui lòng kiểm tra mạng hoặc thử lại sau.",
     );
   }
 }

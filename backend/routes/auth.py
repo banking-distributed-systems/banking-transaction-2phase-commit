@@ -15,9 +15,21 @@ def login():
     API đăng nhập
     Request body: {"phone": "...", "password": "..."}
     """
-    data = request.json
-    phone = data.get('phone', '')
-    password = data.get('password', '')
+    data = request.get_json(silent=True) or {}
+    phone = str(data.get('phone') or '').strip()
+    password = str(data.get('password') or '').strip()
+
+    if not phone:
+        return jsonify({
+            "status": "error",
+            "message": "Vui lòng nhập số điện thoại"
+        }), 400
+
+    if not password:
+        return jsonify({
+            "status": "error",
+            "message": "Vui lòng nhập mật khẩu"
+        }), 400
 
     user = authenticate_user(phone, password)
 

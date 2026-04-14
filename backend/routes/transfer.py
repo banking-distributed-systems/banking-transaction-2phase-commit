@@ -21,10 +21,16 @@ def transfer():
         "description": "..."
     }
     """
-    data = request.json
+    data = request.json or {}
     from_account_number = data.get('from_account_number', '')
     to_account_number = data.get('to_account_number', '')
-    amount = float(data.get('amount', 0))
+    try:
+        amount = float(data.get('amount', 0))
+    except (TypeError, ValueError):
+        return jsonify({
+            "status": "error",
+            "message": "Số tiền không hợp lệ"
+        }), 400
     description = data.get('description', '')
 
     # Validation

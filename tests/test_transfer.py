@@ -272,7 +272,7 @@ class TestRecoverAPI:
         data = response.get_json()
         assert 'count' in data
 
-    @patch('routes.recover.recover_in_doubt_transactions')
+    @patch('routes.recovery.recover_in_doubt_transactions')
     def test_recover_returns_recovered_list(self, mock_recover, client):
         """Test /api/recover trả về danh sách recovered"""
         mock_recover.return_value = [

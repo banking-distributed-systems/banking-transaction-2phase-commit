@@ -27,8 +27,8 @@ def lookup_account():
     API tra cứu tài khoản theo số tài khoản
     Request body: {"account_number": "..."}
     """
-    data = request.json
-    account_number = data.get('account_number', '')
+    data = request.get_json(silent=True) or {}
+    account_number = str(data.get('account_number') or '').strip()
 
     if not account_number:
         return jsonify({
