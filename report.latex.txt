@@ -72,17 +72,17 @@
     {GIAO THỨC TWO-PHASE COMMIT (2PC)}}\\[1.5cm]
 
     \begin{tabular}{ll}
-        Sinh viên 1: & Nguyen Phuoc Sang \\
+        Sinh viên 1: & Nguyễn Phước Sang \\
         MSSV: & 3123411255 \\[0.4cm]
 
-        Sinh viên 2: & ........................................ \\
-        MSSV: & ........................................ \\[0.4cm]
+        Sinh viên 2: & 3123411009 \\
+        MSSV: & Trần Quốc An \\[0.4cm]
 
-        Sinh viên 3: & ........................................ \\
-        MSSV: & ........................................ \\[0.4cm]
+        Sinh viên 3: & 3123411042 \\
+        MSSV: & Nguyễn Nguyên Chương \\[0.4cm]
 
-        Sinh viên 4: & ........................................ \\
-        MSSV: & ........................................ \\[0.4cm]
+        Sinh viên 4: & 3123411279 \\
+        MSSV: & Nguyễn Gia Thiệu \\[0.4cm]
 
         Lớp: & DCT123C3 \\
     \end{tabular}
