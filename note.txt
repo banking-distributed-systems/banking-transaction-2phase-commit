@@ -220,3 +220,20 @@ Nếu phase PREPARING  => recovery rollback => ABORTED
 Nếu phase PREPARED   => recovery commit   => COMMITTED
 Nếu phase COMMITTING => recovery commit   => COMMITTED
 Nếu phase COMMIT_A   => recovery commit B => COMMITTED
+
+Note test bằng proxy
+- `L. Thêm Limit Data (Packet Loss)`: nhập `50`
+  → login fail do response bị cắt/truncated.
+
+- `K. Thêm Close Stream (Server chết)`: không cần nhập giá trị
+  → login fail ngay do connection bị đóng.
+
+- `M. Thêm Bandwidth (Slow network)`: nhập `0`
+  → login fail do timeout.
+  Lưu ý: `1` vẫn có thể pass vì payload login hiện tại rất nhỏ.
+
+- `P. Thêm Slicer (Random packet loss)`: nhập lần lượt
+  `10`
+  `2`
+  `35000000`
+  → login fail do timeout.
