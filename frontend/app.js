@@ -133,17 +133,77 @@ function renderTxStatus(data) {
     return;
   }
 
-  const lines = [
-    `TX: ${data.tx_id || "-"}`,
-    `Phase: ${data.phase || "-"}`,
-    `Chi tiết: ${data.phase_label || "-"}`,
-    `Thông điệp: ${data.message || mapPhaseHint(data.phase)}`,
-    `Nguồn -> Đích: ${data.from_account_number || "-"} -> ${data.to_account_number || "-"}`,
-    `Số tiền: ${(data.amount || 0).toLocaleString("vi-VN")} VND`,
-    `Cập nhật: ${data.updated_at || "-"}`,
-  ];
+  const phaseClass = `phase-${data.phase || "UNKNOWN"}`;
+  box.innerHTML = `
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+  <strong style="font-size:13px">${escHtml(data.tx_id || "-")}</strong>
+  <span class="tx-phase-badge ${escHtml(phaseClass)}">${escHtml(data.phase || "UNKNOWN")}</span>
+</div>
+<div style="font-size:11px;color:#6b7b8d;line-height:1.6">
+  <div><b>Chi tiết:</b> ${escHtml(data.phase_label || "-")}</div>
+  <div><b>Nguồn → Đích:</b> ${escHtml(data.from_account_number || "-")} → ${escHtml(data.to_account_number || "-")}</div>
+  <div><b>Số tiền:</b> ${(data.amount || 0).toLocaleString("vi-VN")} VND</div>
+  <div><b>Thông điệp:</b> ${escHtml(data.message || mapPhaseHint(data.phase))}</div>
+  <div><b>Cập nhật:</b> ${escHtml(data.updated_at || "-")}</div>
+</div>`;
+}
 
-  box.textContent = lines.join("\n");
+function escHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function _logLineClass(line) {
+  if (line.includes("ERROR")) return "log-error";
+  if (line.includes("[PARTIAL COMMIT]") || line.includes("[COMPENSAT")) return "log-partial";
+  if (line.includes("WARNING") || line.includes("[COMPENSAT")) return "log-phase-warn";
+  if (line.includes("[BAL]")) {
+    const label = line.match(/\[BAL\]\s+(\S+)/)?.[1] || "";
+    if (label.startsWith("TRƯỚC")) return "log-bal-before";
+    if (label.startsWith("SAU-COMPENS") || label.startsWith("TRƯỚC-COMP")) return "log-bal-comp";
+    return "log-bal-after";
+  }
+  if (line.includes("[PHASE]")) return "log-phase";
+  return "";
+}
+
+function renderTxLog(lines) {
+  const panel = document.getElementById("txLogPanel");
+  if (!panel) return;
+  if (!Array.isArray(lines) || lines.length === 0) {
+    panel.classList.remove("has-lines");
+    panel.innerHTML = '<span class="tx-log-empty">Chưa có log cho giao dịch này.</span>';
+    return;
+  }
+  panel.classList.add("has-lines");
+  panel.innerHTML = lines
+    .map((line) => {
+      const cls = _logLineClass(line);
+      return `<span class="tx-log-line ${cls}">${escHtml(line)}</span>`;
+    })
+    .join("\n");
+  panel.scrollTop = panel.scrollHeight;
+}
+
+async function fetchTxLog(txId) {
+  try {
+    const res = await apiFetch(
+      `${API_URL}/transfer/log/${encodeURIComponent(txId)}`,
+      {},
+      "TX-LOG",
+    );
+    const payload = await readJsonSafe(res);
+    if (res.ok && payload?.status === "success") {
+      renderTxLog(payload.lines || []);
+    } else {
+      renderTxLog([]);
+    }
+  } catch {
+    renderTxLog([]);
+  }
 }
 
 function renderRecentTransactions(items = []) {
@@ -237,6 +297,7 @@ async function lookupTransactionStatus(txIdOverride = null, options = {}) {
     }
 
     renderTxStatus(payload.data);
+    await fetchTxLog(txId);
   } catch (error) {
     if (box) box.textContent = "Lỗi kết nối khi tra cứu trạng thái giao dịch.";
   }

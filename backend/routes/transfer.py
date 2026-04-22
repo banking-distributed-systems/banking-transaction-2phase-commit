@@ -297,3 +297,22 @@ def transfer_recent():
     limit = max(1, min(limit, 50))
     items = _get_recent_transactions(limit)
     return jsonify({'status': 'success', 'items': items, 'count': len(items)})
+
+
+@transfer_bp.route('/api/transfer/log/<tx_id>', methods=['GET'])
+def transfer_tx_log(tx_id: str):
+    """Đọc log lines liên quan đến tx_id từ .log file tại project root."""
+    import os as _os
+    log_path = _os.path.normpath(
+        _os.path.join(_os.path.dirname(__file__), '..', '..', '.log')
+    )
+    lines = []
+    if _os.path.exists(log_path):
+        try:
+            with open(log_path, 'r', encoding='utf-8', errors='replace') as f:
+                for line in f:
+                    if tx_id in line:
+                        lines.append(line.rstrip('\n\r'))
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)}), 500
+    return jsonify({'status': 'success', 'tx_id': tx_id, 'lines': lines, 'count': len(lines)})
