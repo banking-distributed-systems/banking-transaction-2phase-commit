@@ -1,19 +1,20 @@
 # V-Bank 2PC — Database Documentation
 
-> **Phiên bản:** 1.0
-> **Ngày:** 17/03/2026
+> **Phiên bản:** 2.0
+> **Ngày cập nhật:** 22/04/2026
 
 ---
 
 ## 1. Tổng quan Database
 
-Hệ thống V-Bank sử dụng 3 MySQL containers với các database riêng biệt:
+Hệ thống V-Bank sử dụng 4 MySQL containers với các database riêng biệt:
 
 | Container | Port | Database | Mục đích |
 |-----------|------|---------|----------|
-| `mysql1` | 3306 | `bank1` | Bank A - Tài khoản, giao dịch, log |
-| `mysql2` | 3307 | `bank2` | Bank B - Tài khoản, giao dịch |
-| `mysql3` | 3308 | `bank3` | Mở rộng |
+| `mysql1` | 3306 | `bank1` | Bank A — tài khoản, transaction_log |
+| `mysql2` | 3307 | `bank2` | Bank B — tài khoản, transaction_log |
+| `mysql3` | 3308 | `bank3` | Bank C — tài khoản, transaction_log |
+| `coordinator` | 3309 | `coordinator` | Coordinator — giao dịch tổng hợp, idempotency |
 
 ---
 
@@ -25,33 +26,23 @@ Lưu trữ thông tin tài khoản ngân hàng.
 
 ```sql
 CREATE TABLE accounts (
-    id INT PRIMARY KEY,
+    account_number VARCHAR(20) PRIMARY KEY,
     name VARCHAR(100),
-    balance DECIMAL(15, 2) CHECK (balance >= 0),
-    phone VARCHAR(20),
-    password VARCHAR(255),
-    account_number VARCHAR(20),
-    account_type VARCHAR(50) DEFAULT 'STANDARD'
+    balance DECIMAL(15,2) CHECK (balance >= 0)
 ) ENGINE=InnoDB;
 ```
 
 | Column | Type | Constraints | Mô tả |
 |--------|------|-------------|--------|
-| `id` | INT | PRIMARY KEY | ID tài khoản |
+| `account_number` | VARCHAR(20) | PRIMARY KEY | Số tài khoản |
 | `name` | VARCHAR(100) | | Tên chủ tài khoản |
 | `balance` | DECIMAL(15,2) | CHECK >= 0 | Số dư tài khoản |
-| `phone` | VARCHAR(20) | | Số điện thoại |
-| `password` | VARCHAR(255) | | MD5 hash của mật khẩu |
-| `account_number` | VARCHAR(20) | | Số tài khoản |
-| `account_type` | VARCHAR(50) | DEFAULT 'STANDARD' | Loại tài khoản |
 
 **Sample Data:**
 
 ```sql
-INSERT INTO accounts (id, name, balance, phone, password, account_number, account_type)
-VALUES
-    (1, 'Nguyễn Văn A', 1234567890, '0901234567', 'e10adc3949ba59abbe56e057f20f883e', '1029 3847 5612', 'VCB PLATINUM'),
-    (4, 'Lê Văn C', 5000000, '0923456789', 'e10adc3949ba59abbe56e057f20f883e', '3047 5612 8934', 'STANDARD');
+INSERT INTO accounts (account_number, name, balance)
+VALUES ('102938475612', 'Nguyễn Văn A', 1234567890);
 ```
 
 ---
@@ -100,39 +91,25 @@ CREATE TABLE transactions (
 
 ### 2.3. Table: transaction_log
 
-Bảng ghi log trạng thái từng phase của 2PC - quan trọng cho recovery.
+Bảng ghi trạng thái XA transaction tại từng participant — dùng cho recovery.
 
 ```sql
 CREATE TABLE transaction_log (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    tx_id VARCHAR(30) NOT NULL UNIQUE,
-    xid VARCHAR(64) NOT NULL,
-    from_account_number VARCHAR(20) NOT NULL,
-    from_name VARCHAR(100) NOT NULL,
-    to_account_number VARCHAR(20) NOT NULL,
-    to_name VARCHAR(100) NOT NULL,
-    amount DECIMAL(15,2) NOT NULL,
-    description VARCHAR(255) DEFAULT '',
-    phase VARCHAR(20) NOT NULL DEFAULT 'PREPARING',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    tx_id VARCHAR(30) PRIMARY KEY,
+    xid   VARCHAR(64),
+    phase VARCHAR(20),
+    amount DECIMAL(15,2),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 ```
 
 | Column | Type | Constraints | Mô tả |
 |--------|------|-------------|--------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | ID log |
-| `tx_id` | VARCHAR(30) | NOT NULL, UNIQUE | Mã giao dịch hiển thị |
-| `xid` | VARCHAR(64) | NOT NULL | XA Transaction ID |
-| `from_account_number` | VARCHAR(20) | NOT NULL | Số TK người gửi |
-| `from_name` | VARCHAR(100) | NOT NULL | Tên người gửi |
-| `to_account_number` | VARCHAR(20) | NOT NULL | Số TK người nhận |
-| `to_name` | VARCHAR(100) | NOT NULL | Tên người nhận |
-| `amount` | DECIMAL(15,2) | NOT NULL | Số tiền |
-| `description` | VARCHAR(255) | DEFAULT '' | Mô tả |
-| `phase` | VARCHAR(20) | NOT NULL, DEFAULT 'PREPARING' | Phase hiện tại |
-| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Thời gian tạo |
-| `updated_at` | DATETIME | AUTO UPDATE | Thời gian cập nhật |
+| `tx_id` | VARCHAR(30) | PRIMARY KEY | Mã giao dịch |
+| `xid` | VARCHAR(64) | | XA Transaction ID |
+| `phase` | VARCHAR(20) | | Phase hiện tại của 2PC |
+| `amount` | DECIMAL(15,2) | | Số tiền giao dịch |
+| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Thời gian ghi log |
 
 **Phase Values:**
 
@@ -152,110 +129,138 @@ CREATE TABLE transaction_log (
 
 ## 3. Database: bank2 (Bank B)
 
-### 3.1. Table: accounts
+Cấu trúc giống bank1. Chỉ lưu tài khoản và transaction_log của participant B.
+
+### Table: accounts
 
 ```sql
 CREATE TABLE accounts (
-    id INT PRIMARY KEY,
+    account_number VARCHAR(20) PRIMARY KEY,
     name VARCHAR(100),
-    balance DECIMAL(15, 2) CHECK (balance >= 0),
-    phone VARCHAR(20),
-    password VARCHAR(255),
-    account_number VARCHAR(20),
-    account_type VARCHAR(50) DEFAULT 'STANDARD'
+    balance DECIMAL(15,2)
 ) ENGINE=InnoDB;
 ```
 
 **Sample Data:**
 
 ```sql
-INSERT INTO accounts (id, name, balance, phone, password, account_number, account_type)
-VALUES
-    (2, 'Trần Thị B', 3000000, '0912345678', 'e10adc3949ba59abbe56e057f20f883e', '2038 4756 9801', 'STANDARD');
+INSERT INTO accounts (account_number, name, balance)
+VALUES ('203847569801', 'Trần Thị B', 2000000);
 ```
+
+### Table: transaction_log
+
+Cấu trúc giống bank1.transaction_log (xem mục 2.2).
 
 ---
 
-### 3.2. Table: transactions
+## 4. Database: bank3 (Bank C)
+
+Cấu trúc giống bank1 & bank2.
+
+### Table: accounts
 
 ```sql
-CREATE TABLE transactions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    tx_id VARCHAR(30) NOT NULL UNIQUE,
-    from_account_number VARCHAR(20) NOT NULL,
-    from_name VARCHAR(100) NOT NULL,
-    to_account_number VARCHAR(20) NOT NULL,
-    to_name VARCHAR(100) NOT NULL,
-    amount DECIMAL(15, 2) NOT NULL,
-    description VARCHAR(255) DEFAULT '',
-    status VARCHAR(20) DEFAULT 'SUCCESS',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE accounts (
+    account_number VARCHAR(20) PRIMARY KEY,
+    name VARCHAR(100),
+    balance DECIMAL(15,2)
 ) ENGINE=InnoDB;
 ```
 
----
+**Sample Data:**
 
-## 4. Database: bank3 (Bank C - Mở rộng)
-
-Tương tự Bank B, có thể mở rộng khi cần thêm ngân hàng.
-
----
-
-## 5. Entity Relationship Diagram
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        BANK A (bank1)                                      │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│   ┌─────────────┐         ┌──────────────────┐                           │
-│   │  accounts   │         │  transactions    │                           │
-│   ├─────────────┤         ├──────────────────┤                           │
-│   │ id (PK)     │◀───────│ from_account_id  │                           │
-│   │ name        │         │ to_account_id    │                           │
-│   │ balance     │         │ amount           │                           │
-│   │ phone       │         │ status           │                           │
-│   │ password    │         │ created_at       │                           │
-│   │ account_num │         └──────────────────┘                           │
-│   │ account_type│                                                     │
-│   └─────────────┘                                                     │
-│            │                                                           │
-│            │                                                            │
-│   ┌────────▼─────────┐                                                 │
-│   │ transaction_log  │                                                 │
-│   ├─────────────────┤                                                 │
-│   │ tx_id (UNIQUE)  │                                                 │
-│   │ xid             │                                                 │
-│   │ phase           │                                                 │
-│   │ ...             │                                                 │
-│   └─────────────────┘                                                 │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        BANK B (bank2)                                      │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│   ┌─────────────┐         ┌──────────────────┐                           │
-│   │  accounts   │         │  transactions    │                           │
-│   ├─────────────┤         ├──────────────────┤                           │
-│   │ id (PK)     │◀───────│ from_account_id  │                           │
-│   │ name        │         │ to_account_id    │                           │
-│   │ balance     │         │ amount           │                           │
-│   │ phone       │         │ status           │                           │
-│   │ password    │         │ created_at       │                           │
-│   │ account_num │         └──────────────────┘                           │
-│   │ account_type│                                                     │
-│   └─────────────┘                                                     │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
+```sql
+INSERT INTO accounts (account_number, name, balance)
+VALUES ('304756128934', 'Lê Văn C', 8000000);
 ```
 
+### Table: transaction_log
+
+Cấu trúc giống bank1.transaction_log (xem mục 2.2).
+
 ---
 
-## 6. Database Configuration
+## 5. Database: coordinator (Coordinator)
 
-### 6.1. Connection Parameters
+Database dùng riêng bởi Transaction Coordinator (Flask). Không dùng XA.
+
+### 5.1. Table: transactions
+
+Lưu kết quả tổng hợp của từng giao dịch (do `account_service.save_transaction()` ghi).
+
+```sql
+CREATE TABLE transactions (
+    tx_id        VARCHAR(30) PRIMARY KEY,
+    from_account VARCHAR(20),
+    to_account   VARCHAR(20),
+    amount       DECIMAL(15,2),
+    status       VARCHAR(20),
+    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+```
+
+| Column | Type | Mô tả |
+|--------|------|--------|
+| `tx_id` | VARCHAR(30) | Mã giao dịch duy nhất |
+| `from_account` | VARCHAR(20) | Số TK người gửi |
+| `to_account` | VARCHAR(20) | Số TK người nhận |
+| `amount` | DECIMAL(15,2) | Số tiền |
+| `status` | VARCHAR(20) | Trạng thái (SUCCESS / FAILED / COMPENSATED / TIMEOUT) |
+| `created_at` | DATETIME | Thời gian tạo |
+
+### 5.2. Table: idempotency_keys
+
+Đảm bảo idempotency cho API `/api/transfer` (tránh double-submit).
+
+```sql
+CREATE TABLE idempotency_keys (
+    idem_key VARCHAR(64) PRIMARY KEY,
+    status   VARCHAR(20),
+    tx_id    VARCHAR(30)
+) ENGINE=InnoDB;
+```
+
+| Column | Type | Mô tả |
+|--------|------|--------|
+| `idem_key` | VARCHAR(64) | Idempotency key từ header `Idempotency-Key` |
+| `status` | VARCHAR(20) | `PROCESSING` hoặc `SUCCESS` / `FAILED` |
+| `tx_id` | VARCHAR(30) | Mã giao dịch liên kết |
+
+---
+
+## 6. Entity Relationship Diagram
+
+```
+  bank1 / bank2 / bank3 (mỗi participant)
+  ┌──────────────────────┐   ┌─────────────────────────┐
+  │      accounts        │   │     transaction_log     │
+  ├──────────────────────┤   ├─────────────────────────┤
+  │ account_number (PK)  │   │ tx_id (PK)              │
+  │ name                 │   │ xid                     │
+  │ balance              │   │ phase                   │
+  └──────────────────────┘   │ amount                  │
+                             │ created_at              │
+                             └─────────────────────────┘
+
+  coordinator
+  ┌──────────────────────┐   ┌──────────────────────────┐
+  │    transactions      │   │    idempotency_keys      │
+  ├──────────────────────┤   ├──────────────────────────┤
+  │ tx_id (PK)           │   │ idem_key (PK)            │
+  │ from_account         │   │ status                   │
+  │ to_account           │   │ tx_id                    │
+  │ amount               │   └──────────────────────────┘
+  │ status               │
+  │ created_at           │
+  └──────────────────────┘
+```
+
+---
+
+## 7. Database Configuration
+
+### 7.1. Connection Parameters
 
 ```python
 # backend/config.py
@@ -282,9 +287,33 @@ DB2_CONFIG = {
     'read_timeout': 8,
     'write_timeout': 8
 }
+
+DB3_CONFIG = {
+    'host': 'localhost',
+    'port': 3308,
+    'user': 'root',
+    'password': 'root',
+    'database': 'bank3',
+    'autocommit': False,
+    'connect_timeout': 5,
+    'read_timeout': 8,
+    'write_timeout': 8
+}
+
+COORDINATOR_DB_CONFIG = {
+    'host': 'localhost',
+    'port': 3309,
+    'user': 'root',
+    'password': 'root',
+    'database': 'coordinator',
+    'autocommit': True,
+    'connect_timeout': 5,
+    'read_timeout': 8,
+    'write_timeout': 8
+}
 ```
 
-### 6.2. Docker Compose
+### 7.2. Docker Compose
 
 ```yaml
 # docker-compose.yml
@@ -318,32 +347,17 @@ services:
 
 ## 7. Indexing Strategy
 
-### 7.1. Indexes on accounts
+### 8.1. Indexes on accounts
 
 ```sql
--- Tìm kiếm theo số tài khoản
-CREATE INDEX idx_account_number ON accounts(account_number);
-
--- Tìm kiếm theo số điện thoại (login)
-CREATE INDEX idx_phone ON accounts(phone);
+-- Tìm kiếm theo số tài khoản (account_number là PRIMARY KEY nên index tự động)
+-- Không cần thêm index phụ
 ```
 
-### 7.2. Indexes on transactions
+### 8.2. Indexes on transaction_log
 
 ```sql
--- Tìm kiếm theo tx_id
-CREATE INDEX idx_tx_id ON transactions(tx_id);
-
--- Tìm kiếm theo ngày
-CREATE INDEX idx_created_at ON transactions(created_at);
-```
-
-### 7.3. Indexes on transaction_log
-
-```sql
--- Tìm kiếm theo tx_id
-CREATE INDEX idx_log_tx_id ON transaction_log(tx_id);
-
+-- Tìm kiếm theo tx_id (là PRIMARY KEY, index tự động)
 -- Tìm kiếm theo xid (recovery)
 CREATE INDEX idx_log_xid ON transaction_log(xid);
 
@@ -353,7 +367,7 @@ CREATE INDEX idx_log_phase ON transaction_log(phase);
 
 ---
 
-## 8. Backup & Recovery
+## 9. Backup & Recovery
 
 ### 8.1. Backup Strategy
 
@@ -372,21 +386,16 @@ Sử dụng binary logs để recovery đến thời điểm cụ thể.
 
 ---
 
-## 9. Security Considerations
+## 10. Security Considerations
 
-### 9.1. Password Storage
-
-- Password được hash bằng MD5 trong database
-- Nên chuyển sang bcrypt hoặc argon2 cho production
-
-### 9.2. Connection Security
+### 10.1. Connection Security
 
 - Sử dụng SSL cho production
 - Hạn chế quyền user database
 
 ---
 
-## 10. Related Documentation
+## 11. Related Documentation
 
 - [PRD](./PRD.md)
 - [Architecture](./ARCHITECTURE.md)

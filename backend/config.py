@@ -44,6 +44,18 @@ DB3_CONFIG = {
     'write_timeout': 8
 }
 
+COORDINATOR_DB_CONFIG = {
+    'host': 'localhost',
+    'port': 3309,
+    'user': 'root',
+    'password': 'root',
+    'database': 'coordinator',
+    'autocommit': False,
+    'connect_timeout': 5,
+    'read_timeout': 8,
+    'write_timeout': 8
+}
+
 # Danh sách tất cả database configs
 ALL_DB_CONFIGS = [DB1_CONFIG, DB2_CONFIG, DB3_CONFIG]
 

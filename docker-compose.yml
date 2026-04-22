@@ -32,6 +32,17 @@ services:
     volumes:
       - ./db3-init:/docker-entrypoint-initdb.d
 
+  coordinator:
+    image: mysql:8.0
+    container_name: coordinator
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: coordinator
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./coordinator-init:/docker-entrypoint-initdb.d
+
   toxiproxy:
     image: ghcr.io/shopify/toxiproxy:2.12.0
     container_name: toxiproxy
