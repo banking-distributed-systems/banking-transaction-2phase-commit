@@ -9,7 +9,8 @@ CREATE TABLE transaction_log (
 CREATE TABLE accounts (
     account_number VARCHAR(20) PRIMARY KEY,
     name VARCHAR(100),
-    balance DECIMAL(15,2)
+    balance DECIMAL(15,2),
+    account_type VARCHAR(50) DEFAULT NULL
 ) ENGINE=InnoDB;
 
 INSERT INTO accounts (account_number, name, balance)
