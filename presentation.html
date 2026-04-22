@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>V-Bank 2PC — Thuyết trình đồ án CSDL phân tán</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #21262d;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --warn: #f0883e;
+    --danger: #f85149;
+    --purple: #bc8cff;
+    --teal: #39d353;
+    --yellow: #e3b341;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --slide-w: 960px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; overflow: hidden; }
+
+  /* ─── NAVIGATION ─── */
+  #nav { position: fixed; top: 0; left: 0; right: 0; height: 48px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100; }
+  #nav .logo { font-weight: 700; font-size: 15px; color: var(--accent); letter-spacing: .5px; }
+  #nav .controls { display: flex; gap: 10px; align-items: center; }
+  #nav button { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: background .2s; }
+  #nav button:hover { background: var(--accent); color: #fff; }
+  #slide-counter { font-size: 13px; color: var(--text2); min-width: 60px; text-align: center; }
+  #progress-bar { position: fixed; top: 48px; left: 0; height: 3px; background: var(--accent); transition: width .3s ease; z-index: 100; }
+
+  /* ─── SLIDE CONTAINER ─── */
+  #slides-wrapper { position: fixed; top: 48px; left: 0; right: 0; bottom: 0; overflow: hidden; }
+  .slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateX(60px); transition: opacity .4s ease, transform .4s ease; pointer-events: none; }
+  .slide.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+  .slide.prev { opacity: 0; transform: translateX(-60px); }
+  .slide-inner { width: var(--slide-w); max-width: 98vw; max-height: calc(100vh - 80px); overflow-y: auto; padding: 36px 40px; }
+  .slide-inner::-webkit-scrollbar { width: 5px; } 
+  .slide-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ─── TYPOGRAPHY ─── */
+  h1 { font-size: 2.4rem; font-weight: 800; line-height: 1.15; }
+  h2 { font-size: 1.65rem; font-weight: 700; margin-bottom: 18px; }
+  h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+  p { line-height: 1.7; color: var(--text2); }
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .tag-blue { background: rgba(88,166,255,.15); color: var(--accent); border: 1px solid rgba(88,166,255,.3); }
+  .tag-green { background: rgba(63,185,80,.15); color: var(--accent2); border: 1px solid rgba(63,185,80,.3); }
+  .tag-orange { background: rgba(240,136,62,.15); color: var(--warn); border: 1px solid rgba(240,136,62,.3); }
+  .tag-red { background: rgba(248,81,73,.15); color: var(--danger); border: 1px solid rgba(248,81,73,.3); }
+  .tag-purple { background: rgba(188,140,255,.15); color: var(--purple); border: 1px solid rgba(188,140,255,.3); }
+  .accent { color: var(--accent); }
+  .green { color: var(--accent2); }
+  .orange { color: var(--warn); }
+  .danger { color: var(--danger); }
+  .purple { color: var(--purple); }
+  .yellow { color: var(--yellow); }
+  .sub { color: var(--text2); font-size: .9em; }
+
+  /* ─── CARDS ─── */
+  .card-grid { display: grid; gap: 14px; }
+  .card-grid-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+  .card.highlight { border-color: var(--accent); }
+  .card.success { border-color: var(--accent2); }
+  .card.warning { border-color: var(--warn); }
+  .card.danger { border-color: var(--danger); }
+  .card .card-icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .card h3 { color: var(--text); }
+
+  /* ─── PHASE FLOW ─── */
+  .phase-flow { display: flex; flex-direction: column; gap: 0; }
+  .phase-step { display: flex; gap: 16px; position: relative; }
+  .phase-step:not(:last-child)::after { content:''; position: absolute; left: 19px; top: 44px; bottom: -12px; width: 2px; background: var(--border); }
+  .phase-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; margin-top: 4px; }
+  .phase-dot.preparing { background: rgba(88,166,255,.2); color: var(--accent); border: 2px solid var(--accent); }
+  .phase-dot.prepared  { background: rgba(57,211,83,.2); color: var(--teal); border: 2px solid var(--teal); }
+  .phase-dot.committing{ background: rgba(227,179,65,.2); color: var(--yellow); border: 2px solid var(--yellow); }
+  .phase-dot.commit_a  { background: rgba(240,136,62,.2); color: var(--warn); border: 2px solid var(--warn); }
+  .phase-dot.committed { background: rgba(63,185,80,.2); color: var(--accent2); border: 2px solid var(--accent2); }
+  .phase-dot.aborted   { background: rgba(248,81,73,.2); color: var(--danger); border: 2px solid var(--danger); }
+  .phase-dot.timeout   { background: rgba(248,81,73,.2); color: #ff7b72; border: 2px solid #ff7b72; }
+  .phase-dot.compensating { background: rgba(188,140,255,.2); color: var(--purple); border: 2px solid var(--purple); }
+  .phase-dot.compensated  { background: rgba(188,140,255,.2); color: var(--purple); border: 2px solid var(--purple); }
+  .phase-content { padding-bottom: 20px; flex: 1; }
+  .phase-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+  .phase-desc { font-size: .88rem; color: var(--text2); line-height: 1.55; }
+  .phase-code { font-size: .78rem; font-family: 'Cascadia Code','Consolas',monospace; background: var(--bg3); border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; margin-top: 6px; color: #79c0ff; display: inline-block; }
+
+  /* ─── TABLE ─── */
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  th { background: var(--bg3); color: var(--text); padding: 9px 12px; text-align: left; border-bottom: 2px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+  tr:hover td { background: var(--bg2); }
+  .tc-pass { color: var(--accent2); font-weight: 600; }
+  .tc-fail { color: var(--danger); font-weight: 600; }
+  .tc-warn { color: var(--warn); font-weight: 600; }
+
+  /* ─── CODE BLOCK ─── */
+  pre { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; font-size: .78rem; font-family: 'Cascadia Code','Consolas',monospace; overflow-x: auto; line-height: 1.55; color: #e6edf3; }
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .num { color: #f0883e; }
+
+  /* ─── TIMELINE ─── */
+  .timeline { display: grid; grid-template-columns: 120px 4px 1fr; gap: 0 12px; }
+  .tl-label { text-align: right; font-size: .8rem; color: var(--text2); padding: 6px 0; line-height: 1.4; }
+  .tl-line { background: var(--border); position: relative; }
+  .tl-line::before { content:''; position: absolute; left: -4px; top: 10px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+  .tl-line.green::before { background: var(--accent2); }
+  .tl-line.orange::before { background: var(--warn); }
+  .tl-line.red::before { background: var(--danger); }
+  .tl-content { font-size: .85rem; padding: 6px 0 16px; line-height: 1.5; }
+
+  /* ─── STAT BOXES ─── */
+  .stat-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; flex: 1; min-width: 120px; }
+  .stat-num { font-size: 2rem; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: .8rem; color: var(--text2); margin-top: 2px; }
+
+  /* ─── DIAGRAM ─── */
+  .diagram { display: flex; align-items: center; gap: 0; justify-content: center; flex-wrap: wrap; }
+  .diagram-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; text-align: center; font-size: .85rem; font-weight: 600; min-width: 100px; }
+  .diagram-box.coordinator { border-color: var(--accent); color: var(--accent); }
+  .diagram-box.db-a { border-color: var(--accent2); color: var(--accent2); }
+  .diagram-box.db-b { border-color: var(--yellow); color: var(--yellow); }
+  .diagram-box.db-c { border-color: var(--purple); color: var(--purple); }
+  .diagram-arrow { color: var(--text2); font-size: 1.2rem; padding: 0 6px; }
+
+  /* ─── UTILS ─── */
+  .mt8 { margin-top: 8px; }
+  .mt12 { margin-top: 12px; }
+  .mt16 { margin-top: 16px; }
+  .mt20 { margin-top: 20px; }
+  .mt24 { margin-top: 24px; }
+  .mb8 { margin-bottom: 8px; }
+  .mb12 { margin-bottom: 12px; }
+  .row { display: flex; gap: 16px; align-items: flex-start; }
+  .col { flex: 1; }
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .pill { background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: .78rem; color: var(--text2); }
+  .pill.on { border-color: var(--accent); color: var(--accent); background: rgba(88,166,255,.08); }
+
+  /* ─── TITLE SLIDE SPECIAL ─── */
+  #slide-0 .slide-inner { display: flex; flex-direction: column; justify-content: center; min-height: calc(100vh - 100px); }
+  .title-badge { font-size: .8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 16px; }
+  .title-sub { font-size: 1.05rem; color: var(--text2); margin-top: 20px; line-height: 1.7; max-width: 680px; }
+  .title-members { margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 560px; }
+  .member { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; font-size: .85rem; }
+  .member span { color: var(--accent2); font-weight: 600; }
+
+  /* ─── KEYBOARD HINT ─── */
+  .key-hint { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: .72rem; color: var(--text2); background: var(--bg2); border: 1px solid var(--border); padding: 4px 14px; border-radius: 20px; }
+
+  /* ─── SCROLLABLE TABLE WRAPPER ─── */
+  .table-wrap { overflow-x: auto; }
+
+  /* ─── TC DETAIL CARD ─── */
+  .tc-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 14px; }
+  .tc-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .tc-badge { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 2px 10px; font-weight: 700; font-size: .85rem; font-family: monospace; }
+  .tc-flow { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .tc-step { background: var(--bg3); border: 1px solid var(--border); border-radius: 5px; padding: 3px 10px; font-size: .78rem; font-family: monospace; }
+  .tc-arrow { color: var(--text2); font-size: .9rem; }
+
+  /* ─── BALANCE LOG ─── */
+  .bal-log { background: #010409; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-family: 'Cascadia Code','Consolas',monospace; font-size: .72rem; line-height: 1.88; }
+  .bal-log .bl { display: flex; gap: 10px; align-items: baseline; }
+  .bal-log .bl-phase { min-width: 118px; font-weight: 700; }
+  .bl-phase.preparing  { color: var(--accent); }
+  .bl-phase.prepared   { color: var(--teal); }
+  .bl-phase.committing { color: var(--yellow); }
+  .bl-phase.commit_a   { color: var(--warn); }
+  .bl-phase.committed  { color: var(--accent2); }
+  .bl-phase.aborted    { color: var(--danger); }
+  .bl-phase.compensation { color: var(--purple); }
+  .bl-phase.recovery   { color: #79c0ff; }
+  .bl-phase.crash      { color: var(--danger); }
+  .bal-log .bl-bank { min-width: 70px; color: var(--text2); }
+  .bal-log .bl-msg  { flex: 1; color: var(--text); }
+  .bal-log .debit   { color: #ff7b72; font-weight: 600; }
+  .bal-log .credit  { color: var(--accent2); font-weight: 600; }
+  .bal-log .lock-val { color: var(--yellow); }
+  .bal-log .neutral { color: var(--text2); }
+  .bal-log .sep { border-top: 1px dashed var(--border); margin: 3px 0; }
+  .bal-log .bl-head { color: var(--text2); font-size: .67rem; margin-bottom: 4px; letter-spacing: .4px; text-transform: uppercase; }
+
+  /* ─── NARRATOR BOX ─── */
+  .tc-narrator { background: rgba(88,166,255,.07); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; padding: 8px 14px; margin: 8px 0 10px; font-size: .82rem; line-height: 1.7; color: var(--text); }
+  .tc-narrator b { color: var(--accent); }
+  .tc-narrator .nar-label { display: inline-block; font-size: .68rem; font-weight: 700; letter-spacing: .5px; color: var(--accent); text-transform: uppercase; margin-bottom: 3px; }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="logo">🏦 V-Bank 2PC Presentation</div>
+  <div class="controls">
+    <button id="btn-prev">← Prev</button>
+    <span id="slide-counter">1 / 12</span>
+    <button id="btn-next">Next →</button>
+  </div>
+</nav>
+<div id="progress-bar"></div>
+
+<div id="slides-wrapper">
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 0 — COVER
+  ───────────────────────────────────────────── -->
+  <div class="slide active" id="slide-0">
+    <div class="slide-inner">
+      <div class="title-badge">Đề tài 6 · CSDL Phân tán · DCT123C3</div>
+      <h1>Chuyển tiền ngân hàng<br><span class="accent">bằng giao thức 2PC</span></h1>
+      <p class="title-sub">Mô phỏng bài toán chuyển tiền liên ngân hàng trong hệ thống phân tán sử dụng <strong style="color:var(--text)">Two-Phase Commit</strong>, XA Transactions và cơ chế phục hồi tự động. Hệ thống xử lý các kịch bản lỗi thực tế: timeout, coordinator crash, partial commit và compensation.</p>
+      <div class="title-members">
+        <div class="member"><span>Nguyễn Phước Sang</span><br><small>3123411255</small></div>
+        <div class="member"><span>Trần Quốc An</span><br><small>3123411009</small></div>
+        <div class="member"><span>Nguyễn Nguyên Chương</span><br><small>3123411042</small></div>
+        <div class="member"><span>Nguyễn Gia Thiệu</span><br><small>3123411279</small></div>
+      </div>
+      <div class="pill-row mt24">
+        <div class="pill on">Flask · Python</div>
+        <div class="pill on">MySQL · XA</div>
+        <div class="pill on">Docker Compose</div>
+        <div class="pill on">Toxiproxy</div>
+        <div class="pill on">Pytest · CI</div>
+      </div>
+      <p class="sub mt16">Giảng viên hướng dẫn: <strong style="color:var(--text)">Vũ Ngọc Thanh Sang</strong> · Trường ĐH Sài Gòn</p>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 1 — TỔNG QUAN
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-1">
+    <div class="slide-inner">
+      <div class="tag tag-blue mb12">Slide 2</div>
+      <h2>Tổng quan dự án</h2>
+      <div class="card-grid card-grid-3 mt12">
+        <div class="card highlight">
+          <div class="card-icon">🗄️</div>
+          <h3 class="accent">3 Site Ngân hàng</h3>
+          <p class="mt8">bank1 (3306) · bank2 (3307) · bank3 (3308). Mỗi site là một MySQL instance độc lập — dữ liệu không chia sẻ.</p>
+        </div>
+        <div class="card success">
+          <div class="card-icon">⚙️</div>
+          <h3 class="green">Coordinator</h3>
+          <p class="mt8">Flask API trên cổng 5000. Điều phối toàn bộ luồng 2PC, xử lý recovery, idempotency.</p>
+        </div>
+        <div class="card warning">
+          <div class="card-icon">🔌</div>
+          <h3 class="orange">Toxiproxy</h3>
+          <p class="mt8">Proxy lớp mạng trên cổng 8666 → 5000. Inject latency, timeout, ngắt kết nối để mô phỏng lỗi mạng.</p>
+        </div>
+      </div>
+      <div class="mt20">
+        <h3 class="mb12">Kiến trúc kết nối</h3>
+        <div class="diagram">
+          <div class="diagram-box" style="border-color:var(--text2);color:var(--text2)">Frontend<br><small class="sub">HTML/JS</small></div>
+          <div class="diagram-arrow">→</div>
+          <div class="diagram-box" style="border-color:var(--warn);color:var(--warn)">Toxiproxy<br><small class="sub">:8666</small></div>
+          <div class="diagram-arrow">→</div>
+          <div class="diagram-box coordinator">Flask API<br><small>:5000</small></div>
+          <div class="diagram-arrow">→</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="diagram-box db-a">MySQL bank1<br><small>:3306</small></div>
+            <div class="diagram-box db-b">MySQL bank2<br><small>:3307</small></div>
+            <div class="diagram-box db-c">MySQL bank3<br><small>:3308</small></div>
+            <div class="diagram-box coordinator">MySQL coordinator<br><small>:3309</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="mt20">
+        <h3 class="mb12">Phân mảnh dữ liệu</h3>
+        <div class="card-grid" style="grid-template-columns:1fr 1fr 1fr 1fr">
+          <div class="card"><h3>bank1 <span class="sub">:3306</span></h3><p class="mt8"><strong class="accent">accounts</strong> · <strong class="accent">transaction_log</strong></p><p class="mt4 sub" style="font-size:.78rem">Participant nguồn. Ghi log phase XA.</p></div>
+          <div class="card"><h3>bank2 <span class="sub">:3307</span></h3><p class="mt8"><strong style="color:var(--yellow)">accounts</strong></p><p class="mt4 sub" style="font-size:.78rem">Participant đích, xử lý cộng tiền.</p></div>
+          <div class="card"><h3>bank3 <span class="sub">:3308</span></h3><p class="mt8"><strong style="color:var(--purple)">accounts</strong></p><p class="mt4 sub" style="font-size:.78rem">Site mở rộng (Bank C).</p></div>
+          <div class="card highlight"><h3>coordinator <span class="sub">:3309</span></h3><p class="mt8"><strong class="accent">transactions</strong> · <strong class="accent">idempotency_keys</strong></p><p class="mt4 sub" style="font-size:.78rem">Lưu receipt &amp; chống double-submit.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 2 — CÁC PHASE 2PC
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-2">
+    <div class="slide-inner">
+      <div class="tag tag-blue mb12">Slide 3</div>
+      <h2>Các trạng thái (Phase) trong 2PC</h2>
+      <p class="mb16">Mỗi giao dịch đi qua chuỗi trạng thái được ghi vào <code style="color:var(--accent)">transaction_log</code>. Happy path: <span class="accent">PREPARING → PREPARED → COMMITTING → COMMIT_A → COMMITTED</span></p>
+      <div class="phase-flow">
+        <div class="phase-step">
+          <div class="phase-dot preparing">P</div>
+          <div class="phase-content">
+            <div class="phase-title accent">PREPARING <span class="tag tag-blue" style="font-size:10px;margin-left:6px">Phase 1 bắt đầu</span></div>
+            <div class="phase-desc">Coordinator nhận lệnh chuyển tiền. Ghi log với trạng thái PREPARING. Bắt đầu gửi <strong>XA START</strong> + <strong>UPDATE balance</strong> + <strong>XA END</strong> + <strong>XA PREPARE</strong> tới cả 2 participant <em>song song</em> (ThreadPoolExecutor, timeout 10s).</div>
+            <div class="phase-code">XA START 'xid'; UPDATE accounts SET balance±amount; XA END 'xid'; XA PREPARE 'xid';</div>
+          </div>
+        </div>
+        <div class="phase-step">
+          <div class="phase-dot prepared">✓</div>
+          <div class="phase-content">
+            <div class="phase-title green">PREPARED <span class="tag tag-green" style="font-size:10px;margin-left:6px">Phase 1 hoàn tất</span></div>
+            <div class="phase-desc">Cả hai Bank A và Bank B đã trả lời YES. Dữ liệu đang bị <strong>lock</strong> trong XA PREPARED state. Coordinator cập nhật log → PREPARED. Giao dịch chưa commit, dữ liệu chưa thay đổi thật sự nhưng không thể bị cancel bởi participant nữa.</div>
+          </div>
+        </div>
+        <div class="phase-step">
+          <div class="phase-dot committing">C</div>
+          <div class="phase-content">
+            <div class="phase-title yellow">COMMITTING <span class="tag tag-orange" style="font-size:10px;margin-left:6px">Phase 2 bắt đầu</span></div>
+            <div class="phase-desc">Coordinator quyết định COMMIT. Cập nhật log → COMMITTING. Đây là điểm quyết định không thể đảo ngược: nếu ghi được log này thì hệ thống <em>phải</em> commit xong, dù coordinator có crash.</div>
+          </div>
+        </div>
+        <div class="phase-step">
+          <div class="phase-dot commit_a">A</div>
+          <div class="phase-content">
+            <div class="phase-title orange">COMMIT_A <span class="tag tag-orange" style="font-size:10px;margin-left:6px">Trạng thái trung gian nguy hiểm</span></div>
+            <div class="phase-desc">Bank A (nguồn) đã XA COMMIT thành công — tiền đã bị trừ thật sự. Bank B (đích) chưa commit. Đây là điểm dễ crash nhất. Nếu coordinator crash tại đây → Recovery sẽ phát hiện và hoàn tất commit Bank B, hoặc chạy Compensation.</div>
+            <div class="phase-code">XA COMMIT 'xid'; -- Bank A xong, Bank B chưa</div>
+          </div>
+        </div>
+        <div class="phase-step">
+          <div class="phase-dot committed">✔</div>
+          <div class="phase-content">
+            <div class="phase-title green">COMMITTED <span class="tag tag-green" style="font-size:10px;margin-left:6px">Thành công</span></div>
+            <div class="phase-desc">Cả Bank A và Bank B đều XA COMMIT thành công. Tiền đã trừ ở nguồn và cộng ở đích. Coordinator lưu receipt vào bảng <code>transactions</code>. Trả response SUCCESS về client.</div>
+          </div>
+        </div>
+        <div class="phase-step">
+          <div class="phase-dot aborted">✗</div>
+          <div class="phase-content">
+            <div class="phase-title danger">ABORTED <span class="tag tag-red" style="font-size:10px;margin-left:6px">Rollback</span></div>
+            <div class="phase-desc">Một hoặc cả hai participant FAIL ở Phase 1, hoặc recovery quyết định rollback. Coordinator chạy <code>XA ROLLBACK</code> tất cả. Không tài khoản nào thay đổi số dư.</div>
+            <div class="phase-code">XA ROLLBACK 'xid'; -- gọi trên tất cả participant</div>
+          </div>
+        </div>
+        <div class="phase-step">
+          <div class="phase-dot timeout">⏱</div>
+          <div class="phase-content">
+            <div class="phase-title danger">TIMEOUT</div>
+            <div class="phase-desc">Một participant không phản hồi XA PREPARE trong 10 giây (PREPARE_TIMEOUT). Coordinator auto-rollback toàn bộ. Không tài khoản nào bị ảnh hưởng.</div>
+          </div>
+        </div>
+        <div class="phase-step">
+          <div class="phase-dot compensating">↩</div>
+          <div class="phase-content">
+            <div class="phase-title purple">COMPENSATING → COMPENSATED</div>
+            <div class="phase-desc">Xảy ra khi Bank A đã COMMIT nhưng Bank B không thể COMMIT và không thể rollback. Coordinator tạo giao dịch ngược chiều: cộng lại tiền cho Bank A. Ghi tx_id = <code>'COMP-' + tx_id</code> vào bảng transactions.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 3 — PHASE 1 CHI TIẾT
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-3">
+    <div class="slide-inner">
+      <div class="tag tag-blue mb12">Slide 4</div>
+      <h2>Phase 1 — PREPARE chi tiết</h2>
+      <p class="mb16">Hai participant chạy song song trong ThreadPoolExecutor(max_workers=2). Coordinator chờ cả hai với timeout 10 giây.</p>
+      <div class="row">
+        <div class="col">
+          <div class="card highlight">
+            <h3 class="accent mb8">Coordinator gửi song song</h3>
+            <pre><span class="cm"># concurrent.futures — chạy cùng lúc</span>
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">2</span>) <span class="kw">as</span> ex:
+    future_A = ex.submit(xa_prepare_participant,
+        from_config, xid, from_acc, amount, <span class="num">True</span>)
+    future_B = ex.submit(xa_prepare_participant,
+        to_config,   xid, to_acc,   amount, <span class="num">False</span>)
+
+    done, pending = wait([future_A, future_B],
+                         timeout=<span class="num">10</span>)  <span class="cm"># 10 giây</span></pre>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card success">
+            <h3 class="green mb8">Từng participant thực hiện</h3>
+            <pre><span class="cm"># Trong xa_prepare_participant()</span>
+conn = get_connection(config)
+cur.execute(<span class="str">f"XA START '{xid}'"</span>)
+
+<span class="kw">if</span> is_debit:   <span class="cm"># Bank A — trừ tiền</span>
+    cur.execute(<span class="str">"UPDATE accounts
+    SET balance = balance - %s
+    WHERE account_number = %s"</span>, ...)
+<span class="kw">else</span>:          <span class="cm"># Bank B — cộng tiền</span>
+    cur.execute(<span class="str">"UPDATE accounts
+    SET balance = balance + %s
+    WHERE account_number = %s"</span>, ...)
+
+cur.execute(<span class="str">f"XA END '{xid}'"</span>)
+cur.execute(<span class="str">f"XA PREPARE '{xid}'"</span>)</pre>
+          </div>
+        </div>
+      </div>
+      <div class="mt16">
+        <h3 class="mb12">Kết quả sau Phase 1</h3>
+        <div class="card-grid card-grid-3">
+          <div class="card success">
+            <h3 class="green">✓ Cả hai OK</h3>
+            <p class="mt8">→ Ghi PREPARED. Tiếp tục Phase 2. Dữ liệu bị lock nhưng chưa commit thật.</p>
+          </div>
+          <div class="card danger">
+            <h3 class="danger">✗ 1 bên fail</h3>
+            <p class="mt8">→ Ghi ABORTED. Chạy <code>XA ROLLBACK</code> cả hai. Không giao dịch nào xảy ra.</p>
+          </div>
+          <div class="card warning">
+            <h3 class="orange">⏱ Timeout</h3>
+            <p class="mt8">→ Ghi TIMEOUT. Auto rollback. Message rõ ràng tên participant chậm.</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt16 card">
+        <h3 class="mb8">⚠️ Tại sao XA state vẫn tồn tại sau khi đóng connection?</h3>
+        <p>MySQL InnoDB duy trì XA PREPARED state độc lập với connection. Khi <code>xa_prepare_participant</code> đóng connection (finally block), trạng thái PREPARED vẫn còn trong engine. Chỉ <code>XA COMMIT</code> hoặc <code>XA ROLLBACK</code> mới xóa nó — đây là điều cho phép Recovery hoạt động.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 4 — PHASE 2 CHI TIẾT
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-4">
+    <div class="slide-inner">
+      <div class="tag tag-blue mb12">Slide 5</div>
+      <h2>Phase 2 — COMMIT chi tiết</h2>
+      <p class="mb16">Coordinator commit <strong>tuần tự</strong>: Bank A trước, Bank B sau. Đây là thiết kế có chủ đích để phát hiện COMMIT_A partial failure.</p>
+      <pre><span class="cm"># ── PHASE 2 ────────────────────────────────────────────────</span>
+log_phase(tx_id, xid, <span class="str">'COMMITTING'</span>)
+
+<span class="cm"># Bank A (nguồn) — commit trước</span>
+ca = get_connection({**from_config, <span class="str">'autocommit'</span>: <span class="num">True</span>})
+ca.cursor().execute(<span class="str">f"XA COMMIT '{xid}'"</span>)
+log_phase(tx_id, xid, <span class="str">'COMMIT_A'</span>)  <span class="cm"># ← điểm nguy hiểm</span>
+commit_a_done = <span class="num">True</span>
+
+<span class="cm"># Bank B (đích) — commit sau</span>
+cb = get_connection({**to_config, <span class="str">'autocommit'</span>: <span class="num">True</span>})
+cb.cursor().execute(<span class="str">f"XA COMMIT '{xid}'"</span>)
+
+log_phase(tx_id, xid, <span class="str">'COMMITTED'</span>)
+save_transaction(...)  <span class="cm"># lưu receipt</span>
+<span class="kw">return</span> (True, <span class="str">"Chuyển tiền thành công!"</span>, tx_id, None)
+
+<span class="cm"># ── Nếu exception sau COMMIT_A ──────────────────────────────</span>
+<span class="kw">except</span> Exception:
+    <span class="kw">if</span> commit_a_done:
+        <span class="cm"># Kịch bản 4: partial failure → compensation</span>
+        xa_rollback(to_config, xid)   <span class="cm"># rollback Bank B</span>
+        do_compensation(tx_id, xid, from_acc, amount)
+    <span class="kw">else</span>:
+        rollback_xa_all(xid, [from_config, to_config])</pre>
+      <div class="mt16 card-grid card-grid-2">
+        <div class="card success">
+          <h3 class="green mb8">Luồng thành công</h3>
+          <div class="tc-flow">
+            <div class="tc-step" style="border-color:var(--accent);color:var(--accent)">COMMITTING</div>
+            <div class="tc-arrow">→</div>
+            <div class="tc-step" style="border-color:var(--warn);color:var(--warn)">COMMIT_A</div>
+            <div class="tc-arrow">→</div>
+            <div class="tc-step" style="border-color:var(--accent2);color:var(--accent2)">COMMITTED</div>
+          </div>
+          <p class="mt8">Cả hai commit xong. receipt lưu, trả SUCCESS.</p>
+        </div>
+        <div class="card danger">
+          <h3 class="danger mb8">Luồng partial failure</h3>
+          <div class="tc-flow">
+            <div class="tc-step" style="border-color:var(--warn);color:var(--warn)">COMMIT_A ✓</div>
+            <div class="tc-arrow">→</div>
+            <div class="tc-step" style="border-color:var(--danger);color:var(--danger)">COMMIT_B ✗</div>
+            <div class="tc-arrow">→</div>
+            <div class="tc-step" style="border-color:var(--purple);color:var(--purple)">COMPENSATED</div>
+          </div>
+          <p class="mt8">Bank A đã mất tiền → phải hoàn tiền lại bằng giao dịch bù.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 5 — COMPENSATION & RECOVERY
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-5">
+    <div class="slide-inner">
+      <div class="tag tag-purple mb12">Slide 6</div>
+      <h2>Compensation & Recovery</h2>
+      <div class="row">
+        <div class="col">
+          <div class="card" style="border-color:var(--purple)">
+            <h3 class="purple mb8">🔄 Compensation Transaction</h3>
+            <p>Dùng khi Bank A đã COMMIT (không thể XA ROLLBACK nữa) nhưng Bank B thất bại. Tạo giao dịch ngược chiều cộng lại tiền cho Bank A.</p>
+            <pre class="mt8" style="font-size:.72rem"><span class="cm"># do_compensation()</span>
+UPDATE accounts
+SET balance = balance + %s   <span class="cm">← cộng lại</span>
+WHERE account_number = %s    <span class="cm">← tài khoản nguồn</span>
+
+<span class="cm"># Ghi lịch sử</span>
+INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
+  status=<span class="str">'COMPENSATED'</span>)</pre>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card" style="border-color:var(--accent)">
+            <h3 class="accent mb8">🔧 Recovery khi Coordinator khởi động lại</h3>
+            <p>Sau crash, recovery đọc transaction_log và XA RECOVER để xác định giao dịch treo, sau đó quyết định hành động theo phase.</p>
+            <div class="mt8 table-wrap">
+              <table>
+                <tr><th>Phase treo</th><th>Hành động Recovery</th></tr>
+                <tr><td class="accent">PREPARING</td><td class="danger">XA ROLLBACK (abort)</td></tr>
+                <tr><td class="yellow">PREPARED / COMMITTING</td><td class="green">XA COMMIT tiếp tục</td></tr>
+                <tr><td class="warn">COMMIT_A</td><td style="color:var(--purple)">Commit Bank B hoặc Compensation</td></tr>
+                <tr><td style="color:var(--purple)">COMPENSATING</td><td style="color:var(--purple)">Chạy lại Compensation</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt16 card">
+        <h3 class="mb12">Luồng Recovery từng bước</h3>
+        <div class="timeline">
+          <div class="tl-label">Bước 1</div><div class="tl-line"></div>
+          <div class="tl-content"><strong>XA RECOVER</strong> — truy vấn tất cả MySQL site, lấy danh sách XID còn ở trạng thái PREPARED (in-doubt). Map xid → danh sách DB configs.</div>
+          <div class="tl-label">Bước 2</div><div class="tl-line"></div>
+          <div class="tl-content"><strong>Đọc transaction_log</strong> — lấy tất cả entries có phase IN ('PREPARING','PREPARED','COMMITTING','COMMIT_A','COMPENSATING').</div>
+          <div class="tl-label">Bước 3</div><div class="tl-line orange"></div>
+          <div class="tl-content"><strong>Quyết định per-tx_id</strong> — đối chiếu phase log với XA RECOVER state, chọn hành động phù hợp (commit / rollback / compensate).</div>
+          <div class="tl-label">Bước 4</div><div class="tl-line green"></div>
+          <div class="tl-content"><strong>Thực thi & cập nhật log</strong> — chạy XA COMMIT/ROLLBACK, gọi do_compensation, cập nhật phase → COMMITTED/ABORTED/COMPENSATED.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 6 — IDEMPOTENCY
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-6">
+    <div class="slide-inner">
+      <div class="tag tag-green mb12">Slide 7</div>
+      <h2>Idempotency — Chống double-submit</h2>
+      <p class="mb16">Khi client gửi lại request (retry, double-click...), hệ thống nhận ra và trả về kết quả cũ mà <strong>không tạo giao dịch mới</strong>.</p>
+      <div class="row">
+        <div class="col">
+          <div class="card success">
+            <h3 class="green mb8">Cơ chế hoạt động</h3>
+            <p>Client gắn header <code class="accent">Idempotency-Key: &lt;uuid&gt;</code>. Server hash toàn bộ request body + key → lookup bảng <code>idempotency_keys</code>.</p>
+            <div class="mt12 table-wrap">
+              <table>
+                <tr><th>Trường hợp</th><th>Kết quả</th></tr>
+                <tr><td>Lần đầu tiên</td><td class="green">Thực hiện giao dịch, lưu response</td></tr>
+                <tr><td>Cùng key, cùng body</td><td class="accent">Replay response cũ, <code>idempotent_replay=true</code></td></tr>
+                <tr><td>Cùng key, khác body</td><td class="danger">HTTP 422 Unprocessable Entity</td></tr>
+                <tr><td>Đang xử lý</td><td class="orange">HTTP 409 Conflict</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card highlight">
+            <h3 class="accent mb8">Bảng idempotency_keys</h3>
+            <pre style="font-size:.72rem">idempotency_keys (
+  id          INT PK,
+  idem_key    VARCHAR UNIQUE,
+  request_hash VARCHAR,    <span class="cm">← hash body</span>
+  status      ENUM(
+    'PROCESSING','COMPLETED','FAILED'),
+  tx_id       VARCHAR,     <span class="cm">← liên kết giao dịch</span>
+  http_status INT,
+  response_json TEXT,      <span class="cm">← lưu response</span>
+  created_at  TIMESTAMP,
+  updated_at  TIMESTAMP
+)</pre>
+            <p class="mt8">Nếu <code>status=COMPLETED</code> và hash khớp → trả <code>response_json</code> ngay lập tức, không qua 2PC.</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt16 card">
+        <h3 class="mb8">TC14 — Double submit test</h3>
+        <p>Gửi 2 request giống nhau với cùng <code>Idempotency-Key</code>:</p>
+        <div class="tc-flow mt8">
+          <div class="tc-step" style="color:var(--accent);border-color:var(--accent)">Request 1</div>
+          <div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--accent2);border-color:var(--accent2)">COMMITTED (mới)</div>
+          <div class="tc-arrow" style="margin-left:20px">||</div>
+          <div class="tc-step" style="color:var(--text2)">Request 2 (same key)</div>
+          <div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--warn);border-color:var(--warn)">replay=true (cũ)</div>
+          <div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--accent2);border-color:var(--accent2)">Số dư KHÔNG đổi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 7 — MA TRẬN TEST CASE
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-7">
+    <div class="slide-inner">
+      <div class="tag tag-orange mb12">Slide 8</div>
+      <h2>Ma trận Test Case TC01–TC16</h2>
+      <div class="stat-row mb16">
+        <div class="stat-box"><div class="stat-num accent">16</div><div class="stat-label">Test cases</div></div>
+        <div class="stat-box"><div class="stat-num green">128</div><div class="stat-label">Tests passed (non-e2e)</div></div>
+        <div class="stat-box"><div class="stat-num yellow">2</div><div class="stat-label">CI Jobs</div></div>
+        <div class="stat-box"><div class="stat-num purple">10</div><div class="stat-label">Fault scenarios</div></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Case</th><th>Mô tả</th><th>Phase trigger</th><th>Kết quả kỳ vọng</th><th>Kết quả</th></tr></thead>
+          <tbody>
+            <tr><td class="accent">TC01</td><td>Happy path</td><td>—</td><td>COMMITTED, A trừ, B cộng</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC02</td><td>Bank A fail ở Phase 1</td><td>PREPARE</td><td>ABORTED, rollback toàn bộ</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC03</td><td>Bank B trả NO ở Phase 1</td><td>PREPARE</td><td>ABORTED, rollback toàn bộ</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="orange">TC04</td><td>Commit A OK, Commit B fail</td><td>COMMIT_A</td><td>partial_failure=true, compensation</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="orange">TC05</td><td>Coordinator crash sau COMMIT_A</td><td>COMMIT_A</td><td>Recovery commit B, action=COMMIT_B_COMPLETED</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="orange">TC06</td><td>Crash trước commit (PREPARING)</td><td>PREPARING</td><td>Recovery → ABORTED</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="orange">TC07</td><td>Crash sau PREPARED</td><td>PREPARED</td><td>Recovery → COMMITTED</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="orange">TC08</td><td>In-doubt ở COMMITTING</td><td>COMMITTING</td><td>Recovery → COMMITTED</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC09</td><td>Commit gửi nhiều lần</td><td>COMMITTING</td><td>Không nhân đôi tiền, COMMITTED</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC10</td><td>Rollback gửi nhiều lần</td><td>—</td><td>Không crash, ABORTED</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC11</td><td>2 giao dịch đồng thời</td><td>—</td><td>tx_id khác nhau, ổn định</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC12</td><td>Amount ≤ 0</td><td>Validation</td><td>HTTP 400</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC13</td><td>Tài khoản đích không tồn tại</td><td>Validation</td><td>HTTP 4xx, không commit</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC14</td><td>Double submit cùng Idempotency-Key</td><td>—</td><td>idempotent_replay=true</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC15</td><td>Audit phase log</td><td>—</td><td>Đủ 5 phase: PREPARING→COMMITTED</td><td class="tc-pass">PASS</td></tr>
+            <tr><td class="accent">TC16</td><td>Recovery từ log</td><td>PREPARED</td><td>Xử lý đúng, trả recovered[]</td><td class="tc-pass">PASS</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 8 — TC01 / TC02 / TC03 CHI TIẾT
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-8">
+    <div class="slide-inner">
+      <div class="tag tag-green mb12">Slide 9</div>
+      <h2>Test Cases — Phase 1 Scenarios</h2>
+
+      <div class="tc-card">
+        <div class="tc-card-header">
+          <div class="tc-badge" style="color:var(--accent2);border-color:var(--accent2)">TC01</div>
+          <h3 class="green">Happy Path — 2PC thành công hoàn toàn</h3>
+          <span class="tag tag-green">Trước: balance_A=5tr, balance_B=1tr</span>
+        </div>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Đây là kịch bản lý tưởng — <b>«happy path»</b>. Anh A có 5 triệu, chuyển 500 nghìn cho chị B. Cả hai ngân hàng đều đồng ý bước <b>PREPARE</b> (khóa số tiền lại, cam kết sẵn sàng). Coordinator ra lệnh <b>COMMIT</b> — tiền trừ khỏi A và cộng vào B một cách nguyên tử, không mất mát, không sai lệch.
+        </div>
+        <div class="tc-flow">
+          <div class="tc-step">POST /api/transfer amount=500k</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--accent)">PREPARING</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--teal)">PREPARED</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--yellow)">COMMITTING</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--warn)">COMMIT_A</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--accent2)">COMMITTED</div>
+        </div>
+        <div class="bal-log mt8">
+          <div class="bl-head">── balance log (amount = 500,000đ) ──────────────────────────────────</div>
+          <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank1</span><span class="bl-msg">balance=<b>5,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">-500,000</span> (chưa commit thật)</span></div>
+          <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank2</span><span class="bl-msg">balance=<b>1,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">+500,000</span> (chưa commit thật)</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase commit_a">[COMMIT_A]</span><span class="bl-bank">bank1</span><span class="bl-msg">5,000,000 → <span class="debit">4,500,000</span> │ <span class="debit">-500,000</span> ✓ XA COMMIT (đã trừ thật)</span></div>
+          <div class="bl"><span class="bl-phase committed">[COMMITTED]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="credit">1,500,000</span> │ <span class="credit">+500,000</span> ✓ XA COMMIT (đã cộng thật)</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase committed">[KẾT QUẢ]</span><span class="bl-bank"></span><span class="bl-msg neutral">bank1: 4,500,000 ✓ &nbsp;│&nbsp; bank2: 1,500,000 ✓ &nbsp;│&nbsp; Tổng tiền bảo toàn</span></div>
+        </div>
+        <p class="mt8 sub">Sau: balance_A=4.5tr, balance_B=1.5tr. Assert: <code>success=True</code>, <code>tx_id.startswith('VB')</code>, phases == ['PREPARING', 'PREPARED', 'COMMITTING', 'COMMIT_A', 'COMMITTED']</p>
+      </div>
+
+      <div class="tc-card">
+        <div class="tc-card-header">
+          <div class="tc-badge" style="color:var(--danger);border-color:var(--danger)">TC02</div>
+          <h3 class="danger">Bank A fail ở XA PREPARE</h3>
+          <span class="tag tag-red">Trước: balance_A=200, amount=500k</span>
+        </div>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Tài khoản A chỉ còn <b>200đ</b> nhưng muốn chuyển <b>500,000đ</b>. Khi bước PREPARE chạy lệnh <b>UPDATE balance−500000</b>, MySQL phát hiện vi phạm ràng buộc <b>balance ≥ 0</b> và ném exception ngay lập tức. Coordinator nhận tin, <b>rollback cả hai ngân hàng</b> — không ai bị ảnh hưởng dù chỉ một bên lỗi.
+        </div>
+        <div class="tc-flow">
+          <div class="tc-step">POST /api/transfer</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--accent)">PREPARING</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--danger)">Bank A: XA PREPARE → Exception</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--danger)">ABORTED</div><div class="tc-arrow">→</div>
+          <div class="tc-step">XA ROLLBACK cả 2</div>
+        </div>
+        <div class="bal-log mt8">
+          <div class="bl-head">── balance log (balance_A=200, amount=500,000đ) ──────────────────</div>
+          <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank1</span><span class="bl-msg">balance=<b>200</b> │ XA PREPARE → UPDATE <span class="debit">-500,000</span> → <span class="debit">FAIL ✗</span> (CHECK balance≥0 violated)</span></div>
+          <div class="bl"><span class="bl-phase aborted">[ABORTED]</span><span class="bl-bank">bank1</span><span class="bl-msg">200 → <span class="neutral">200</span> │ XA ROLLBACK (balance không thay đổi)</span></div>
+          <div class="bl"><span class="bl-phase aborted">[ABORTED]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="neutral">1,000,000</span> │ XA ROLLBACK (balance không thay đổi)</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase aborted">[KẾT QUẢ]</span><span class="bl-bank"></span><span class="bl-msg neutral">bank1: 200 ✓ &nbsp;│&nbsp; bank2: 1,000,000 ✓ &nbsp;│&nbsp; Không tài khoản nào bị ảnh hưởng</span></div>
+        </div>
+        <p class="mt8 sub">Sau: balance_A=200, balance_B không đổi. Assert: <code>success=False</code>, <code>'Phase 1' in message</code>, <code>rollback_xa_all.called=True</code></p>
+      </div>
+
+      <div class="tc-card">
+        <div class="tc-card-header">
+          <div class="tc-badge" style="color:var(--danger);border-color:var(--danger)">TC03</div>
+          <h3 class="danger">Bank B trả NO ở XA PREPARE</h3>
+          <span class="tag tag-red">Trước: cả hai balance bình thường</span>
+        </div>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Lần này Bank A sẵn sàng, nhưng <b>Bank B gặp lỗi</b> ở bước PREPARE. Luật cốt lõi của 2PC: <b>chỉ cần một participant phản đối là hủy toàn bộ</b>. Coordinator rollback luôn cả Bank A, dù Bank A đã «giơ tay đồng ý» xong rồi. Đây chính là bảo đảm «all-or-nothing» của giao thức.
+        </div>
+        <div class="tc-flow">
+          <div class="tc-step">POST /api/transfer</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--accent)">PREPARING</div><div class="tc-arrow">→</div>
+          <div class="tc-step">Bank A: OK</div><div class="tc-arrow">||</div>
+          <div class="tc-step" style="color:var(--danger)">Bank B: Exception</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--danger)">ABORTED</div>
+        </div>
+        <div class="bal-log mt8">
+          <div class="bl-head">── balance log (amount = 500,000đ, cả hai balance bình thường) ──</div>
+          <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank1</span><span class="bl-msg">balance=<b>5,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">-500,000</span> ✓ (chờ quyết định)</span></div>
+          <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank2</span><span class="bl-msg">balance=<b>1,000,000</b> │ XA PREPARE → <span class="debit">FAIL ✗</span> (exception phía bank B)</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase aborted">[ABORTED]</span><span class="bl-bank">bank1</span><span class="bl-msg">5,000,000 → <span class="neutral">5,000,000</span> │ XA ROLLBACK (lock giải phóng, không trừ)</span></div>
+          <div class="bl"><span class="bl-phase aborted">[ABORTED]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="neutral">1,000,000</span> │ XA ROLLBACK (không thay đổi)</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase aborted">[KẾT QUẢ]</span><span class="bl-bank"></span><span class="bl-msg neutral">bank1: 5,000,000 ✓ &nbsp;│&nbsp; bank2: 1,000,000 ✓ &nbsp;│&nbsp; Rollback atomicity đảm bảo</span></div>
+        </div>
+        <p class="mt8 sub">Khi một trong hai future.exception() != None → rollback tất cả. Sau: không tài khoản nào thay đổi.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 9 — TC04 / TC05 CHI TIẾT
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-9">
+    <div class="slide-inner">
+      <div class="tag tag-orange mb12">Slide 10</div>
+      <h2>Test Cases — Partial Commit & Crash Recovery</h2>
+
+      <div class="tc-card">
+        <div class="tc-card-header">
+          <div class="tc-badge" style="color:var(--warn);border-color:var(--warn)">TC04</div>
+          <h3 class="orange">COMMIT_A OK → COMMIT_B fail → Compensation</h3>
+        </div>
+        <p class="sub mb8">Trigger: Gắn token <code>TC04_B_COMMIT_FAIL</code> vào description. Coordinator raise RuntimeError trước khi XA COMMIT Bank B.</p>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Đây là kịch bản <b>nguy hiểm nhất</b> trong 2PC. Bank A đã COMMIT thật (tiền đã bị trừ rồi) nhưng Bank B lại lỗi đột ngột. Hệ thống phát hiện trạng thái «commit lệch pha» và tự động thực hiện <b>giao dịch bù (compensation)</b>: cộng lại đúng số tiền đó cho A. Người gửi không mất tiền oan, nhưng giao dịch tổng thể vẫn được hủy.
+        </div>
+        <div class="tc-flow">
+          <div class="tc-step" style="color:var(--accent2)">Bank A: XA COMMIT ✓</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--warn)">COMMIT_A logged</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--danger)">Bank B: Exception ✗</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--purple)">xa_rollback Bank B</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--purple)">do_compensation</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--purple)">COMPENSATED</div>
+        </div>
+        <div class="bal-log mt8">
+          <div class="bl-head">── balance log (amount = 500,000đ) ──────────────────────────────────</div>
+          <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank1</span><span class="bl-msg">balance=<b>5,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">-500,000</span> ✓</span></div>
+          <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank2</span><span class="bl-msg">balance=<b>1,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">+500,000</span> ✓</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase commit_a">[COMMIT_A]</span><span class="bl-bank">bank1</span><span class="bl-msg">5,000,000 → <span class="debit">4,500,000</span> │ <span class="debit">-500,000</span> ✓ XA COMMIT (tiền đã trừ thật)</span></div>
+          <div class="bl"><span class="bl-phase aborted">[COMMIT_B]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="debit">FAIL ✗</span> │ XA COMMIT → RuntimeError → XA ROLLBACK bank2</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase compensation">[COMPENSATING]</span><span class="bl-bank">bank1</span><span class="bl-msg">4,500,000 → <span class="credit">5,000,000</span> │ <span class="credit">+500,000</span> hoàn tiền bù (UPDATE balance+500000)</span></div>
+          <div class="bl"><span class="bl-phase compensation">[COMPENSATED]</span><span class="bl-bank">coord</span><span class="bl-msg">INSERT transactions: tx_id=<span class="neutral">COMP-VB…</span>, status=COMPENSATED</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase compensation">[KẾT QUẢ]</span><span class="bl-bank"></span><span class="bl-msg neutral">bank1: 5,000,000 ✓ (hoàn lại) &nbsp;│&nbsp; bank2: 1,000,000 ✓ (không đổi)</span></div>
+        </div>
+        <p class="mt8 sub">Assert: <code>success=False</code>, <code>extra['partial_failure']=True</code>, <code>extra['compensation']=True</code>, <code>mock_compensate.called</code>, <code>mock_xa_rollback.called</code></p>
+      </div>
+
+      <div class="tc-card mt16">
+        <div class="tc-card-header">
+          <div class="tc-badge" style="color:var(--warn);border-color:var(--warn)">TC05</div>
+          <h3 class="orange">Coordinator crash sau COMMIT_A — Recovery commit tiếp Bank B</h3>
+        </div>
+        <p class="sub mb8">Trigger: Token <code>TC05_CRASH_AFTER_COMMIT_A</code>. Coordinator gọi <code>os._exit(1)</code> sau khi log COMMIT_A. Khi restart → Recovery.</p>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Cũng là tình huống Bank A đã commit nhưng coordinator <b>bị sập đột ngột</b> trước khi kịp commit Bank B. Khác TC04, ở đây không có compensation — thay vào đó khi khởi động lại, <b>module Recovery</b> đọc log, thấy phase=COMMIT_A và quyết định <b>commit nốt Bank B</b>. Giao dịch hoàn thành đúng, không mất tiền.
+        </div>
+        <div class="tc-flow">
+          <div class="tc-step" style="color:var(--warn)">COMMIT_A logged</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--danger)">os._exit(1) 💀</div><div class="tc-arrow">→</div>
+          <div class="tc-step">Restart</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--accent)">XA RECOVER Bank B → PREPARED</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--accent2)">xa_commit Bank B</div><div class="tc-arrow">→</div>
+          <div class="tc-step" style="color:var(--accent2)">action=COMMIT_B_COMPLETED</div>
+        </div>
+        <div class="bal-log mt8">
+          <div class="bl-head">── balance log (amount = 500,000đ) ──────────────────────────────────</div>
+          <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank1</span><span class="bl-msg">balance=<b>5,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">-500,000</span> ✓</span></div>
+          <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank2</span><span class="bl-msg">balance=<b>1,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">+500,000</span> ✓</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase commit_a">[COMMIT_A]</span><span class="bl-bank">bank1</span><span class="bl-msg">5,000,000 → <span class="debit">4,500,000</span> │ <span class="debit">-500,000</span> ✓ XA COMMIT (đã trừ thật)</span></div>
+          <div class="bl"><span class="bl-phase crash">[CRASH 💀]</span><span class="bl-bank">coord</span><span class="bl-msg"><span class="debit">os._exit(1)</span> — bank2 vẫn đang XA PREPARED (locked, chưa commit)</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase recovery">[RECOVERY]</span><span class="bl-bank">bank2</span><span class="bl-msg">XA RECOVER → phát hiện XID còn PREPARED trên bank2</span></div>
+          <div class="bl"><span class="bl-phase recovery">[RECOVERY]</span><span class="bl-bank">log</span><span class="bl-msg">transaction_log phase=COMMIT_A → quyết định: tiếp tục COMMIT bank2</span></div>
+          <div class="bl"><span class="bl-phase committed">[COMMIT_B]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="credit">1,500,000</span> │ <span class="credit">+500,000</span> ✓ XA COMMIT hoàn tất</span></div>
+          <div class="sep"></div>
+          <div class="bl"><span class="bl-phase committed">[KẾT QUẢ]</span><span class="bl-bank"></span><span class="bl-msg neutral">bank1: 4,500,000 ✓ &nbsp;│&nbsp; bank2: 1,500,000 ✓ &nbsp;│&nbsp; action=COMMIT_B_COMPLETED</span></div>
+        </div>
+        <p class="mt8 sub">Assert: <code>recovered[0]['action'] == 'COMMIT_B_COMPLETED'</code>, <code>mock_commit.assert_called_once_with(cfg_b, xid)</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 10 — TC06–TC11 + Concurrency
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-10">
+    <div class="slide-inner">
+      <div class="tag tag-orange mb12">Slide 11</div>
+      <h2>Test Cases — Crash Scenarios & Concurrency</h2>
+      <div class="card-grid card-grid-2">
+        <div class="tc-card">
+          <div class="tc-card-header">
+            <div class="tc-badge" style="color:var(--danger);border-color:var(--danger)">TC06</div>
+            <h3 class="danger">Crash trước commit — Recovery ABORT</h3>
+          </div>
+          <p class="sub">Token <code>TC06_CRASH_BEFORE_COMMIT</code>: crash ngay sau khi phase = PREPARING, trước khi ghi PREPARED. Recovery thấy phase=PREPARING → XA ROLLBACK → ABORTED.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Coordinator sập ngay khi đang PREPARING, <b>chưa bank nào commit cả</b>. Recovery đọc log, thấy phase=PREPARING → suy luận <b>an toàn để rollback toàn bộ</b>. Tiền không bị trừ.
+          </div>
+          <div class="tc-flow mt8">
+            <div class="tc-step" style="color:var(--accent)">PREPARING</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--danger)">CRASH</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--danger)">Recovery: ABORTED</div>
+          </div>
+          <div class="bal-log mt8">
+            <div class="bl-head">── balance log (amount = 500,000đ, phase=PREPARING khi crash) ──</div>
+            <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank1</span><span class="bl-msg">balance=<b>5,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">-500,000</span> ✓ (chưa commit)</span></div>
+            <div class="bl"><span class="bl-phase preparing">[PREPARING]</span><span class="bl-bank">bank2</span><span class="bl-msg">balance=<b>1,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">+500,000</span> ✓ (chưa commit)</span></div>
+            <div class="bl"><span class="bl-phase crash">[CRASH 💀]</span><span class="bl-bank">coord</span><span class="bl-msg">phase=PREPARING còn trong transaction_log</span></div>
+            <div class="sep"></div>
+            <div class="bl"><span class="bl-phase recovery">[RECOVERY]</span><span class="bl-bank">log</span><span class="bl-msg">phase=PREPARING → quyết định: XA ROLLBACK tất cả</span></div>
+            <div class="bl"><span class="bl-phase aborted">[ABORTED]</span><span class="bl-bank">bank1</span><span class="bl-msg">5,000,000 → <span class="neutral">5,000,000</span> │ XA ROLLBACK (lock giải phóng)</span></div>
+            <div class="bl"><span class="bl-phase aborted">[ABORTED]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="neutral">1,000,000</span> │ XA ROLLBACK (không thay đổi)</span></div>
+          </div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-header">
+            <div class="tc-badge" style="color:var(--warn);border-color:var(--warn)">TC07</div>
+            <h3 class="orange">Crash sau PREPARED — Recovery COMMIT</h3>
+          </div>
+          <p class="sub">Token <code>TC07_CRASH_AFTER_PREPARE</code>: crash sau phase=PREPARED. Cả hai bank còn trong XA PREPARED state. Recovery: xa_commit toàn bộ → COMMITTED.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Cả hai bank đã <b>PREPARE xong</b> (có nghĩa là đồng ý commit) nhưng coordinator sập đúng lúc sắp ra lệnh COMMIT. Recovery thấy phase=PREPARED + XID còn trên cả hai bank → <b>commit tiếp</b>. Giao dịch hoàn tất dù coordinator từng sập.
+          </div>
+          <div class="tc-flow mt8">
+            <div class="tc-step" style="color:var(--teal)">PREPARED</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--danger)">CRASH</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--accent2)">Recovery: COMMITTED</div>
+          </div>
+          <div class="bal-log mt8">
+            <div class="bl-head">── balance log (amount = 500,000đ, phase=PREPARED khi crash) ──</div>
+            <div class="bl"><span class="bl-phase prepared">[PREPARED]</span><span class="bl-bank">bank1</span><span class="bl-msg">balance=<b>5,000,000</b> │ XA PREPARED ✓ (locked <span class="lock-val">-500,000</span>)</span></div>
+            <div class="bl"><span class="bl-phase prepared">[PREPARED]</span><span class="bl-bank">bank2</span><span class="bl-msg">balance=<b>1,000,000</b> │ XA PREPARED ✓ (locked <span class="lock-val">+500,000</span>)</span></div>
+            <div class="bl"><span class="bl-phase crash">[CRASH 💀]</span><span class="bl-bank">coord</span><span class="bl-msg">phase=PREPARED còn trong transaction_log</span></div>
+            <div class="sep"></div>
+            <div class="bl"><span class="bl-phase recovery">[RECOVERY]</span><span class="bl-bank">log</span><span class="bl-msg">phase=PREPARED + cả 2 còn XA PREPARED → quyết định: COMMIT</span></div>
+            <div class="bl"><span class="bl-phase committed">[COMMIT]</span><span class="bl-bank">bank1</span><span class="bl-msg">5,000,000 → <span class="debit">4,500,000</span> │ <span class="debit">-500,000</span> ✓ XA COMMIT</span></div>
+            <div class="bl"><span class="bl-phase committed">[COMMIT]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="credit">1,500,000</span> │ <span class="credit">+500,000</span> ✓ XA COMMIT</span></div>
+          </div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-header">
+            <div class="tc-badge" style="color:var(--warn);border-color:var(--warn)">TC08</div>
+            <h3 class="orange">Crash tại COMMITTING — In-doubt Recovery</h3>
+          </div>
+          <p class="sub">Token <code>TC08_CRASH_DURING_COMMITTING</code>: log=COMMITTING, cả hai bank vẫn PREPARED (chưa commit nào). Recovery thấy phase=COMMITTING → xa_commit tất cả → COMMITTED.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Coordinator kịp ghi phase=<b>COMMITTING</b> vào log rồi mới sập, nhưng chưa gọi XA COMMIT cho bank nào. Đây là trường hợp <b>«in-doubt» kinh điển</b>. Recovery xác nhận cả hai bank vẫn XA PREPARED → quyết định COMMIT hết — giống TC07 nhưng xuất phát từ phase khác.
+          </div>
+          <div class="tc-flow mt8">
+            <div class="tc-step" style="color:var(--yellow)">COMMITTING</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--danger)">CRASH</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--accent2)">Recovery: COMMITTED</div>
+          </div>
+          <div class="bal-log mt8">
+            <div class="bl-head">── balance log (amount = 500,000đ, phase=COMMITTING khi crash) ─</div>
+            <div class="bl"><span class="bl-phase committing">[COMMITTING]</span><span class="bl-bank">coord</span><span class="bl-msg">ghi phase=COMMITTING vào log, chưa XA COMMIT bank nào</span></div>
+            <div class="bl"><span class="bl-phase crash">[CRASH 💀]</span><span class="bl-bank">coord</span><span class="bl-msg">bank1 + bank2 đều còn XA PREPARED (bị treo)</span></div>
+            <div class="sep"></div>
+            <div class="bl"><span class="bl-phase recovery">[RECOVERY]</span><span class="bl-bank">log</span><span class="bl-msg">phase=COMMITTING + cả 2 XA PREPARED → quyết định: COMMIT tất cả</span></div>
+            <div class="bl"><span class="bl-phase committed">[COMMIT]</span><span class="bl-bank">bank1</span><span class="bl-msg">5,000,000 → <span class="debit">4,500,000</span> │ <span class="debit">-500,000</span> ✓ XA COMMIT</span></div>
+            <div class="bl"><span class="bl-phase committed">[COMMIT]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="credit">1,500,000</span> │ <span class="credit">+500,000</span> ✓ XA COMMIT</span></div>
+          </div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-header">
+            <div class="tc-badge" style="color:var(--accent);border-color:var(--accent)">TC09</div>
+            <h3 class="accent">Commit gửi 2 lần — Idempotent</h3>
+          </div>
+          <p class="sub">Token <code>TC09_COMMIT_TWICE</code>: gọi xa_commit lần 2 → lần 1 OK, lần 2 raise XAER_NOTA (đã commit rồi). Hệ thống không crash, tiền không nhân đôi.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Kiểm tra tính <b>idempotent</b>: nếu network retry khiến COMMIT được gửi 2 lần, lần 2 MySQL trả <b>XAER_NOTA</b> — «XID này tôi không biết, chắc đã commit rồi». Hệ thống log warning và bỏ qua — <b>tiền không bị trừ hai lần</b>.
+          </div>
+          <div class="tc-flow mt8">
+            <div class="tc-step">XA COMMIT #1 ✓</div><div class="tc-arrow">→</div>
+            <div class="tc-step">XA COMMIT #2 → XAER_NOTA</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--accent2)">COMMITTED (1 lần)</div>
+          </div>
+          <div class="bal-log mt8">
+            <div class="bl-head">── balance log (amount = 500,000đ, commit gửi 2 lần) ───────────</div>
+            <div class="bl"><span class="bl-phase committed">[COMMIT #1]</span><span class="bl-bank">bank1</span><span class="bl-msg">5,000,000 → <span class="debit">4,500,000</span> │ <span class="debit">-500,000</span> ✓ XA COMMIT</span></div>
+            <div class="bl"><span class="bl-phase committed">[COMMIT #1]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="credit">1,500,000</span> │ <span class="credit">+500,000</span> ✓ XA COMMIT</span></div>
+            <div class="sep"></div>
+            <div class="bl"><span class="bl-phase aborted">[COMMIT #2]</span><span class="bl-bank">bank1</span><span class="bl-msg">XA COMMIT → <span class="neutral">XAER_NOTA</span> (đã commit rồi, bỏ qua)</span></div>
+            <div class="bl"><span class="bl-phase aborted">[COMMIT #2]</span><span class="bl-bank">bank2</span><span class="bl-msg">XA COMMIT → <span class="neutral">XAER_NOTA</span> (đã commit rồi, bỏ qua)</span></div>
+            <div class="sep"></div>
+            <div class="bl"><span class="bl-phase committed">[KẾT QUẢ]</span><span class="bl-bank"></span><span class="bl-msg neutral">bank1: 4,500,000 ✓ &nbsp;│&nbsp; bank2: 1,500,000 ✓ &nbsp;│&nbsp; tiền không bị nhân đôi</span></div>
+          </div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-header">
+            <div class="tc-badge" style="color:var(--accent);border-color:var(--accent)">TC10</div>
+            <h3 class="accent">Rollback gửi 2 lần — Không crash</h3>
+          </div>
+          <p class="sub">Token <code>TC10_ROLLBACK_TWICE</code>: gọi rollback_xa_all 2 lần liên tiếp. Lần 2 MySQL trả lỗi XAER_NOTA, hệ thống catch và log warning, không crash.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Tương tự TC09 nhưng cho ROLLBACK. Gửi XA ROLLBACK 2 lần liên tiếp — lần 2 MySQL cũng trả <b>XAER_NOTA</b>. Hệ thống catch exception, ghi warning và tiếp tục — <b>không crash, không tác dụng phụ</b>. Đảm bảo rollback luôn an toàn dù gửi nhiều lần.
+          </div>
+          <div class="tc-flow mt8">
+            <div class="tc-step">XA ROLLBACK #1 ✓</div><div class="tc-arrow">→</div>
+            <div class="tc-step">XA ROLLBACK #2 → warning</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--accent2)">ABORTED (an toàn)</div>
+          </div>
+          <div class="bal-log mt8">
+            <div class="bl-head">── balance log (amount = 500,000đ, rollback gửi 2 lần) ─────────</div>
+            <div class="bl"><span class="bl-phase prepared">[PREPARED]</span><span class="bl-bank">bank1</span><span class="bl-msg">balance=<b>5,000,000</b> │ XA PREPARED ✓ (locked <span class="lock-val">-500,000</span>)</span></div>
+            <div class="bl"><span class="bl-phase prepared">[PREPARED]</span><span class="bl-bank">bank2</span><span class="bl-msg">balance=<b>1,000,000</b> │ XA PREPARED ✓ (locked <span class="lock-val">+500,000</span>)</span></div>
+            <div class="sep"></div>
+            <div class="bl"><span class="bl-phase aborted">[ROLLBACK #1]</span><span class="bl-bank">bank1</span><span class="bl-msg">5,000,000 → <span class="neutral">5,000,000</span> │ XA ROLLBACK ✓ (lock giải phóng)</span></div>
+            <div class="bl"><span class="bl-phase aborted">[ROLLBACK #1]</span><span class="bl-bank">bank2</span><span class="bl-msg">1,000,000 → <span class="neutral">1,000,000</span> │ XA ROLLBACK ✓ (lock giải phóng)</span></div>
+            <div class="bl"><span class="bl-phase aborted">[ROLLBACK #2]</span><span class="bl-bank">bank1</span><span class="bl-msg">XA ROLLBACK → <span class="neutral">XAER_NOTA</span> (warning logged, không crash)</span></div>
+            <div class="bl"><span class="bl-phase aborted">[ROLLBACK #2]</span><span class="bl-bank">bank2</span><span class="bl-msg">XA ROLLBACK → <span class="neutral">XAER_NOTA</span> (warning logged, không crash)</span></div>
+          </div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-card-header">
+            <div class="tc-badge" style="color:var(--purple);border-color:var(--purple)">TC11</div>
+            <h3 class="purple">2 giao dịch đồng thời — Isolation</h3>
+          </div>
+          <p class="sub">ThreadPoolExecutor(max_workers=2) chạy execute_transfer 2 lần đồng thời với uuid khác nhau. Assert: tx_id[0] ≠ tx_id[1], cả hai thành công, hệ thống ổn định.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Hai người dùng chuyển tiền <b>cùng lúc trên 2 thread</b>. Mỗi giao dịch có XID riêng nên MySQL cấp khóa riêng, không xung đột. Kết quả: <b>hai tx_id khác nhau, cả hai COMMITTED</b>, chứng minh hệ thống <b>thread-safe</b> và isolation đúng chuẩn.
+          </div>
+          <div class="tc-flow mt8">
+            <div class="tc-step">Transfer A || Transfer B</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--accent2)">2 tx_id khác nhau</div><div class="tc-arrow">→</div>
+            <div class="tc-step" style="color:var(--accent2)">Cả hai COMMITTED</div>
+          </div>
+          <div class="bal-log mt8">
+            <div class="bl-head">── balance log (TX-A: 300k &nbsp;||&nbsp; TX-B: 200k, song song) ──────────</div>
+            <div class="bl"><span class="bl-phase preparing">[TX-A PREP]</span><span class="bl-bank">bank1</span><span class="bl-msg">acc A1 balance=<b>5,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">-300,000</span> &nbsp;XID=aaaa…</span></div>
+            <div class="bl"><span class="bl-phase preparing">[TX-B PREP]</span><span class="bl-bank">bank1</span><span class="bl-msg">acc A2 balance=<b>3,000,000</b> │ XA PREPARE → LOCK <span class="lock-val">-200,000</span> &nbsp;XID=bbbb… (song song)</span></div>
+            <div class="sep"></div>
+            <div class="bl"><span class="bl-phase committed">[TX-A ✓]</span><span class="bl-bank">bank1</span><span class="bl-msg">A1: 5,000,000 → <span class="debit">4,700,000</span> &nbsp;│&nbsp; bank2 B1: 1,000,000 → <span class="credit">1,300,000</span></span></div>
+            <div class="bl"><span class="bl-phase committed">[TX-B ✓]</span><span class="bl-bank">bank1</span><span class="bl-msg">A2: 3,000,000 → <span class="debit">2,800,000</span> &nbsp;│&nbsp; bank2 B2: 2,000,000 → <span class="credit">2,200,000</span></span></div>
+            <div class="sep"></div>
+            <div class="bl"><span class="bl-phase committed">[KẾT QUẢ]</span><span class="bl-bank"></span><span class="bl-msg neutral">tx_id khác nhau ✓ &nbsp;│&nbsp; isolation đảm bảo ✓ &nbsp;│&nbsp; không conflict</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────────────────
+       SLIDE 11 — QUY TRÌNH CHẠY TEST
+  ───────────────────────────────────────────── -->
+  <div class="slide" id="slide-11">
+    <div class="slide-inner">
+      <div class="tag tag-blue mb12">Slide 12</div>
+      <h2>Quy trình chạy test</h2>
+      <div class="row">
+        <div class="col">
+          <div class="card success">
+            <h3 class="green mb8">1. Chuẩn bị môi trường</h3>
+            <pre style="font-size:.75rem"><span class="cm"># Khởi động 3 MySQL + Toxiproxy</span>
+docker-compose up -d
+
+<span class="cm"># Cài dependencies</span>
+pip install -e .
+
+<span class="cm"># Khởi động Flask API (coordinator)</span>
+python backend/app.py</pre>
+          </div>
+          <div class="card highlight mt12">
+            <h3 class="accent mb8">2. Chạy test không E2E (unit/integration)</h3>
+            <pre style="font-size:.75rem"><span class="cm"># Chạy toàn bộ non-e2e tests</span>
+pytest -m <span class="str">"not e2e"</span> -v
+
+<span class="cm"># Kết quả: 128 tests passed</span>
+<span class="cm"># tests/test_2pc_matrix.py — 16 TC</span>
+<span class="cm"># tests/test_transfer.py</span>
+<span class="cm"># tests/test_account_service.py</span>
+<span class="cm"># tests/test_database.py ...</span></pre>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card warning">
+            <h3 class="orange mb8">3. Chạy E2E qua Toxiproxy</h3>
+            <pre style="font-size:.75rem"><span class="cm"># Bật E2E mode (cần Docker)</span>
+<span class="kw">$env</span>:RUN_TOXIPROXY_E2E=<span class="str">"1"</span>
+pytest -m e2e -v
+
+<span class="cm"># Toxiproxy inject lỗi:</span>
+<span class="cm"># - latency: thêm độ trễ</span>
+<span class="cm"># - timeout: ngắt kết nối</span>
+<span class="cm"># - down: tắt hoàn toàn</span></pre>
+          </div>
+          <div class="card mt12">
+            <h3 class="mb8">4. CI/CD Pipeline</h3>
+            <div class="table-wrap">
+              <table>
+                <tr><th>Job</th><th>Nội dung</th></tr>
+                <tr><td class="green">core-tests</td><td class="sub">pytest -m "not e2e" — chạy nhanh, không cần Docker</td></tr>
+                <tr><td class="orange">e2e-toxiproxy</td><td class="sub">Docker Compose + Toxiproxy + RUN_TOXIPROXY_E2E=1</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt16 card" style="border-color:var(--purple)">
+        <h3 class="purple mb12">Conftest.py — Fixtures dùng chung</h3>
+        <pre style="font-size:.75rem"><span class="cm"># tests/conftest.py</span>
+@pytest.fixture
+<span class="kw">def</span> <span class="fn">client</span>():
+    app.config[<span class="str">'TESTING'</span>] = True
+    <span class="kw">with</span> app.test_client() <span class="kw">as</span> client:
+        <span class="kw">yield</span> client     <span class="cm">← Flask test client cho TC12, TC16...</span>
+
+<span class="cm"># Mock pattern dùng trong test_2pc_matrix.py</span>
+<span class="kw">with</span> patch(<span class="str">'two_phase_commit.xa_prepare_participant'</span>), \
+     patch(<span class="str">'two_phase_commit.get_connection'</span>, side_effect=[conn_a, conn_b]):
+    success, msg, tx_id, extra = tpc.execute_transfer(...)
+    assert success is True</pre>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /slides-wrapper -->
+
+<div class="key-hint">← → Arrow keys hoặc click nút Prev / Next</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const counter = document.getElementById('slide-counter');
+const bar = document.getElementById('progress-bar');
+let cur = 0;
+const total = slides.length;
+
+function goTo(n) {
+  if (n === cur || n < 0 || n >= total) return;
+  const oldCur = cur;
+  slides[oldCur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  counter.textContent = (cur + 1) + ' / ' + total;
+  bar.style.width = ((cur + 1) / total * 100) + '%';
+  const inner = slides[cur].querySelector('.slide-inner');
+  if (inner) inner.scrollTop = 0;
+}
+
+function next() { goTo(cur + 1); }
+function prev() { goTo(cur - 1); }
+
+document.getElementById('btn-next').addEventListener('click', next);
+document.getElementById('btn-prev').addEventListener('click', prev);
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prev();
+});
+
+// Init
+counter.textContent = '1 / ' + total;
+bar.style.width = (1 / total * 100) + '%';
+</script>
+</body>
+</html>

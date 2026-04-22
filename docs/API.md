@@ -1,7 +1,7 @@
 # V-Bank 2PC — API Documentation
 
-> **Phiên bản:** 1.0
-> **Ngày:** 17/03/2026
+> **Phiên bản:** 2.0
+> **Ngày cập nhật:** 22/04/2026
 > **Base URL:** `http://localhost:5000`
 
 ---
@@ -30,15 +30,13 @@ Content-Type: application/json
 
 ```json
 {
-  "phone": "0901234567",
-  "password": "123456"
+  "account_number": "102938475612"
 }
 ```
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `phone` | string | ✓ | Số điện thoại đăng ký |
-| `password` | string | ✓ | Mật khẩu |
+| `account_number` | string | ✓ | Số tài khoản |
 
 **Response (Success)**
 
@@ -46,11 +44,11 @@ Content-Type: application/json
 {
   "status": "success",
   "user": {
-    "id": 1,
     "name": "Nguyễn Văn A",
-    "balance": 5000000,
+    "balance": 1234567890,
     "account_number": "102938475612",
-    "account_type": "saving"
+    "account_type": null,
+    "bank": "bank1"
   }
 }
 ```
@@ -60,7 +58,7 @@ Content-Type: application/json
 ```json
 {
   "status": "error",
-  "message": "Số điện thoại hoặc mật khẩu không đúng"
+  "message": "Số tài khoản không tồn tại"
 }
 ```
 
@@ -70,7 +68,7 @@ Content-Type: application/json
 
 ### GET /api/accounts
 
-Lấy danh sách tất cả tài khoản từ cả hai ngân hàng.
+Lấy danh sách tất cả tài khoản từ cả 3 ngân hàng.
 
 **Request**
 
@@ -83,20 +81,25 @@ GET /api/accounts
 ```json
 [
   {
-    "id": 1,
     "name": "Nguyễn Văn A",
-    "balance": 5000000,
+    "balance": 1234567890,
     "account_number": "102938475612",
-    "account_type": "saving",
-    "bank": "Ngân hàng 1"
+    "account_type": null,
+    "bank": "bank1"
   },
   {
-    "id": 2,
     "name": "Trần Thị B",
-    "balance": 3000000,
+    "balance": 2000000,
     "account_number": "203847569801",
-    "account_type": "checking",
-    "bank": "Ngân hàng 2"
+    "account_type": null,
+    "bank": "bank2"
+  },
+  {
+    "name": "Lê Văn C",
+    "balance": 8000000,
+    "account_number": "304756128934",
+    "account_type": null,
+    "bank": "bank3"
   }
 ]
 ```
@@ -131,7 +134,8 @@ Content-Type: application/json
   "status": "success",
   "account": {
     "name": "Trần Thị B",
-    "account_number": "203847569801"
+    "account_number": "203847569801",
+    "account_type": null
   }
 }
 ```

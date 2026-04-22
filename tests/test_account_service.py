@@ -149,7 +149,7 @@ class TestGetAccountByNumberSafe:
             DB1_CONFIG,
         )
         result = get_account_by_number_safe('102938475612')
-        assert result == {'name': 'Nguyễn Văn A', 'account_number': '102938475612'}
+        assert result == {'name': 'Nguyễn Văn A', 'account_number': '102938475612', 'account_type': None}
 
     @patch('account_service.find_account_by_number', return_value=(None, None))
     def test_get_account_by_number_safe_returns_none_when_not_found(self, _mock_find):

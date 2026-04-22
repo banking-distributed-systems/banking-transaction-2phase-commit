@@ -104,12 +104,12 @@ jobs:
 
       - name: Start test infrastructure
         run: |
-          docker compose up -d mysql1 mysql2 mysql3 toxiproxy toxiproxy-bootstrap
+          docker compose up -d mysql1 mysql2 mysql3 coordinator toxiproxy toxiproxy-bootstrap
 
       - name: Wait for MySQL containers
         run: |
           set -e
-          for container in mysql mysql2 mysql3; do
+          for container in mysql mysql2 mysql3 coordinator; do
             echo "Waiting for ${container}..."
             for i in $(seq 1 90); do
               if [ "$(docker inspect -f '{{.State.Running}}' "${container}" 2>/dev/null || echo false)" != "true" ]; then
