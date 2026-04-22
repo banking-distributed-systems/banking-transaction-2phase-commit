@@ -203,6 +203,34 @@ def rollback_xa_all(xid: str, configs: List[Dict[str, Any]]):
         xa_rollback(cfg, xid)
 
 
+def log_balance(config: Dict[str, Any], account_number: str, tx_id: str, label: str):
+    """Đọc số dư committed và ghi vào log (cả console lẫn .log file)."""
+    try:
+        conn = get_connection({**config, 'autocommit': True})
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT balance FROM accounts WHERE account_number = %s",
+                (account_number,)
+            )
+            row = cur.fetchone()
+        conn.close()
+        if row is not None:
+            logger.info(
+                '[BAL] %-22s | tx=%-14s | acc=%s | balance=%.0f đ',
+                label, tx_id, account_number, row[0]
+            )
+        else:
+            logger.warning(
+                '[BAL] %-22s | tx=%-14s | acc=%s | không tìm thấy',
+                label, tx_id, account_number
+            )
+    except Exception as e:
+        logger.error(
+            '[BAL] %-22s | tx=%-14s | acc=%s | lỗi: %s',
+            label, tx_id, account_number, e
+        )
+
+
 # =============================================================================
 # Compensating Transaction — Kịch bản 4
 # =============================================================================
@@ -244,6 +272,7 @@ def do_compensation(
         return False
 
     try:
+        log_balance(from_config, from_acc['account_number'], tx_id, 'TRƯỚC-COMPENSATION')
         log_phase(tx_id, xid, 'COMPENSATING', from_acc, None, from_config, None, amount)
         conn = get_connection({**from_config, 'autocommit': True})
         with conn.cursor() as cur:
@@ -252,6 +281,7 @@ def do_compensation(
                 (amount, from_acc['account_number'])
             )
         conn.close()
+        log_balance(from_config, from_acc['account_number'], tx_id, 'SAU-COMPENSATION(+hoàn)')
         log_phase(tx_id, xid, 'COMPENSATED', from_acc, None, from_config, None, amount)
         logger.info('[COMPENSATE] Hoàn %.0fđ → %s thành công | tx=%s',
                     amount, from_account_number, tx_id)
@@ -532,6 +562,8 @@ def execute_transfer(
 
     logger.info('[TRANSFER] ── Giao dịch mới | tx=%s | %s → %s | %.0fđ | "%s"',
                 tx_id, from_acc['account_number'], to_acc['account_number'], amount, description)
+    log_balance(from_config, from_acc['account_number'], tx_id, 'TRƯỚC')
+    log_balance(to_config,   to_acc['account_number'],   tx_id, 'TRƯỚC')
     log_phase(tx_id, xid, 'PREPARING', from_acc, to_acc, from_config, to_config, amount, description)
 
     # ===== PHASE 1: XA PREPARE — chạy song song, có timeout =====
@@ -572,6 +604,8 @@ def execute_transfer(
             logger.error('[TRANSFER] tx=%s: Phase 1 thất bại | lỗi=%s', tx_id, exc)
             log_phase(tx_id, xid, 'ABORTED', from_acc, to_acc, from_config, to_config, amount, description)
             rollback_xa_all(xid, [from_config, to_config])
+            log_balance(from_config, from_acc['account_number'], tx_id, 'SAU-ABORTED(Phase1)')
+            log_balance(to_config,   to_acc['account_number'],   tx_id, 'SAU-ABORTED(Phase1)')
             return (
                 False,
                 f"Giao dịch thất bại ở Phase 1: {str(exc)}",
@@ -652,6 +686,7 @@ def execute_transfer(
 
         log_phase(tx_id, xid, 'COMMIT_A', from_acc, to_acc, from_config, to_config, amount, description)
         commit_a_done = True
+        log_balance(from_config, from_acc['account_number'], tx_id, 'SAU-COMMIT_A(-trừ)')
 
         if should_simulate_coordinator_crash_after_commit_a(description):
             crash_coordinator_for_demo(
@@ -669,6 +704,8 @@ def execute_transfer(
         cb.close()
 
         log_phase(tx_id, xid, 'COMMITTED', from_acc, to_acc, from_config, to_config, amount, description)
+        log_balance(from_config, from_acc['account_number'], tx_id, 'SAU-COMMITTED')
+        log_balance(to_config,   to_acc['account_number'],   tx_id, 'SAU-COMMITTED(+nhận)')
 
         # Lưu hóa đơn
         save_transaction(
