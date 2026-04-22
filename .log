@@ -1,0 +1,285 @@
+2026-04-22 09:47:49  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-22 09:47:49  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-04-22 09:47:49  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-22 09:47:49  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-04-22 09:47:49  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-04-22 09:47:49  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-04-22 09:47:49  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-04-22 09:47:49  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-04-22 09:47:49  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-04-22 09:47:49  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-04-22 09:47:49  INFO      [RECOVERY] Tìm thấy 4 giao dịch cần xử lý.
+2026-04-22 09:47:49  INFO      [RECOVERY] tx=VBB7A180088B | phase=PREPARED | PREPARED trên 0 DB
+2026-04-22 09:47:49  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VBB7A180088B
+2026-04-22 09:47:49  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMMIT_A | PREPARED trên 0 DB
+2026-04-22 09:47:49  WARNING   [RECOVERY] tx=VB09014E2153: Bank B mất XA state → thực hiện compensation
+2026-04-22 09:47:49  WARNING   [COMPENSATE] Bắt đầu hoàn tiền | tx=VB09014E2153 | acc=None | amount=10000
+2026-04-22 09:47:49  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:49  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [COMPENSATE] Không tìm thấy tài khoản nguồn None
+2026-04-22 09:47:50  INFO      [RECOVERY] tx=VB93DF808852 | phase=PREPARED | PREPARED trên 0 DB
+2026-04-22 09:47:50  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB93DF808852
+2026-04-22 09:47:50  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMMIT_A | PREPARED trên 0 DB
+2026-04-22 09:47:50  WARNING   [RECOVERY] tx=VBC80ECC2190: Bank B mất XA state → thực hiện compensation
+2026-04-22 09:47:50  WARNING   [COMPENSATE] Bắt đầu hoàn tiền | tx=VBC80ECC2190 | acc=None | amount=10000
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [COMPENSATE] Không tìm thấy tài khoản nguồn None
+2026-04-22 09:47:50  INFO      [STARTUP] ✓ Đã khôi phục 4 giao dịch treo
+2026-04-22 09:47:50  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-22 09:47:50  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-04-22 09:47:50  INFO        📍 Server chạy tại: http://localhost:5000
+2026-04-22 09:47:50  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-04-22 09:47:50  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-04-22 09:47:50  INFO        ⏱  Prepare Timeout: 10 giây
+2026-04-22 09:47:50  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-22 09:47:50  INFO      [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.31.129:5000
+2026-04-22 09:47:50  INFO      [33mPress CTRL+C to quit[0m
+2026-04-22 09:47:50  INFO       * Restarting with stat
+2026-04-22 09:47:50  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-22 09:47:50  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-04-22 09:47:50  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-22 09:47:50  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-04-22 09:47:50  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-04-22 09:47:50  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-04-22 09:47:50  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-04-22 09:47:50  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-04-22 09:47:50  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-04-22 09:47:50  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-04-22 09:47:50  INFO      [RECOVERY] Tìm thấy 4 giao dịch cần xử lý.
+2026-04-22 09:47:50  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMMIT_A | PREPARED trên 0 DB
+2026-04-22 09:47:50  WARNING   [RECOVERY] tx=VB09014E2153: Bank B mất XA state → thực hiện compensation
+2026-04-22 09:47:50  WARNING   [COMPENSATE] Bắt đầu hoàn tiền | tx=VB09014E2153 | acc=None | amount=10000
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [COMPENSATE] Không tìm thấy tài khoản nguồn None
+2026-04-22 09:47:50  INFO      [RECOVERY] tx=VBB7A180088B | phase=PREPARED | PREPARED trên 0 DB
+2026-04-22 09:47:50  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VBB7A180088B
+2026-04-22 09:47:50  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMMIT_A | PREPARED trên 0 DB
+2026-04-22 09:47:50  WARNING   [RECOVERY] tx=VBC80ECC2190: Bank B mất XA state → thực hiện compensation
+2026-04-22 09:47:50  WARNING   [COMPENSATE] Bắt đầu hoàn tiền | tx=VBC80ECC2190 | acc=None | amount=10000
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [LOOKUP] Lỗi tìm tài khoản: 'NoneType' object has no attribute 'replace'
+2026-04-22 09:47:50  ERROR     [COMPENSATE] Không tìm thấy tài khoản nguồn None
+2026-04-22 09:47:50  INFO      [RECOVERY] tx=VB93DF808852 | phase=PREPARED | PREPARED trên 0 DB
+2026-04-22 09:47:50  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB93DF808852
+2026-04-22 09:47:50  INFO      [STARTUP] ✓ Đã khôi phục 4 giao dịch treo
+2026-04-22 09:47:50  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-22 09:47:50  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-04-22 09:47:50  INFO        📍 Server chạy tại: http://localhost:5000
+2026-04-22 09:47:50  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-04-22 09:47:50  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-04-22 09:47:50  INFO        ⏱  Prepare Timeout: 10 giây
+2026-04-22 09:47:50  INFO      ═══════════════════════════════════════════════════════════════
+2026-04-22 09:47:50  WARNING    * Debugger is active!
+2026-04-22 09:47:50  INFO       * Debugger PIN: 535-083-205
+2026-04-22 09:47:51  INFO      [TIMING][a7868b8021ad] GET /api/accounts - Time: 0.0582s
+2026-04-22 09:47:51  INFO      127.0.0.1 - - [22/Apr/2026 09:47:51] "GET /api/accounts HTTP/1.1" 200 -
+2026-04-22 09:47:51  INFO      [TIMING][d9a401124847] GET /api/accounts - Time: 0.0228s
+2026-04-22 09:47:51  INFO      127.0.0.1 - - [22/Apr/2026 09:47:51] "GET /api/accounts HTTP/1.1" 200 -
+2026-04-22 09:47:54  INFO      [TIMING][5b23a5670500] GET /api/transfer/recent - Time: 0.2653s
+2026-04-22 09:47:54  INFO      127.0.0.1 - - [22/Apr/2026 09:47:54] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:47:56  INFO      [TIMING][fd13ec56bed2] OPTIONS /api/lookup-account - Time: 0.0002s
+2026-04-22 09:47:56  INFO      127.0.0.1 - - [22/Apr/2026 09:47:56] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-04-22 09:47:56  INFO      [TIMING][d693f42bdfac] POST /api/lookup-account - Time: 0.0140s
+2026-04-22 09:47:56  INFO      127.0.0.1 - - [22/Apr/2026 09:47:56] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-04-22 09:48:02  INFO      [TIMING][273d41562e05] GET /api/transfer/recent - Time: 0.2679s
+2026-04-22 09:48:02  INFO      127.0.0.1 - - [22/Apr/2026 09:48:02] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:48:10  INFO      [TIMING][862df0516093] GET /api/transfer/recent - Time: 0.1589s
+2026-04-22 09:48:10  INFO      127.0.0.1 - - [22/Apr/2026 09:48:10] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:48:16  INFO      [TIMING][0fb74c0495ec] OPTIONS /api/transfer - Time: 0.0001s
+2026-04-22 09:48:16  INFO      127.0.0.1 - - [22/Apr/2026 09:48:16] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-04-22 09:48:16  INFO      [TRANSFER] ── Giao dịch mới | tx=VB27078F7EF4 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "TC04_B_COMMIT_FAIL"
+2026-04-22 09:48:16  INFO      [BAL] TRƯỚC                  | tx=VB27078F7EF4   | acc=1029 3847 5612 | balance=233680000 đ
+2026-04-22 09:48:16  INFO      [BAL] TRƯỚC                  | tx=VB27078F7EF4   | acc=2038 4756 9801 | balance=46889 đ
+2026-04-22 09:48:16  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB27078F7EF4 | 27078f7ef413 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "TC04_B_COMMIT_FAIL"
+2026-04-22 09:48:16  ERROR     [PHASE] Lỗi ghi participant transaction_log (bank1/PREPARING): (1364, "Field 'from_account_number' doesn't have a default value")
+2026-04-22 09:48:16  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB27078F7EF4
+2026-04-22 09:48:16  ERROR     [PHASE] Lỗi ghi participant transaction_log (bank1/PREPARED): (1364, "Field 'from_account_number' doesn't have a default value")
+2026-04-22 09:48:16  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB27078F7EF4
+2026-04-22 09:48:16  ERROR     [PHASE] Lỗi ghi participant transaction_log (bank1/COMMITTING): (1364, "Field 'from_account_number' doesn't have a default value")
+2026-04-22 09:48:16  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB27078F7EF4
+2026-04-22 09:48:16  ERROR     [PHASE] Lỗi ghi participant transaction_log (bank1/COMMIT_A): (1364, "Field 'from_account_number' doesn't have a default value")
+2026-04-22 09:48:16  INFO      [BAL] SAU-COMMIT_A(-trừ)     | tx=VB27078F7EF4   | acc=1029 3847 5612 | balance=233670000 đ
+2026-04-22 09:48:16  ERROR     [PARTIAL COMMIT] tx=VB27078F7EF4: Bank A committed, Bank B failed → compensation
+2026-04-22 09:48:16  WARNING   [COMPENSATE] Bắt đầu hoàn tiền | tx=VB27078F7EF4 | acc=1029 3847 5612 | amount=10000
+2026-04-22 09:48:16  INFO      [BAL] TRƯỚC-COMPENSATION     | tx=VB27078F7EF4   | acc=1029 3847 5612 | balance=233670000 đ
+2026-04-22 09:48:16  WARNING   [PHASE] Recover  ↺ COMPENSATING — Đang hoàn tiền cho Bank A | tx=VB27078F7EF4
+2026-04-22 09:48:16  ERROR     [PHASE] Lỗi ghi participant transaction_log (bank1/COMPENSATING): (1364, "Field 'from_account_number' doesn't have a default value")
+2026-04-22 09:48:16  INFO      [BAL] SAU-COMPENSATION(+hoàn) | tx=VB27078F7EF4   | acc=1029 3847 5612 | balance=233680000 đ
+2026-04-22 09:48:16  INFO      [PHASE] Recover  ✔ COMPENSATED  — Hoàn tiền thành công | tx=VB27078F7EF4
+2026-04-22 09:48:16  ERROR     [PHASE] Lỗi ghi participant transaction_log (bank1/COMPENSATED): (1364, "Field 'from_account_number' doesn't have a default value")
+2026-04-22 09:48:16  INFO      [COMPENSATE] Hoàn 10000đ → 1029 3847 5612 thành công | tx=VB27078F7EF4
+2026-04-22 09:48:16  INFO      [TIMING][a11cd1eb78f2] POST /api/transfer - Time: 0.4591s
+2026-04-22 09:48:16  INFO      127.0.0.1 - - [22/Apr/2026 09:48:16] "[35m[1mPOST /api/transfer HTTP/1.1[0m" 500 -
+2026-04-22 09:48:16  INFO      [TIMING][86e67bc24bd5] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0423s
+2026-04-22 09:48:16  INFO      127.0.0.1 - - [22/Apr/2026 09:48:16] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:48:18  INFO      [TIMING][ef32e73fe0bc] GET /api/transfer/recent - Time: 0.1922s
+2026-04-22 09:48:18  INFO      127.0.0.1 - - [22/Apr/2026 09:48:18] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:48:18  INFO      [TIMING][3b67bfa35b2a] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0399s
+2026-04-22 09:48:18  INFO      127.0.0.1 - - [22/Apr/2026 09:48:18] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:48:26  INFO      [TIMING][c69d31687509] GET /api/transfer/recent - Time: 0.2246s
+2026-04-22 09:48:26  INFO      127.0.0.1 - - [22/Apr/2026 09:48:26] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:48:27  INFO      [TIMING][f96a0474111a] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0443s
+2026-04-22 09:48:27  INFO      127.0.0.1 - - [22/Apr/2026 09:48:27] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:48:34  INFO      [TIMING][0e4a04933591] GET /api/transfer/recent - Time: 0.2266s
+2026-04-22 09:48:34  INFO      127.0.0.1 - - [22/Apr/2026 09:48:34] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:48:34  INFO      [TIMING][7cf579d4ab1b] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0496s
+2026-04-22 09:48:34  INFO      127.0.0.1 - - [22/Apr/2026 09:48:34] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:48:35  INFO      [TIMING][707d720f5efe] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0384s
+2026-04-22 09:48:35  INFO      127.0.0.1 - - [22/Apr/2026 09:48:35] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:48:37  INFO      [TIMING][d48c917926ee] GET /api/transfer/status/VBC80ECC2190 - Time: 0.0664s
+2026-04-22 09:48:37  INFO      127.0.0.1 - - [22/Apr/2026 09:48:37] "GET /api/transfer/status/VBC80ECC2190 HTTP/1.1" 200 -
+2026-04-22 09:48:38  INFO      [TIMING][25fe7bfe3ed7] GET /api/transfer/status/VB09014E2153 - Time: 0.0314s
+2026-04-22 09:48:38  INFO      127.0.0.1 - - [22/Apr/2026 09:48:38] "GET /api/transfer/status/VB09014E2153 HTTP/1.1" 200 -
+2026-04-22 09:48:42  INFO      [TIMING][2e88cb443549] GET /api/transfer/recent - Time: 0.2551s
+2026-04-22 09:48:42  INFO      127.0.0.1 - - [22/Apr/2026 09:48:42] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:48:43  INFO      [TIMING][d2daad0f235c] GET /api/transfer/status/VB09014E2153 - Time: 0.0367s
+2026-04-22 09:48:43  INFO      127.0.0.1 - - [22/Apr/2026 09:48:43] "GET /api/transfer/status/VB09014E2153 HTTP/1.1" 200 -
+2026-04-22 09:48:50  INFO      [TIMING][498e520b94d8] GET /api/transfer/recent - Time: 0.1568s
+2026-04-22 09:48:50  INFO      127.0.0.1 - - [22/Apr/2026 09:48:50] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:48:50  INFO      [TIMING][e1289be87eed] GET /api/transfer/status/VB09014E2153 - Time: 0.0358s
+2026-04-22 09:48:50  INFO      127.0.0.1 - - [22/Apr/2026 09:48:50] "GET /api/transfer/status/VB09014E2153 HTTP/1.1" 200 -
+2026-04-22 09:48:51  INFO      [TIMING][b2efa22c7089] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0537s
+2026-04-22 09:48:51  INFO      127.0.0.1 - - [22/Apr/2026 09:48:51] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:48:58  INFO      [TIMING][c42bb2f50a3c] GET /api/transfer/recent - Time: 0.1709s
+2026-04-22 09:48:58  INFO      127.0.0.1 - - [22/Apr/2026 09:48:58] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:48:58  INFO      [TIMING][e1f5897bb3e2] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0613s
+2026-04-22 09:48:58  INFO      127.0.0.1 - - [22/Apr/2026 09:48:58] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:49:07  INFO      [TIMING][9af2a656d3ae] GET /api/transfer/recent - Time: 0.2931s
+2026-04-22 09:49:07  INFO      127.0.0.1 - - [22/Apr/2026 09:49:07] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:49:07  INFO      [TIMING][7c2edfe4d21d] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0536s
+2026-04-22 09:49:07  INFO      127.0.0.1 - - [22/Apr/2026 09:49:07] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:49:15  INFO      [TIMING][56a454cf837a] GET /api/transfer/recent - Time: 0.2773s
+2026-04-22 09:49:15  INFO      127.0.0.1 - - [22/Apr/2026 09:49:15] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:49:15  INFO      [TIMING][0b3dae4fa1e6] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0413s
+2026-04-22 09:49:15  INFO      127.0.0.1 - - [22/Apr/2026 09:49:15] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:49:22  INFO      [TIMING][a9f1170762eb] GET /api/transfer/recent - Time: 0.1648s
+2026-04-22 09:49:22  INFO      127.0.0.1 - - [22/Apr/2026 09:49:22] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:49:22  INFO      [TIMING][d7e0c6481198] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0263s
+2026-04-22 09:49:22  INFO      127.0.0.1 - - [22/Apr/2026 09:49:22] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:49:30  INFO      [TIMING][c43db265982c] GET /api/transfer/recent - Time: 0.1940s
+2026-04-22 09:49:30  INFO      127.0.0.1 - - [22/Apr/2026 09:49:30] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:49:30  INFO      [TIMING][4970db53d930] GET /api/transfer/status/VB27078F7EF4 - Time: 0.0481s
+2026-04-22 09:49:30  INFO      127.0.0.1 - - [22/Apr/2026 09:49:30] "GET /api/transfer/status/VB27078F7EF4 HTTP/1.1" 200 -
+2026-04-22 09:49:31  INFO      [TIMING][6bfba7ce6a02] GET /api/accounts - Time: 0.0302s
+2026-04-22 09:49:31  INFO      127.0.0.1 - - [22/Apr/2026 09:49:31] "GET /api/accounts HTTP/1.1" 200 -
+2026-04-22 09:49:31  INFO      [TIMING][da05af2f4fe6] GET /api/transfer/recent - Time: 0.1526s
+2026-04-22 09:49:31  INFO      127.0.0.1 - - [22/Apr/2026 09:49:31] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:49:40  INFO      [TIMING][e1f3365c55bc] GET /api/transfer/recent - Time: 0.2723s
+2026-04-22 09:49:40  INFO      127.0.0.1 - - [22/Apr/2026 09:49:40] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:49:47  INFO      [TIMING][4aa4ea8a49f2] GET /api/transfer/recent - Time: 0.2594s
+2026-04-22 09:49:47  INFO      127.0.0.1 - - [22/Apr/2026 09:49:47] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:49:55  INFO      [TIMING][56e5c7b7ff85] GET /api/transfer/recent - Time: 0.1910s
+2026-04-22 09:49:55  INFO      127.0.0.1 - - [22/Apr/2026 09:49:55] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:50:04  INFO      [TIMING][915f5f173edb] GET /api/transfer/recent - Time: 0.2940s
+2026-04-22 09:50:04  INFO      127.0.0.1 - - [22/Apr/2026 09:50:04] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:50:12  INFO      [TIMING][66b2e96f792a] GET /api/transfer/recent - Time: 0.2908s
+2026-04-22 09:50:12  INFO      127.0.0.1 - - [22/Apr/2026 09:50:12] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:50:20  INFO      [TIMING][f3bce1e4eac5] GET /api/transfer/recent - Time: 0.2797s
+2026-04-22 09:50:20  INFO      127.0.0.1 - - [22/Apr/2026 09:50:20] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:50:27  INFO      [TIMING][9aa876e1d65f] GET /api/transfer/recent - Time: 0.2477s
+2026-04-22 09:50:27  INFO      127.0.0.1 - - [22/Apr/2026 09:50:27] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:50:35  INFO      [TIMING][ac495ab99605] GET /api/transfer/recent - Time: 0.2097s
+2026-04-22 09:50:35  INFO      127.0.0.1 - - [22/Apr/2026 09:50:35] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:50:43  INFO      [TIMING][de2ee3802897] GET /api/transfer/recent - Time: 0.2040s
+2026-04-22 09:50:43  INFO      127.0.0.1 - - [22/Apr/2026 09:50:43] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:50:51  INFO      [TIMING][7868e8710c12] GET /api/transfer/recent - Time: 0.1589s
+2026-04-22 09:50:51  INFO      127.0.0.1 - - [22/Apr/2026 09:50:51] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:50:59  INFO      [TIMING][d7cb380b3207] GET /api/transfer/recent - Time: 0.2402s
+2026-04-22 09:50:59  INFO      127.0.0.1 - - [22/Apr/2026 09:50:59] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:51:08  INFO      [TIMING][0f9485800b54] GET /api/transfer/recent - Time: 0.2682s
+2026-04-22 09:51:08  INFO      127.0.0.1 - - [22/Apr/2026 09:51:08] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:51:16  INFO      [TIMING][993db4b67531] GET /api/transfer/recent - Time: 0.3138s
+2026-04-22 09:51:16  INFO      127.0.0.1 - - [22/Apr/2026 09:51:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:51:23  INFO      [TIMING][7780d72ca613] GET /api/transfer/recent - Time: 0.2119s
+2026-04-22 09:51:23  INFO      127.0.0.1 - - [22/Apr/2026 09:51:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:51:32  INFO      [TIMING][c649eb3d68f9] GET /api/transfer/recent - Time: 0.2860s
+2026-04-22 09:51:32  INFO      127.0.0.1 - - [22/Apr/2026 09:51:32] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:51:39  INFO      [TIMING][19fa284f2aff] GET /api/transfer/recent - Time: 0.2514s
+2026-04-22 09:51:39  INFO      127.0.0.1 - - [22/Apr/2026 09:51:39] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:51:47  INFO      [TIMING][ed8f9bbf7f43] GET /api/transfer/recent - Time: 0.2226s
+2026-04-22 09:51:47  INFO      127.0.0.1 - - [22/Apr/2026 09:51:47] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:51:56  INFO      [TIMING][ac16ebdbbcd3] GET /api/transfer/recent - Time: 0.2846s
+2026-04-22 09:51:56  INFO      127.0.0.1 - - [22/Apr/2026 09:51:56] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:52:03  INFO      [TIMING][fc8fc62bb039] GET /api/transfer/recent - Time: 0.1695s
+2026-04-22 09:52:03  INFO      127.0.0.1 - - [22/Apr/2026 09:52:03] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:52:12  INFO      [TIMING][b368eb80f48e] GET /api/transfer/recent - Time: 0.2777s
+2026-04-22 09:52:12  INFO      127.0.0.1 - - [22/Apr/2026 09:52:12] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:52:20  INFO      [TIMING][337e8f6b28f0] GET /api/transfer/recent - Time: 0.2966s
+2026-04-22 09:52:20  INFO      127.0.0.1 - - [22/Apr/2026 09:52:20] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:52:27  INFO      [TIMING][8d8423636528] GET /api/transfer/recent - Time: 0.1666s
+2026-04-22 09:52:27  INFO      127.0.0.1 - - [22/Apr/2026 09:52:27] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:52:35  INFO      [TIMING][89d275e8094d] GET /api/transfer/recent - Time: 0.2358s
+2026-04-22 09:52:35  INFO      127.0.0.1 - - [22/Apr/2026 09:52:35] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:52:43  INFO      [TIMING][ae294a226ed8] GET /api/transfer/recent - Time: 0.2144s
+2026-04-22 09:52:43  INFO      127.0.0.1 - - [22/Apr/2026 09:52:43] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:52:51  INFO      [TIMING][bba322c3905c] GET /api/transfer/recent - Time: 0.2342s
+2026-04-22 09:52:51  INFO      127.0.0.1 - - [22/Apr/2026 09:52:51] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:52:59  INFO      [TIMING][d53dd6c7825e] GET /api/transfer/recent - Time: 0.2353s
+2026-04-22 09:52:59  INFO      127.0.0.1 - - [22/Apr/2026 09:52:59] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:53:08  INFO      [TIMING][f5fc36dd1398] GET /api/transfer/recent - Time: 0.2799s
+2026-04-22 09:53:08  INFO      127.0.0.1 - - [22/Apr/2026 09:53:08] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:53:15  INFO      [TIMING][934c2e256a95] GET /api/transfer/recent - Time: 0.2603s
+2026-04-22 09:53:15  INFO      127.0.0.1 - - [22/Apr/2026 09:53:15] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:53:23  INFO      [TIMING][fb04c911cf0a] GET /api/transfer/recent - Time: 0.2482s
+2026-04-22 09:53:23  INFO      127.0.0.1 - - [22/Apr/2026 09:53:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:53:47  INFO      [TIMING][a8130d1620c6] GET /api/transfer/recent - Time: 0.1978s
+2026-04-22 09:53:47  INFO      127.0.0.1 - - [22/Apr/2026 09:53:47] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:53:47  INFO      [TIMING][f82650afffaa] GET /api/transfer/recent - Time: 0.1875s
+2026-04-22 09:53:47  INFO      127.0.0.1 - - [22/Apr/2026 09:53:47] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:53:55  INFO      [TIMING][42f7a6e8bc80] GET /api/transfer/recent - Time: 0.2333s
+2026-04-22 09:53:55  INFO      127.0.0.1 - - [22/Apr/2026 09:53:55] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:54:03  INFO      [TIMING][b16a1ebf562b] GET /api/transfer/recent - Time: 0.1938s
+2026-04-22 09:54:03  INFO      127.0.0.1 - - [22/Apr/2026 09:54:03] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:54:11  INFO      [TIMING][3f6c8167a7dd] GET /api/transfer/recent - Time: 0.2363s
+2026-04-22 09:54:11  INFO      127.0.0.1 - - [22/Apr/2026 09:54:11] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:54:19  INFO      [TIMING][4a7be011bf8e] GET /api/transfer/recent - Time: 0.1212s
+2026-04-22 09:54:19  INFO      127.0.0.1 - - [22/Apr/2026 09:54:19] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:54:27  INFO      [TIMING][06c5a2d48e4e] GET /api/transfer/recent - Time: 0.2037s
+2026-04-22 09:54:27  INFO      127.0.0.1 - - [22/Apr/2026 09:54:27] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:54:35  INFO      [TIMING][47cb57f801ef] GET /api/transfer/recent - Time: 0.2542s
+2026-04-22 09:54:35  INFO      127.0.0.1 - - [22/Apr/2026 09:54:35] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:54:43  INFO      [TIMING][952c6fe41d1a] GET /api/transfer/recent - Time: 0.1717s
+2026-04-22 09:54:43  INFO      127.0.0.1 - - [22/Apr/2026 09:54:43] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:54:52  INFO      [TIMING][c4526430d17b] GET /api/transfer/recent - Time: 0.2795s
+2026-04-22 09:54:52  INFO      127.0.0.1 - - [22/Apr/2026 09:54:52] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:54:59  INFO      [TIMING][203678ec5f95] GET /api/transfer/recent - Time: 0.1846s
+2026-04-22 09:54:59  INFO      127.0.0.1 - - [22/Apr/2026 09:54:59] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:55:07  INFO      [TIMING][a6f5d40afc25] GET /api/transfer/recent - Time: 0.2537s
+2026-04-22 09:55:07  INFO      127.0.0.1 - - [22/Apr/2026 09:55:07] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:55:15  INFO      [TIMING][86eb61a1cb0e] GET /api/transfer/recent - Time: 0.2027s
+2026-04-22 09:55:15  INFO      127.0.0.1 - - [22/Apr/2026 09:55:15] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:55:23  INFO      [TIMING][949bd822fcd8] GET /api/transfer/recent - Time: 0.1847s
+2026-04-22 09:55:23  INFO      127.0.0.1 - - [22/Apr/2026 09:55:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:56:23  INFO      [TIMING][64eee1b0ea3c] GET /api/transfer/recent - Time: 0.2360s
+2026-04-22 09:56:23  INFO      127.0.0.1 - - [22/Apr/2026 09:56:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:57:23  INFO      [TIMING][005356cc3036] GET /api/transfer/recent - Time: 0.2274s
+2026-04-22 09:57:23  INFO      127.0.0.1 - - [22/Apr/2026 09:57:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:57:47  INFO      [TIMING][d692ec1d2f9b] GET /api/transfer/recent - Time: 0.2534s
+2026-04-22 09:57:47  INFO      127.0.0.1 - - [22/Apr/2026 09:57:47] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:57:47  INFO      [TIMING][c9753caa7b9d] GET /api/transfer/recent - Time: 0.2516s
+2026-04-22 09:57:47  INFO      127.0.0.1 - - [22/Apr/2026 09:57:47] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:57:55  INFO      [TIMING][2f9eefdb80ce] GET /api/transfer/recent - Time: 0.1851s
+2026-04-22 09:57:55  INFO      127.0.0.1 - - [22/Apr/2026 09:57:55] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:58:03  INFO      [TIMING][75b3fa8a6d48] GET /api/transfer/recent - Time: 0.2552s
+2026-04-22 09:58:03  INFO      127.0.0.1 - - [22/Apr/2026 09:58:03] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:58:11  INFO      [TIMING][e152fa6f7a58] GET /api/transfer/recent - Time: 0.2131s
+2026-04-22 09:58:11  INFO      127.0.0.1 - - [22/Apr/2026 09:58:11] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:58:19  INFO      [TIMING][22a4ef118bf5] GET /api/transfer/recent - Time: 0.2145s
+2026-04-22 09:58:19  INFO      127.0.0.1 - - [22/Apr/2026 09:58:19] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:58:27  INFO      [TIMING][0bcf9415df8a] GET /api/transfer/recent - Time: 0.1216s
+2026-04-22 09:58:27  INFO      127.0.0.1 - - [22/Apr/2026 09:58:27] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:58:35  INFO      [TIMING][7568731cc1dc] GET /api/transfer/recent - Time: 0.1847s
+2026-04-22 09:58:35  INFO      127.0.0.1 - - [22/Apr/2026 09:58:35] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:58:43  INFO      [TIMING][cc69dd4df730] GET /api/transfer/recent - Time: 0.2612s
+2026-04-22 09:58:43  INFO      127.0.0.1 - - [22/Apr/2026 09:58:43] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-04-22 09:59:23  INFO      [TIMING][f8b43a50c88d] GET /api/transfer/recent - Time: 0.1588s
+2026-04-22 09:59:23  INFO      127.0.0.1 - - [22/Apr/2026 09:59:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
