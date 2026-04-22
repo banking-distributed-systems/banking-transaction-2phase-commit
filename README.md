@@ -53,6 +53,7 @@ pip install -r backend/requirements.txt
 - `flask` - Web framework
 - `flask-cors` - CORS support
 - `pymysql` - MySQL driver
+- `cryptography` - Required for MySQL 8 auth (`caching_sha2_password`)
 - `pytest` - Testing framework (optional, cho dev)
 
 ### 3. Khởi động database và Toxiproxy

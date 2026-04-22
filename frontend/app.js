@@ -1,5 +1,6 @@
 // Sử dụng proxy để test các lỗi mạng/toxic
 const API_URL = "http://localhost:8666/api";
+const SESSION_STORAGE_KEY = "vbank_current_user";
 let currentUser = null;
 let balanceVisible = false;
 let lookupTimer = null;
@@ -7,6 +8,39 @@ let resolvedToAccount = null;
 let toastTimer = null;
 let pendingTransferIdempotencyKey = null;
 let txAutoRefreshTimer = null;
+
+function persistCurrentUser() {
+  if (!currentUser) return;
+  try {
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(currentUser));
+  } catch (error) {
+    console.warn("Không thể lưu session đăng nhập:", error?.message || error);
+  }
+}
+
+function clearPersistedSession() {
+  try {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch (error) {
+    console.warn("Không thể xóa session đã lưu:", error?.message || error);
+  }
+}
+
+function restoreSessionFromStorage() {
+  try {
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !parsed.name || !parsed.account_number) {
+      clearPersistedSession();
+      return null;
+    }
+    return parsed;
+  } catch {
+    clearPersistedSession();
+    return null;
+  }
+}
 
 function showToast(type, title, msg) {
   const toast = document.getElementById("toast");
@@ -62,7 +96,8 @@ function buildApiErrorMessage(response, payload, fallbackMessage) {
     payload?.message || payload?.error?.message || payload?.error?.detail;
   const message = messageFromPayload || fallbackMessage;
   const errorCode = payload?.error?.code;
-  const requestId = payload?.error?.request_id || response.headers.get("X-Request-ID");
+  const requestId =
+    payload?.error?.request_id || response.headers.get("X-Request-ID");
 
   let fullMessage = message;
   if (errorCode) {
@@ -150,7 +185,11 @@ function renderRecentTransactions(items = []) {
 
 async function fetchRecentTransactions(limit = 8) {
   try {
-    const res = await apiFetch(`${API_URL}/transfer/recent?limit=${encodeURIComponent(limit)}`, {}, "TX-RECENT");
+    const res = await apiFetch(
+      `${API_URL}/transfer/recent?limit=${encodeURIComponent(limit)}`,
+      {},
+      "TX-RECENT",
+    );
     const payload = await readJsonSafe(res);
     if (!res.ok || payload?.status !== "success") {
       renderRecentTransactions([]);
@@ -180,11 +219,19 @@ async function lookupTransactionStatus(txIdOverride = null, options = {}) {
   if (box && !silent) box.textContent = "Đang tra cứu trạng thái...";
 
   try {
-    const res = await apiFetch(`${API_URL}/transfer/status/${encodeURIComponent(txId)}`, {}, "TX-STATUS");
+    const res = await apiFetch(
+      `${API_URL}/transfer/status/${encodeURIComponent(txId)}`,
+      {},
+      "TX-STATUS",
+    );
     const payload = await readJsonSafe(res);
 
     if (!res.ok || payload?.status !== "success") {
-      const message = buildApiErrorMessage(res, payload, "Không thể tra cứu trạng thái giao dịch");
+      const message = buildApiErrorMessage(
+        res,
+        payload,
+        "Không thể tra cứu trạng thái giao dịch",
+      );
       if (box) box.textContent = message;
       return;
     }
@@ -205,12 +252,20 @@ async function runManualRecovery() {
     );
     const data = await readJsonSafe(res);
     if (!res.ok || data?.status !== "success") {
-      const message = buildApiErrorMessage(res, data, "Không thể chạy recovery");
+      const message = buildApiErrorMessage(
+        res,
+        data,
+        "Không thể chạy recovery",
+      );
       showToast("error", `Recovery lỗi (${res.status})`, message);
       return;
     }
 
-    showToast("success", "Recovery hoàn tất", `Đã xử lý ${data.count || 0} giao dịch treo.`);
+    showToast(
+      "success",
+      "Recovery hoàn tất",
+      `Đã xử lý ${data.count || 0} giao dịch treo.`,
+    );
     await fetchRecentTransactions();
     const txId = document.getElementById("statusTxIdInput")?.value?.trim();
     if (txId) {
@@ -358,18 +413,11 @@ async function doLogin() {
     const data = await readJsonSafe(res);
     if (res.ok && data?.status === "success") {
       currentUser = data.user;
+      persistCurrentUser();
       showDashboard();
     } else {
-      const message = buildApiErrorMessage(
-        res,
-        data,
-        "Đăng nhập thất bại",
-      );
-      showToast(
-        "error",
-        `Đăng nhập thất bại (${res.status})`,
-        message,
-      );
+      const message = buildApiErrorMessage(res, data, "Đăng nhập thất bại");
+      showToast("error", `Đăng nhập thất bại (${res.status})`, message);
     }
   } catch (e) {
     if (e?.isResponseParseError) {
@@ -391,6 +439,13 @@ async function doLogin() {
 }
 
 function showDashboard() {
+  if (!currentUser) {
+    document.getElementById("dashboardScreen").style.display = "none";
+    document.getElementById("receiptScreen").style.display = "none";
+    document.getElementById("loginScreen").style.display = "block";
+    return;
+  }
+
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("receiptScreen").style.display = "none";
   document.getElementById("dashboardScreen").style.display = "flex";
@@ -475,6 +530,8 @@ async function fetchAccounts() {
       const me = accounts.find((a) => a.id === currentUser.id);
       if (me) {
         currentUser.balance = parseFloat(me.balance);
+        currentUser.account_type = me.account_type || currentUser.account_type;
+        persistCurrentUser();
         if (balanceVisible) {
           document.getElementById("mainBalance").textContent = formatMoney(
             currentUser.balance,
@@ -550,7 +607,9 @@ function onToAccountInput() {
     } catch (err) {
       let msg = "Lỗi kết nối khi tra cứu tài khoản";
       if (err?.isResponseParseError) {
-        const statusPart = err.httpStatus ? `HTTP ${err.httpStatus}` : "HTTP unknown";
+        const statusPart = err.httpStatus
+          ? `HTTP ${err.httpStatus}`
+          : "HTTP unknown";
         msg = `${statusPart}: Phản hồi không đọc được (có thể bị cắt do toxic limit_data).`;
       } else if (err && err.name === "AbortError") {
         msg = "Timeout khi tra cứu tài khoản";
@@ -677,15 +736,13 @@ async function executeTransfer() {
         pendingTransferIdempotencyKey = null;
       }
 
-      showToast(
-        "error",
-        `Giao dịch thất bại (${response.status})`,
-        message,
-      );
+      showToast("error", `Giao dịch thất bại (${response.status})`, message);
     }
   } catch (error) {
     if (error?.isResponseParseError) {
-      const statusPart = error.httpStatus ? `HTTP ${error.httpStatus}` : "HTTP unknown";
+      const statusPart = error.httpStatus
+        ? `HTTP ${error.httpStatus}`
+        : "HTTP unknown";
       showToast(
         "error",
         "Lỗi dữ liệu phản hồi",
@@ -707,4 +764,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("loginPassword").addEventListener("keydown", (e) => {
     if (e.key === "Enter") doLogin();
   });
+
+  const restoredUser = restoreSessionFromStorage();
+  if (restoredUser) {
+    currentUser = restoredUser;
+    showDashboard();
+  }
 });

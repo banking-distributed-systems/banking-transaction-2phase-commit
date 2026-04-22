@@ -41,6 +41,12 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
     Đến B: 203847569801
     Số tiền: 50000
     Nội dung: TC04_B_COMMIT_FAIL
+    -- Kỳ vọng
+      Tài khoản A (102938475612):
+      ❌ Không bị trừ tiền (rollback lại)
+      Số dư giữ nguyên như ban đầu
+      Tài khoản B (203847569801):
+      ❌ Không nhận tiền
 
 -- cấu hình để chạy TC05 – Coordinator chết sau khi commit A
   - chuyển tiền với nội dung y như bên dưới
@@ -48,6 +54,17 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
     Đến B: 203847569801
     Số tiền: 50000
     Nội dung: TC05_CRASH_AFTER_COMMIT_A
+    -- Kỳ vọng
+      Backend chết sau khi A đã commit, trước khi B commit
+      transaction_log dừng ở COMMIT_A
+      Tài khoản A đã bị trừ 50000
+      Tài khoản B chưa được cộng ngay tại thời điểm crash
+      Sau khi restart backend hoặc gọi /api/recover:
+      transaction_log = COMMITTED
+      B được commit tiếp và nhận 50000
+      Kết quả cuối cùng:
+      A bị trừ 50000 đúng 1 lần
+      B được cộng 50000 đúng 1 lần
 
 TC06 – Coordinator crash trước commit
 
