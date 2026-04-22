@@ -192,6 +192,11 @@
   .bal-log .neutral { color: var(--text2); }
   .bal-log .sep { border-top: 1px dashed var(--border); margin: 3px 0; }
   .bal-log .bl-head { color: var(--text2); font-size: .67rem; margin-bottom: 4px; letter-spacing: .4px; text-transform: uppercase; }
+
+  /* ─── NARRATOR BOX ─── */
+  .tc-narrator { background: rgba(88,166,255,.07); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; padding: 8px 14px; margin: 8px 0 10px; font-size: .82rem; line-height: 1.7; color: var(--text); }
+  .tc-narrator b { color: var(--accent); }
+  .tc-narrator .nar-label { display: inline-block; font-size: .68rem; font-weight: 700; letter-spacing: .5px; color: var(--accent); text-transform: uppercase; margin-bottom: 3px; }
 </style>
 </head>
 <body>
@@ -654,6 +659,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
           <h3 class="green">Happy Path — 2PC thành công hoàn toàn</h3>
           <span class="tag tag-green">Trước: balance_A=5tr, balance_B=1tr</span>
         </div>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Đây là kịch bản lý tưởng — <b>«happy path»</b>. Anh A có 5 triệu, chuyển 500 nghìn cho chị B. Cả hai ngân hàng đều đồng ý bước <b>PREPARE</b> (khóa số tiền lại, cam kết sẵn sàng). Coordinator ra lệnh <b>COMMIT</b> — tiền trừ khỏi A và cộng vào B một cách nguyên tử, không mất mát, không sai lệch.
+        </div>
         <div class="tc-flow">
           <div class="tc-step">POST /api/transfer amount=500k</div><div class="tc-arrow">→</div>
           <div class="tc-step" style="color:var(--accent)">PREPARING</div><div class="tc-arrow">→</div>
@@ -681,6 +690,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
           <h3 class="danger">Bank A fail ở XA PREPARE</h3>
           <span class="tag tag-red">Trước: balance_A=200, amount=500k</span>
         </div>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Tài khoản A chỉ còn <b>200đ</b> nhưng muốn chuyển <b>500,000đ</b>. Khi bước PREPARE chạy lệnh <b>UPDATE balance−500000</b>, MySQL phát hiện vi phạm ràng buộc <b>balance ≥ 0</b> và ném exception ngay lập tức. Coordinator nhận tin, <b>rollback cả hai ngân hàng</b> — không ai bị ảnh hưởng dù chỉ một bên lỗi.
+        </div>
         <div class="tc-flow">
           <div class="tc-step">POST /api/transfer</div><div class="tc-arrow">→</div>
           <div class="tc-step" style="color:var(--accent)">PREPARING</div><div class="tc-arrow">→</div>
@@ -704,6 +717,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
           <div class="tc-badge" style="color:var(--danger);border-color:var(--danger)">TC03</div>
           <h3 class="danger">Bank B trả NO ở XA PREPARE</h3>
           <span class="tag tag-red">Trước: cả hai balance bình thường</span>
+        </div>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Lần này Bank A sẵn sàng, nhưng <b>Bank B gặp lỗi</b> ở bước PREPARE. Luật cốt lõi của 2PC: <b>chỉ cần một participant phản đối là hủy toàn bộ</b>. Coordinator rollback luôn cả Bank A, dù Bank A đã «giơ tay đồng ý» xong rồi. Đây chính là bảo đảm «all-or-nothing» của giao thức.
         </div>
         <div class="tc-flow">
           <div class="tc-step">POST /api/transfer</div><div class="tc-arrow">→</div>
@@ -741,6 +758,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
           <h3 class="orange">COMMIT_A OK → COMMIT_B fail → Compensation</h3>
         </div>
         <p class="sub mb8">Trigger: Gắn token <code>TC04_B_COMMIT_FAIL</code> vào description. Coordinator raise RuntimeError trước khi XA COMMIT Bank B.</p>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Đây là kịch bản <b>nguy hiểm nhất</b> trong 2PC. Bank A đã COMMIT thật (tiền đã bị trừ rồi) nhưng Bank B lại lỗi đột ngột. Hệ thống phát hiện trạng thái «commit lệch pha» và tự động thực hiện <b>giao dịch bù (compensation)</b>: cộng lại đúng số tiền đó cho A. Người gửi không mất tiền oan, nhưng giao dịch tổng thể vẫn được hủy.
+        </div>
         <div class="tc-flow">
           <div class="tc-step" style="color:var(--accent2)">Bank A: XA COMMIT ✓</div><div class="tc-arrow">→</div>
           <div class="tc-step" style="color:var(--warn)">COMMIT_A logged</div><div class="tc-arrow">→</div>
@@ -771,6 +792,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
           <h3 class="orange">Coordinator crash sau COMMIT_A — Recovery commit tiếp Bank B</h3>
         </div>
         <p class="sub mb8">Trigger: Token <code>TC05_CRASH_AFTER_COMMIT_A</code>. Coordinator gọi <code>os._exit(1)</code> sau khi log COMMIT_A. Khi restart → Recovery.</p>
+        <div class="tc-narrator">
+          <div class="nar-label">💬 Lời dẫn</div>
+          Cũng là tình huống Bank A đã commit nhưng coordinator <b>bị sập đột ngột</b> trước khi kịp commit Bank B. Khác TC04, ở đây không có compensation — thay vào đó khi khởi động lại, <b>module Recovery</b> đọc log, thấy phase=COMMIT_A và quyết định <b>commit nốt Bank B</b>. Giao dịch hoàn thành đúng, không mất tiền.
+        </div>
         <div class="tc-flow">
           <div class="tc-step" style="color:var(--warn)">COMMIT_A logged</div><div class="tc-arrow">→</div>
           <div class="tc-step" style="color:var(--danger)">os._exit(1) 💀</div><div class="tc-arrow">→</div>
@@ -812,6 +837,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
             <h3 class="danger">Crash trước commit — Recovery ABORT</h3>
           </div>
           <p class="sub">Token <code>TC06_CRASH_BEFORE_COMMIT</code>: crash ngay sau khi phase = PREPARING, trước khi ghi PREPARED. Recovery thấy phase=PREPARING → XA ROLLBACK → ABORTED.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Coordinator sập ngay khi đang PREPARING, <b>chưa bank nào commit cả</b>. Recovery đọc log, thấy phase=PREPARING → suy luận <b>an toàn để rollback toàn bộ</b>. Tiền không bị trừ.
+          </div>
           <div class="tc-flow mt8">
             <div class="tc-step" style="color:var(--accent)">PREPARING</div><div class="tc-arrow">→</div>
             <div class="tc-step" style="color:var(--danger)">CRASH</div><div class="tc-arrow">→</div>
@@ -834,6 +863,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
             <h3 class="orange">Crash sau PREPARED — Recovery COMMIT</h3>
           </div>
           <p class="sub">Token <code>TC07_CRASH_AFTER_PREPARE</code>: crash sau phase=PREPARED. Cả hai bank còn trong XA PREPARED state. Recovery: xa_commit toàn bộ → COMMITTED.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Cả hai bank đã <b>PREPARE xong</b> (có nghĩa là đồng ý commit) nhưng coordinator sập đúng lúc sắp ra lệnh COMMIT. Recovery thấy phase=PREPARED + XID còn trên cả hai bank → <b>commit tiếp</b>. Giao dịch hoàn tất dù coordinator từng sập.
+          </div>
           <div class="tc-flow mt8">
             <div class="tc-step" style="color:var(--teal)">PREPARED</div><div class="tc-arrow">→</div>
             <div class="tc-step" style="color:var(--danger)">CRASH</div><div class="tc-arrow">→</div>
@@ -856,6 +889,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
             <h3 class="orange">Crash tại COMMITTING — In-doubt Recovery</h3>
           </div>
           <p class="sub">Token <code>TC08_CRASH_DURING_COMMITTING</code>: log=COMMITTING, cả hai bank vẫn PREPARED (chưa commit nào). Recovery thấy phase=COMMITTING → xa_commit tất cả → COMMITTED.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Coordinator kịp ghi phase=<b>COMMITTING</b> vào log rồi mới sập, nhưng chưa gọi XA COMMIT cho bank nào. Đây là trường hợp <b>«in-doubt» kinh điển</b>. Recovery xác nhận cả hai bank vẫn XA PREPARED → quyết định COMMIT hết — giống TC07 nhưng xuất phát từ phase khác.
+          </div>
           <div class="tc-flow mt8">
             <div class="tc-step" style="color:var(--yellow)">COMMITTING</div><div class="tc-arrow">→</div>
             <div class="tc-step" style="color:var(--danger)">CRASH</div><div class="tc-arrow">→</div>
@@ -877,6 +914,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
             <h3 class="accent">Commit gửi 2 lần — Idempotent</h3>
           </div>
           <p class="sub">Token <code>TC09_COMMIT_TWICE</code>: gọi xa_commit lần 2 → lần 1 OK, lần 2 raise XAER_NOTA (đã commit rồi). Hệ thống không crash, tiền không nhân đôi.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Kiểm tra tính <b>idempotent</b>: nếu network retry khiến COMMIT được gửi 2 lần, lần 2 MySQL trả <b>XAER_NOTA</b> — «XID này tôi không biết, chắc đã commit rồi». Hệ thống log warning và bỏ qua — <b>tiền không bị trừ hai lần</b>.
+          </div>
           <div class="tc-flow mt8">
             <div class="tc-step">XA COMMIT #1 ✓</div><div class="tc-arrow">→</div>
             <div class="tc-step">XA COMMIT #2 → XAER_NOTA</div><div class="tc-arrow">→</div>
@@ -899,6 +940,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
             <h3 class="accent">Rollback gửi 2 lần — Không crash</h3>
           </div>
           <p class="sub">Token <code>TC10_ROLLBACK_TWICE</code>: gọi rollback_xa_all 2 lần liên tiếp. Lần 2 MySQL trả lỗi XAER_NOTA, hệ thống catch và log warning, không crash.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Tương tự TC09 nhưng cho ROLLBACK. Gửi XA ROLLBACK 2 lần liên tiếp — lần 2 MySQL cũng trả <b>XAER_NOTA</b>. Hệ thống catch exception, ghi warning và tiếp tục — <b>không crash, không tác dụng phụ</b>. Đảm bảo rollback luôn an toàn dù gửi nhiều lần.
+          </div>
           <div class="tc-flow mt8">
             <div class="tc-step">XA ROLLBACK #1 ✓</div><div class="tc-arrow">→</div>
             <div class="tc-step">XA ROLLBACK #2 → warning</div><div class="tc-arrow">→</div>
@@ -921,6 +966,10 @@ INSERT INTO transactions (tx_id=<span class="str">'COMP-VB...'</span>,
             <h3 class="purple">2 giao dịch đồng thời — Isolation</h3>
           </div>
           <p class="sub">ThreadPoolExecutor(max_workers=2) chạy execute_transfer 2 lần đồng thời với uuid khác nhau. Assert: tx_id[0] ≠ tx_id[1], cả hai thành công, hệ thống ổn định.</p>
+          <div class="tc-narrator">
+            <div class="nar-label">💬 Lời dẫn</div>
+            Hai người dùng chuyển tiền <b>cùng lúc trên 2 thread</b>. Mỗi giao dịch có XID riêng nên MySQL cấp khóa riêng, không xung đột. Kết quả: <b>hai tx_id khác nhau, cả hai COMMITTED</b>, chứng minh hệ thống <b>thread-safe</b> và isolation đúng chuẩn.
+          </div>
           <div class="tc-flow mt8">
             <div class="tc-step">Transfer A || Transfer B</div><div class="tc-arrow">→</div>
             <div class="tc-step" style="color:var(--accent2)">2 tx_id khác nhau</div><div class="tc-arrow">→</div>

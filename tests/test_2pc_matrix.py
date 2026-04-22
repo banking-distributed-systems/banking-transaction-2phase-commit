@@ -41,10 +41,11 @@ def _payload():
 
 
 class Test2PCCoreCases:
+    @patch('two_phase_commit.log_balance')
     @patch('account_service.save_transaction', return_value=True)
     @patch('two_phase_commit.log_phase')
     @patch('two_phase_commit.xa_prepare_participant', return_value=None)
-    def test_tc01_happy_path_commit_success(self, _mock_prepare, mock_log_phase, _mock_save_tx):
+    def test_tc01_happy_path_commit_success(self, _mock_prepare, mock_log_phase, _mock_save_tx, _mock_log_balance):
         payload = _payload()
         conn_a, _ = _make_conn()
         conn_b, _ = _make_conn()
@@ -90,6 +91,7 @@ class Test2PCCoreCases:
         assert 'Phase 1' in message
         assert mock_rollback_all.called
 
+    @patch('two_phase_commit.log_balance')
     @patch('two_phase_commit.log_phase')
     @patch('two_phase_commit.xa_prepare_participant', return_value=None)
     @patch('two_phase_commit.xa_rollback')
@@ -100,6 +102,7 @@ class Test2PCCoreCases:
         mock_xa_rollback,
         _mock_prepare,
         _mock_log_phase,
+        _mock_log_balance,
     ):
         payload = _payload()
         conn_a, _ = _make_conn()
@@ -148,7 +151,8 @@ class Test2PCRecoveryCases:
             if cfg.get('database') == 'bank1':
                 return bank_log_a if cfg.get('autocommit') else conn_a
             if cfg.get('database') == 'bank2':
-                return bank_log_b if cfg.get('autocommit') else conn_b
+                # conn_b has fetchall_rows=[(0,0,0,xid)] needed for XA RECOVER
+                return conn_b
             return conn_b
 
         with patch.object(tpc, 'ALL_DB_CONFIGS', [cfg_a, cfg_b]), patch(
