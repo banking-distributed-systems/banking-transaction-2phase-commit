@@ -1,14 +1,16 @@
-CREATE TABLE accounts (
-    id INT PRIMARY KEY,
-    name VARCHAR(100),
-    balance DECIMAL(15, 2) CHECK (balance >= 0),
-    phone VARCHAR(20),
-    password VARCHAR(255),
-    account_number VARCHAR(20),
-    account_type VARCHAR(50) DEFAULT 'STANDARD'
+CREATE TABLE transaction_log (
+    tx_id VARCHAR(30) PRIMARY KEY,
+    xid VARCHAR(64),
+    phase VARCHAR(20),
+    amount DECIMAL(15,2),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
-SET @@auto_increment_increment = 3;
+CREATE TABLE accounts (
+    account_number VARCHAR(20) PRIMARY KEY,
+    name VARCHAR(100),
+    balance DECIMAL(15,2)
+) ENGINE=InnoDB;
 
-INSERT INTO accounts (id, name, balance, phone, password, account_number, account_type)
-VALUES (2, 'Trần Thị B', 2000000, '0912345678', 'e10adc3949ba59abbe56e057f20f883e', '2038 4756 9801', 'GOLD');
+INSERT INTO accounts (account_number, name, balance)
+VALUES ('203847569801', 'Trần Thị B', 2000000);

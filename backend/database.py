@@ -4,7 +4,7 @@ Database connection và helper functions
 
 import pymysql
 from typing import Optional, Dict, Any, List
-from config import DB1_CONFIG, DB2_CONFIG, ALL_DB_CONFIGS
+from config import ALL_DB_CONFIGS, COORDINATOR_DB_CONFIG
 from logger import get_logger
 
 logger = get_logger(__name__)
@@ -26,14 +26,14 @@ def get_connection(config: Dict[str, Any] = None, **kwargs) -> pymysql.Connectio
     return pymysql.connect(**final_config)
 
 
-def get_log_conn() -> pymysql.Connection:
+def get_coordinator_conn() -> pymysql.Connection:
     """
-    Kết nối autocommit tới DB1 để ghi transaction_log
+    Kết nối autocommit tới database coordinator.
 
     Returns:
         PyMySQL connection với autocommit=True
     """
-    return get_connection(**{**DB1_CONFIG, 'autocommit': True})
+    return get_connection(**{**COORDINATOR_DB_CONFIG, 'autocommit': True})
 
 
 def execute_query(
@@ -130,7 +130,7 @@ def get_all_accounts() -> List[Dict[str, Any]]:
             conn = get_connection(config)
             with conn.cursor(pymysql.cursors.DictCursor) as cursor:
                 cursor.execute(
-                    "SELECT id, name, balance, account_number, account_type, "
+                    "SELECT name, balance, account_number, account_type, "
                     f"'{db_name}' as bank FROM accounts"
                 )
                 accounts.extend(cursor.fetchall())
@@ -143,36 +143,46 @@ def get_all_accounts() -> List[Dict[str, Any]]:
 
 def ensure_runtime_schema() -> None:
     """Khởi tạo các bảng/phần schema cần cho runtime nếu chưa tồn tại."""
-    conn = None
+    coordinator_conn = None
     try:
-        conn = get_log_conn()
-        with conn.cursor() as cur:
+        coordinator_conn = get_coordinator_conn()
+        with coordinator_conn.cursor() as cur:
             cur.execute(
-                "CREATE TABLE IF NOT EXISTS idempotency_keys ("
-                "id BIGINT AUTO_INCREMENT PRIMARY KEY,"
-                "idem_key VARCHAR(128) NOT NULL UNIQUE,"
-                "request_hash CHAR(64) NOT NULL,"
-                "status VARCHAR(20) NOT NULL DEFAULT 'PROCESSING',"
-                "tx_id VARCHAR(30) DEFAULT NULL,"
-                "http_status INT NOT NULL DEFAULT 0,"
-                "response_json LONGTEXT DEFAULT NULL,"
-                "created_at DATETIME DEFAULT CURRENT_TIMESTAMP,"
-                "updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+                "CREATE TABLE IF NOT EXISTS transactions ("
+                "tx_id VARCHAR(30) PRIMARY KEY,"
+                "from_account VARCHAR(20),"
+                "to_account VARCHAR(20),"
+                "amount DECIMAL(15,2),"
+                "status VARCHAR(20),"
+                "created_at DATETIME DEFAULT CURRENT_TIMESTAMP"
                 ") ENGINE=InnoDB"
             )
             cur.execute(
-                "SELECT 1 FROM information_schema.statistics "
-                "WHERE table_schema = DATABASE() "
-                "AND table_name = 'transaction_log' "
-                "AND index_name = 'idx_transaction_log_updated_at' "
-                "LIMIT 1"
+                "CREATE TABLE IF NOT EXISTS idempotency_keys ("
+                "idem_key VARCHAR(128) PRIMARY KEY,"
+                "status VARCHAR(20),"
+                "tx_id VARCHAR(30)"
+                ") ENGINE=InnoDB"
             )
-            if not cur.fetchone():
-                cur.execute(
-                    "CREATE INDEX idx_transaction_log_updated_at ON transaction_log(updated_at)"
-                )
+        for config in ALL_DB_CONFIGS:
+            bank_conn = None
+            try:
+                bank_conn = get_connection({**config, 'autocommit': True})
+                with bank_conn.cursor() as cur:
+                    cur.execute(
+                        "CREATE TABLE IF NOT EXISTS transaction_log ("
+                        "tx_id VARCHAR(30) PRIMARY KEY,"
+                        "xid VARCHAR(64),"
+                        "phase VARCHAR(20),"
+                        "amount DECIMAL(15,2),"
+                        "created_at DATETIME DEFAULT CURRENT_TIMESTAMP"
+                        ") ENGINE=InnoDB"
+                    )
+            finally:
+                if bank_conn:
+                    bank_conn.close()
     except Exception as e:
         logger.warning('[DB] Không thể ensure runtime schema: %s', e)
     finally:
-        if conn:
-            conn.close()
+        if coordinator_conn:
+            coordinator_conn.close()

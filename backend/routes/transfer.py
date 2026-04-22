@@ -4,12 +4,11 @@ Transfer routes - /api/transfer
 
 from flask import Blueprint, request, jsonify
 import pymysql
-from config import PHASE_LABELS
+from config import ALL_DB_CONFIGS, PHASE_LABELS
 
 from account_service import find_account_by_number
-from database import get_log_conn
+from database import get_connection, get_coordinator_conn
 from idempotency_service import (
-    build_request_hash,
     create_processing_record,
     finalize_record,
     get_idempotency_record,
@@ -34,15 +33,35 @@ def _build_status_message(phase: str, fallback: str = '') -> str:
     return fallback or 'Trạng thái giao dịch đang được cập nhật.'
 
 
+def _find_participant_log_by_tx_id(tx_id: str):
+    for config in ALL_DB_CONFIGS:
+        conn = None
+        try:
+            conn = get_connection({**config, 'autocommit': True})
+            with conn.cursor(pymysql.cursors.DictCursor) as cur:
+                cur.execute(
+                    "SELECT tx_id, xid, phase, amount, created_at "
+                    "FROM transaction_log WHERE tx_id = %s",
+                    (tx_id,),
+                )
+                row = cur.fetchone()
+                if row:
+                    row['bank'] = config['database']
+                    return row
+        finally:
+            if conn:
+                conn.close()
+    return None
+
+
 def _get_transaction_status(tx_id: str):
     conn = None
     try:
-        conn = get_log_conn()
-        with conn.cursor() as cur:
+        conn = get_coordinator_conn()
+        with conn.cursor(pymysql.cursors.DictCursor) as cur:
             cur.execute(
-                "SELECT tx_id, xid, from_account_number, to_account_number, amount, description, "
-                "phase, created_at, updated_at "
-                "FROM transaction_log WHERE tx_id = %s",
+                "SELECT tx_id, from_account, to_account, amount, status, created_at "
+                "FROM transactions WHERE tx_id = %s",
                 (tx_id,),
             )
             row = cur.fetchone()
@@ -50,27 +69,20 @@ def _get_transaction_status(tx_id: str):
             if not row:
                 return None
 
-            cur.execute(
-                "SELECT status FROM transactions WHERE tx_id = %s ORDER BY id DESC LIMIT 1",
-                (tx_id,),
-            )
-            tx_row = cur.fetchone()
-
-        phase = row[6]
-        business_status = tx_row[0] if tx_row else None
+        participant_log = _find_participant_log_by_tx_id(tx_id)
+        phase = participant_log['phase'] if participant_log else row['status']
         return {
-            'tx_id': row[0],
-            'xid': row[1],
-            'from_account_number': row[2],
-            'to_account_number': row[3],
-            'amount': float(row[4]),
-            'description': row[5],
+            'tx_id': row['tx_id'],
+            'xid': participant_log['xid'] if participant_log else None,
+            'from_account_number': row['from_account'],
+            'to_account_number': row['to_account'],
+            'amount': float(row['amount']),
             'phase': phase,
             'phase_label': PHASE_LABELS.get(phase, phase),
-            'business_status': business_status,
+            'business_status': row['status'],
             'message': _build_status_message(phase),
-            'created_at': str(row[7]),
-            'updated_at': str(row[8]),
+            'created_at': str(row['created_at']),
+            'updated_at': str(participant_log['created_at'] if participant_log else row['created_at']),
         }
     finally:
         if conn:
@@ -80,28 +92,29 @@ def _get_transaction_status(tx_id: str):
 def _get_recent_transactions(limit: int = 10):
     conn = None
     try:
-        conn = get_log_conn()
+        conn = get_coordinator_conn()
         with conn.cursor(pymysql.cursors.DictCursor) as cur:
             cur.execute(
-                "SELECT tx_id, from_account_number, to_account_number, amount, phase, updated_at "
-                "FROM transaction_log ORDER BY updated_at DESC LIMIT %s",
+                "SELECT tx_id, from_account, to_account, amount, status, created_at "
+                "FROM transactions ORDER BY created_at DESC LIMIT %s",
                 (int(limit),),
             )
             rows = cur.fetchall()
 
         items = []
         for row in rows:
-            phase = row['phase']
+            participant_log = _find_participant_log_by_tx_id(row['tx_id'])
+            phase = participant_log['phase'] if participant_log else row['status']
             items.append(
                 {
                     'tx_id': row['tx_id'],
-                    'from_account_number': row['from_account_number'],
-                    'to_account_number': row['to_account_number'],
+                    'from_account_number': row['from_account'],
+                    'to_account_number': row['to_account'],
                     'amount': float(row['amount']),
                     'phase': phase,
                     'phase_label': PHASE_LABELS.get(phase, phase),
                     'message': _build_status_message(phase),
-                    'updated_at': str(row['updated_at']),
+                    'updated_at': str(participant_log['created_at'] if participant_log else row['created_at']),
                 }
             )
         return items
@@ -134,27 +147,9 @@ def transfer():
     description = str(data.get('description') or '').strip()
 
     idem_key = str(request.headers.get('Idempotency-Key') or data.get('idempotency_key') or '').strip()
-    req_hash = None
     if idem_key:
-        req_hash = build_request_hash(
-            {
-                'from_account_number': from_account_number,
-                'to_account_number': to_account_number,
-                'amount': amount,
-                'description': description,
-            }
-        )
         existing = get_idempotency_record(idem_key)
         if existing:
-            if existing['request_hash'] != req_hash:
-                return jsonify(
-                    {
-                        'status': 'error',
-                        'message': 'Idempotency-Key đã được dùng cho payload khác',
-                        'error_code': 'IDEMPOTENCY_KEY_REUSED_WITH_DIFFERENT_PAYLOAD',
-                    }
-                ), 409
-
             if existing['status'] == 'PROCESSING':
                 return jsonify(
                     {
@@ -168,7 +163,17 @@ def transfer():
             if stored is not None:
                 stored['idempotent_replay'] = True
                 stored['idempotency_key'] = idem_key
-                return jsonify(stored), int(existing.get('http_status') or 200)
+                return jsonify(stored), 200
+            if existing.get('tx_id'):
+                return jsonify(
+                    {
+                        'status': 'success' if existing['status'] == 'COMPLETED' else 'error',
+                        'message': 'Yêu cầu trước đó đã được xử lý.',
+                        'tx_id': existing['tx_id'],
+                        'idempotent_replay': True,
+                        'idempotency_key': idem_key,
+                    }
+                ), 200 if existing['status'] == 'COMPLETED' else 409
 
     # Validation
     if amount <= 0:
@@ -193,14 +198,14 @@ def transfer():
             "message": "Tài khoản đích không tồn tại"
         }), 400
 
-    if from_acc['id'] == to_acc['id'] and from_config == to_config:
+    if from_acc['account_number'] == to_acc['account_number'] and from_config == to_config:
         return jsonify({
             "status": "error",
             "message": "Không thể chuyển tiền cùng một tài khoản"
         }), 400
 
     if idem_key:
-        created = create_processing_record(idem_key, req_hash)
+        created = create_processing_record(idem_key)
         if not created:
             race = get_idempotency_record(idem_key)
             if race:
@@ -216,7 +221,17 @@ def transfer():
                 if stored is not None:
                     stored['idempotent_replay'] = True
                     stored['idempotency_key'] = idem_key
-                    return jsonify(stored), int(race.get('http_status') or 200)
+                    return jsonify(stored), 200
+                if race.get('tx_id'):
+                    return jsonify(
+                        {
+                            'status': 'success' if race['status'] == 'COMPLETED' else 'error',
+                            'message': 'Yêu cầu trước đó đã được xử lý.',
+                            'tx_id': race['tx_id'],
+                            'idempotent_replay': True,
+                            'idempotency_key': idem_key,
+                        }
+                    ), 200 if race['status'] == 'COMPLETED' else 409
 
     # Execute 2PC transfer
     success, message, tx_id, extra_data = execute_transfer(
@@ -245,7 +260,7 @@ def transfer():
         status_code = 408
 
     if idem_key:
-        finalize_record(idem_key, tx_id, status_code, response, success)
+        finalize_record(idem_key, tx_id, success)
 
     return jsonify(response), status_code
 

@@ -12,8 +12,8 @@ from werkzeug.exceptions import HTTPException
 from logger import logger
 from routes import register_routes
 from two_phase_commit import recover_in_doubt_transactions
-from config import DB1_CONFIG, DB2_CONFIG, DB3_CONFIG, ALL_DB_CONFIGS
-from database import get_connection, ensure_runtime_schema
+from config import DB1_CONFIG, DB2_CONFIG, DB3_CONFIG, ALL_DB_CONFIGS, COORDINATOR_DB_CONFIG
+from database import get_connection, get_coordinator_conn, ensure_runtime_schema
 
 # Khởi tạo Flask app
 app = Flask(__name__)
@@ -144,6 +144,15 @@ def check_database_connections():
             results[db_name] = f'Lỗi: {e}'
             logger.error('[STARTUP] ✗ Kết nối %s thất bại: %s', db_name, e)
 
+    try:
+        conn = get_coordinator_conn()
+        conn.close()
+        results['Coordinator (coordinator)'] = 'OK'
+        logger.info('[STARTUP] ✓ Kết nối Coordinator (coordinator) thành công')
+    except Exception as e:
+        results['Coordinator (coordinator)'] = f'Lỗi: {e}'
+        logger.error('[STARTUP] ✗ Kết nối Coordinator (coordinator) thất bại: %s', e)
+
     return results
 
 @app.route('/api/health')
@@ -179,10 +188,11 @@ def main():
     logger.info('  🎉 V-Bank 2PC Server khởi động thành công!')
     logger.info('  📍 Server chạy tại: http://localhost:5000')
     logger.info('  📍 API Base URL:    http://localhost:5000/api')
-    logger.info('  🗄  Database:       %s/%s/%s',
+    logger.info('  🗄  Database:       %s/%s/%s + %s',
                 DB1_CONFIG['database'],
                 DB2_CONFIG['database'],
-                DB3_CONFIG['database'])
+                DB3_CONFIG['database'],
+                COORDINATOR_DB_CONFIG['database'])
     logger.info('  ⏱  Prepare Timeout: %s giây', 10)
     logger.info('═══════════════════════════════════════════════════════════════')
 

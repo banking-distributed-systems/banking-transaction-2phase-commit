@@ -377,26 +377,13 @@ function getGreeting() {
   return "CHÀO BUỔI TỐI,";
 }
 
-function togglePassword() {
-  const input = document.getElementById("loginPassword");
-  const icon = document.querySelector(".toggle-password");
-  if (input.type === "password") {
-    input.type = "text";
-    icon.classList.replace("fa-eye", "fa-eye-slash");
-  } else {
-    input.type = "password";
-    icon.classList.replace("fa-eye-slash", "fa-eye");
-  }
-}
-
 async function doLogin() {
-  const phone = document.getElementById("loginPhone").value.trim();
-  const password = document.getElementById("loginPassword").value;
+  const accountNumber = document.getElementById("loginAccountNumber").value.trim();
   const msgDiv = document.getElementById("loginMessage");
   msgDiv.textContent = "";
 
-  if (!phone || !password) {
-    showToast("error", "Thiếu thông tin", "Vui lòng nhập đầy đủ thông tin");
+  if (!accountNumber) {
+    showToast("error", "Thiếu thông tin", "Vui lòng nhập số tài khoản");
     return;
   }
 
@@ -406,7 +393,7 @@ async function doLogin() {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, password }),
+        body: JSON.stringify({ account_number: accountNumber }),
       },
       "LOGIN",
     );
@@ -458,7 +445,7 @@ function showDashboard() {
   document.getElementById("accountNumber").textContent =
     currentUser.account_number;
   document.getElementById("accountBadge").textContent =
-    currentUser.account_type;
+    (currentUser.account_type || currentUser.bank || "BANK").toUpperCase();
 
   balanceVisible = false;
   document.getElementById("mainBalance").textContent = "******* VND";
@@ -527,11 +514,16 @@ async function fetchAccounts() {
     const accounts = Array.isArray(data) ? data : [];
     // Update current user balance
     if (currentUser) {
-      const me = accounts.find((a) => a.id === currentUser.id);
+      const me = accounts.find(
+        (a) => a.account_number === currentUser.account_number,
+      );
       if (me) {
         currentUser.balance = parseFloat(me.balance);
         currentUser.account_type = me.account_type || currentUser.account_type;
+        currentUser.bank = me.bank || currentUser.bank;
         persistCurrentUser();
+        document.getElementById("accountBadge").textContent =
+          (currentUser.account_type || currentUser.bank || "BANK").toUpperCase();
         if (balanceVisible) {
           document.getElementById("mainBalance").textContent = formatMoney(
             currentUser.balance,
@@ -761,7 +753,7 @@ async function executeTransfer() {
 
 // Allow Enter key to login
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("loginPassword").addEventListener("keydown", (e) => {
+  document.getElementById("loginAccountNumber").addEventListener("keydown", (e) => {
     if (e.key === "Enter") doLogin();
   });
 

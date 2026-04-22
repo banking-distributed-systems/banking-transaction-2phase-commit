@@ -24,34 +24,19 @@
         </div>
         <div class="login-form">
           <div class="input-group">
-            <label>Số điện thoại</label>
+            <label>Số tài khoản</label>
             <div class="input-wrapper">
-              <i class="fas fa-phone"></i>
+              <i class="fas fa-credit-card"></i>
               <input
-                type="tel"
-                id="loginPhone"
-                placeholder="Nhập số điện thoại"
+                type="text"
+                id="loginAccountNumber"
+                placeholder="Nhập số tài khoản"
               />
-            </div>
-          </div>
-          <div class="input-group">
-            <label>Mật khẩu</label>
-            <div class="input-wrapper">
-              <i class="fas fa-lock"></i>
-              <input
-                type="password"
-                id="loginPassword"
-                placeholder="Nhập mật khẩu"
-              />
-              <i
-                class="fas fa-eye toggle-password"
-                onclick="togglePassword()"
-              ></i>
             </div>
           </div>
           <div class="login-links">
-            <a href="#">Quên mật khẩu?</a>
-            <a href="#">Đăng ký mới</a>
+            <a href="#">Tra cứu tài khoản</a>
+            <a href="#">Hỗ trợ</a>
           </div>
           <button class="login-btn" onclick="doLogin()">ĐĂNG NHẬP</button>
           <div id="loginMessage" class="login-message"></div>
@@ -117,7 +102,7 @@
               <span class="account-num" id="accountNumber">**** **** ****</span>
               <i class="fas fa-copy" onclick="copyAccountNumber()"></i>
             </div>
-            <span class="account-badge" id="accountBadge">STANDARD</span>
+            <span class="account-badge" id="accountBadge">BANK</span>
           </div>
         </div>
 

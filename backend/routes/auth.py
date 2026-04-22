@@ -13,30 +13,23 @@ auth_bp = Blueprint('auth', __name__)
 def login():
     """
     API đăng nhập
-    Request body: {"phone": "...", "password": "..."}
+    Request body: {"account_number": "..."}
     """
     data = request.get_json(silent=True) or {}
-    phone = str(data.get('phone') or '').strip()
-    password = str(data.get('password') or '').strip()
+    account_number = str(data.get('account_number') or '').strip()
 
-    if not phone:
+    if not account_number:
         return jsonify({
             "status": "error",
-            "message": "Vui lòng nhập số điện thoại"
+            "message": "Vui lòng nhập số tài khoản"
         }), 400
 
-    if not password:
-        return jsonify({
-            "status": "error",
-            "message": "Vui lòng nhập mật khẩu"
-        }), 400
-
-    user = authenticate_user(phone, password)
+    user = authenticate_user(account_number)
 
     if user:
         return jsonify({"status": "success", "user": user})
 
     return jsonify({
         "status": "error",
-        "message": "Số điện thoại hoặc mật khẩu không đúng"
+        "message": "Số tài khoản không tồn tại"
     }), 401

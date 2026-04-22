@@ -2,13 +2,12 @@
 Account Service - xử lý các tác vụ liên quan đến tài khoản
 """
 
-import hashlib
 from typing import Dict, Any, Optional, List, Tuple
 
 import pymysql
 
 from config import ALL_DB_CONFIGS
-from database import get_connection, get_log_conn
+from database import get_connection, get_coordinator_conn
 from logger import get_logger
 
 logger = get_logger(__name__)
@@ -29,7 +28,7 @@ def find_account_by_number(account_number: str) -> Tuple[Optional[Dict[str, Any]
             conn = get_connection(config)
             with conn.cursor(pymysql.cursors.DictCursor) as cursor:
                 cursor.execute(
-                    "SELECT id, name, balance, account_number, account_type "
+                    "SELECT name, balance, account_number, account_type "
                     "FROM accounts WHERE REPLACE(account_number, ' ', '') = %s",
                     (account_number.replace(' ', ''),)
                 )
@@ -42,36 +41,27 @@ def find_account_by_number(account_number: str) -> Tuple[Optional[Dict[str, Any]
     return None, None
 
 
-def authenticate_user(phone: str, password: str) -> Optional[Dict[str, Any]]:
+def authenticate_user(account_number: str) -> Optional[Dict[str, Any]]:
     """
-    Xác thực người dùng đăng nhập
+    Xác thực người dùng đăng nhập bằng số tài khoản.
 
     Args:
-        phone: Số điện thoại
-        password: Mật khẩu (plain text)
+        account_number: Số tài khoản
 
     Returns:
         Thông tin user nếu đăng nhập thành công, None nếu thất bại
     """
-    password_md5 = hashlib.md5(password.encode()).hexdigest()
+    user, config = find_account_by_number(account_number)
+    if not user or not config:
+        return None
 
-    for config in ALL_DB_CONFIGS:
-        try:
-            conn = get_connection(config)
-            with conn.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute(
-                    "SELECT id, name, balance, account_number, account_type "
-                    "FROM accounts WHERE phone = %s AND password = %s",
-                    (phone, password_md5)
-                )
-                user = cursor.fetchone()
-            conn.close()
-            if user:
-                return user
-        except Exception as e:
-            logger.error('[LOGIN] Lỗi kết nối DB: %s', e)
-
-    return None
+    return {
+        'name': user['name'],
+        'balance': user['balance'],
+        'account_number': user['account_number'],
+        'account_type': user.get('account_type'),
+        'bank': config['database'],
+    }
 
 
 def save_transaction(
@@ -97,16 +87,26 @@ def save_transaction(
         True nếu lưu thành công
     """
     try:
-        conn_log = get_log_conn()
-        with conn_log.cursor() as cur:
+        conn = get_coordinator_conn()
+        with conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO transactions "
-                "(tx_id, from_account_number, from_name, to_account_number, to_name, amount, description, status) "
-                "VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
-                (tx_id, from_acc['account_number'], from_acc['name'],
-                 to_acc['account_number'], to_acc['name'], amount, description, status)
+                "(tx_id, from_account, to_account, amount, status) "
+                "VALUES (%s,%s,%s,%s,%s) "
+                "ON DUPLICATE KEY UPDATE "
+                "from_account = VALUES(from_account), "
+                "to_account = VALUES(to_account), "
+                "amount = VALUES(amount), "
+                "status = VALUES(status)",
+                (
+                    tx_id,
+                    from_acc['account_number'],
+                    to_acc['account_number'],
+                    amount,
+                    status,
+                )
             )
-        conn_log.close()
+        conn.close()
         return True
     except Exception as log_err:
         logger.error('[TRANSFER] Lỗi lưu hóa đơn: %s', log_err)
@@ -125,19 +125,22 @@ def get_all_accounts_with_bank() -> List[Dict[str, Any]]:
 
     for config in ALL_DB_CONFIGS:
         db_name = config['database']
-        bank_label = 'Ngân hàng 1' if db_name == 'bank1' else 'Ngân hàng 2'
+        bank_label = {
+            'bank1': 'Ngân hàng 1',
+            'bank2': 'Ngân hàng 2',
+            'bank3': 'Ngân hàng 3',
+        }.get(db_name, db_name)
 
         try:
             conn = get_connection(config)
             with conn.cursor(pymysql.cursors.DictCursor) as cursor:
                 cursor.execute(
-                    "SELECT id, name, balance, account_number, account_type, "
+                    "SELECT name, balance, account_number, account_type, "
                     f"'{bank_label}' as bank FROM accounts"
                 )
                 rows = cursor.fetchall()
                 for row in rows:
                     dedupe_key = (
-                        row.get('id'),
                         str(row.get('account_number') or ''),
                     )
                     if dedupe_key in seen:
@@ -165,6 +168,7 @@ def get_account_by_number_safe(account_number: str) -> Optional[Dict[str, Any]]:
     if acc:
         return {
             'name': acc['name'],
-            'account_number': acc['account_number']
+            'account_number': acc['account_number'],
+            'account_type': acc.get('account_type'),
         }
     return None
