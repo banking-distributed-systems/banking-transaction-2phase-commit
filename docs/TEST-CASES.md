@@ -70,12 +70,14 @@ python test_toxiproxy.py
 **Mục đích:** Kiểm tra kết nối cơ bản đến backend qua proxy
 
 **Cách chạy:**
+
 1. Chọn `A` để tạo proxy (nếu chưa có)
 2. Chọn `1` để chạy Health Check
 
 **Kết quả mong đợi:**
 
 **Thành công:**
+
 ```
 ============================================================
 TEST 1: Health Check
@@ -91,6 +93,7 @@ Time: 0.05s
 ```
 
 **Thất bại (Timeout):**
+
 ```
 ============================================================
 TEST 1: Health Check
@@ -103,6 +106,7 @@ Time: 30.02s
 ```
 
 **Thất bại (Connection Closed):**
+
 ```
 ============================================================
 TEST 1: Health Check
@@ -121,14 +125,20 @@ Time: 2.51s
 **Mục đích:** Lấy danh sách tài khoản
 
 **Cách chạy:**
+
 1. Chọn `2`
 
 **Kết quả mong đợi:**
+
 ```json
 {
   "accounts": [
-    {"account_number": "102938475612", "name": "Nguyen Van A", "balance": 100000},
-    {"account_number": "203847569801", "name": "Le Thi B", "balance": 50000}
+    {
+      "account_number": "102938475612",
+      "name": "Nguyen Van A",
+      "balance": 100000
+    },
+    { "account_number": "203847569801", "name": "Le Thi B", "balance": 50000 }
   ]
 }
 ```
@@ -140,9 +150,11 @@ Time: 2.51s
 **Mục đích:** Test chức năng đăng nhập
 
 **Cách chạy:**
+
 1. Chọn `3`
 
 **Dữ liệu test:**
+
 ```json
 {
   "phone": "0901234567",
@@ -157,9 +169,11 @@ Time: 2.51s
 **Mục đích:** Test chuyển tiền 2PC trong điều kiện bình thường
 
 **Cách chạy:**
+
 1. Chọn `4`
 
 **Dữ liệu test:**
+
 ```json
 {
   "from_account_number": "102938475612",
@@ -170,6 +184,7 @@ Time: 2.51s
 ```
 
 **Kết quả mong đợi:**
+
 ```json
 {
   "status": "success",
@@ -185,6 +200,7 @@ Time: 2.51s
 **Mục đích:** Test chuyển tiền với network issues đang active
 
 **Cách chạy:**
+
 1. Thêm toxic (latency, timeout,...)
 2. Chọn `5`
 
@@ -215,15 +231,18 @@ S. Xem thông tin Proxy & Toxics    - Xem trạng thái
 **Mục đích:** Mô phỏng network chậm
 
 **Tham số:**
+
 - `latency`: Thời gian delay (milliseconds)
 
 **Ví dụ:**
+
 ```
 Nhập latency (ms) (default: 1000): 5000
 → Response sẽ bị chậm 5 giây
 ```
 
 **Tác động:**
+
 - Request vẫn thành công (nếu < client timeout)
 - Response bị delay
 
@@ -234,20 +253,24 @@ Nhập latency (ms) (default: 1000): 5000
 **Mục đích:** Mô phỏng server không phản hồi
 
 **Tham số:**
+
 - `timeout`: Thời gian chờ tối đa (milliseconds)
 
 **⚠️ QUAN TRỌNG:**
+
 - Timeout phải **nhỏ hơn** thời gian backend xử lý để gây lỗi
 - Backend xử lý khoảng 2 giây
 - Nên dùng timeout < 2000ms để test timeout
 
 **Ví dụ:**
+
 ```
 Nhập timeout (ms) (default: 5000): 1000
 → Server chưa kịp phản hồi đã bị timeout
 ```
 
 **Tác động:**
+
 - Client nhận `ConnectionError` (KHÔNG phải Timeout exception)
 - Connection bị đóng ngay lập tức
 
@@ -258,19 +281,23 @@ Nhập timeout (ms) (default: 5000): 1000
 **Mục đích:** Mô phỏng response bị cắt
 
 **Tham số:**
+
 - `bytes`: Số bytes tối đa
 
 **Ví dụ:**
+
 ```
 Nhập số bytes giới hạn (default: 100): 50
 → Response bị cắt sau 50 bytes
 ```
 
 **Tác động:**
+
 - JSON parse error
 - Response không hoàn chỉnh
 
 **Cách xử lý:**
+
 ```python
 try:
     data = res.json()
@@ -288,6 +315,7 @@ except ValueError:
 **Tham số:** Không có
 
 **Tác động:**
+
 - Connection bị đóng ngay lập tức
 - Client nhận `RemoteDisconnected`
 - Dùng để test Kịch bản 4 (Partial Commit)
@@ -299,15 +327,18 @@ except ValueError:
 **Mục đích:** Mô phỏng network chậm thật
 
 **Tham số:**
+
 - `rate`: Tốc độ (bytes/giây)
 
 **Ví dụ:**
+
 ```
 Nhập bandwidth (bytes/giây) (default: 1024): 512
 → Download 512 bytes/giây
 ```
 
 **Tác động:**
+
 - Response được trả về chậm rãi
 - Không phải delay cố định như latency
 
@@ -318,9 +349,11 @@ Nhập bandwidth (bytes/giây) (default: 1024): 512
 **Mục đích:** Mô phỏng network instability
 
 **Tham số:**
+
 - `size`: Kích thước trung bình mỗi slice
 
 **Tác động:**
+
 - Response bị cắt ngẫu nhiên
 - Realistic hơn limit_data
 
@@ -344,11 +377,13 @@ W. Test Fallback Data (API fail → dùng dự phòng) - Test fallback data
 **Mục đích:** Test cơ chế retry khi request thất bại
 
 **Cách chạy:**
+
 1. Thêm timeout toxic (D)
 2. Chọn `R`
 3. Nhập số retries và delay
 
 **Kết quả:**
+
 ```
 🔄 Attempt 1/3
 ❌ TIMEOUT sau 5.02s
@@ -371,9 +406,11 @@ W. Test Fallback Data (API fail → dùng dự phòng) - Test fallback data
 **Mục đích:** Test cơ chế fallback khi API fail
 
 **Cách chạy:**
+
 1. Chọn `W`
 
 **Kết quả:**
+
 ```
 📊 Test 1: Gọi API bình thường...
 ✅ API Response:
@@ -395,6 +432,7 @@ W. Test Fallback Data (API fail → dùng dự phòng) - Test fallback data
 **Mục đích:** Tự động test kịch bản timeout rồi retry
 
 **Cách chạy:**
+
 1. Chọn `1`
 2. Nhập timeout value và số retries
 3. Script sẽ:
@@ -410,6 +448,7 @@ W. Test Fallback Data (API fail → dùng dự phòng) - Test fallback data
 **Mục đích:** Test Kịch bản 4 của 2PC
 
 **Cách chạy:**
+
 1. Chọn `2`
 2. Script sẽ:
    - Kiểm tra số dư trước
@@ -420,6 +459,7 @@ W. Test Fallback Data (API fail → dùng dự phòng) - Test fallback data
    - Giải thích kết quả
 
 **Kết quả:**
+
 ```
 📊 KẾT QUẢ:
    → A không bị trừ tiền (rollback)
@@ -514,13 +554,15 @@ E. Xóa tất cả Toxics
 
 ### 6.1 Các Kịch bản Lỗi 2PC
 
-| Kịch bản | Mô tả | Toxic dùng |
-|-----------|--------|-------------|
-| KB 1 | TC sập sau PREPARE | Timeout |
-| KB 2 | TC sập ở PREPARING | Timeout |
-| KB 3 | TC sập đang COMMITTING | Close Stream |
-| KB 4 | Bank A commit, Bank B fail | Close Stream |
-| KB 5 | Timeout ở Phase 1 | Timeout |
+| Kịch bản | Mô tả                      | Toxic dùng   |
+| -------- | -------------------------- | ------------ |
+| KB 1     | TC sập sau PREPARE         | Timeout      |
+| KB 2     | TC sập ở PREPARING         | Timeout      |
+| KB 3     | TC sập đang COMMITTING     | Close Stream |
+| KB 4     | Bank A commit, Bank B fail | Close Stream |
+| KB 5     | Timeout ở Phase 1          | Timeout      |
+
+**Lưu ý:** Sau khi restart backend (TC05–TC08), log sẽ có thêm dòng `[BAL] RECOVERY-...-A/B` để hiển thị số dư sau recovery.
 
 ### 6.2 Mapping Test Cases
 
@@ -529,12 +571,14 @@ E. Xóa tất cả Toxics
 **Mục đích:** Bank A commit thành công, Bank B fail
 
 **Cách test:**
+
 1. `K` - Thêm Close Stream
 2. `4` - Chạy Transfer
 3. `E` - Xóa toxic
 4. Kiểm tra số dư
 
 **Kết quả mong đợi:**
+
 - Bank A: Không thay đổi (rollback)
 - Bank B: Không thay đổi (fail)
 - Transaction: FAILED
@@ -546,11 +590,13 @@ E. Xóa tất cả Toxics
 **Mục đích:** Bank B không phản hồi trong thời gian quy định
 
 **Cách test:**
+
 1. `D` - Thêm Timeout
 2. Nhập giá trị < 2000ms
 3. `4` - Chạy Transfer
 
 **Kết quả mong đợi:**
+
 - Client nhận ConnectionError
 - Transaction: TIMEOUT
 - Bank A: Rollback
@@ -559,15 +605,15 @@ E. Xóa tất cả Toxics
 
 ### 6.3 Quick Reference
 
-| Mục đích | Menu | Tham số |
-|-----------|------|---------|
-| Test bình thường | 1-5 | Không |
-| Network delay | C | latency (ms) |
-| Server timeout | D | timeout (ms) |
-| Packet loss | L | bytes |
-| Server crash | K | - |
-| Slow network | B | rate (bytes/s) |
-| Reset | E | - |
+| Mục đích         | Menu | Tham số        |
+| ---------------- | ---- | -------------- |
+| Test bình thường | 1-5  | Không          |
+| Network delay    | C    | latency (ms)   |
+| Server timeout   | D    | timeout (ms)   |
+| Packet loss      | L    | bytes          |
+| Server crash     | K    | -              |
+| Slow network     | B    | rate (bytes/s) |
+| Reset            | E    | -              |
 
 ---
 
@@ -575,21 +621,21 @@ E. Xóa tất cả Toxics
 
 ### A. Error Messages
 
-| Message | Ý nghĩa |
-|---------|----------|
-| `✅ SUCCESS` | Request thành công |
-| `❌ CLIENT TIMEOUT` | Client timeout (vượt REQUEST_TIMEOUT) |
+| Message                | Ý nghĩa                               |
+| ---------------------- | ------------------------------------- |
+| `✅ SUCCESS`           | Request thành công                    |
+| `❌ CLIENT TIMEOUT`    | Client timeout (vượt REQUEST_TIMEOUT) |
 | `💣 CONNECTION CLOSED` | Proxy đóng connection (timeout toxic) |
-| `❌ UNKNOWN ERROR` | Lỗi không xác định |
+| `❌ UNKNOWN ERROR`     | Lỗi không xác định                    |
 
 ### B. Status Codes
 
-| Code | Ý nghĩa |
-|------|----------|
-| 200 | OK |
-| 400 | Bad Request |
-| 500 | Internal Server Error |
-| 502 | Bad Gateway |
+| Code | Ý nghĩa               |
+| ---- | --------------------- |
+| 200  | OK                    |
+| 400  | Bad Request           |
+| 500  | Internal Server Error |
+| 502  | Bad Gateway           |
 
 ### C. Cấu hình mặc định
 

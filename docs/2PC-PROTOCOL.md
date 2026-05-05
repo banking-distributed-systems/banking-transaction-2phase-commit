@@ -16,11 +16,11 @@ Two-Phase Commit (2PC) là giao thức phân tán đảm bảo **tính nguyên t
 
 ### 1.2. Các thành phần
 
-| Thành phần | Vai trò | Trong V-Bank |
-|------------|---------|--------------|
-| **Transaction Coordinator (TC)** | Điều phối toàn bộ giao dịch | Flask Server |
-| **Participant** | Thực hiện giao dịch trên mỗi DB | Bank A, Bank B |
-| **Resource Manager** | Quản lý XA transaction | MySQL |
+| Thành phần                       | Vai trò                         | Trong V-Bank   |
+| -------------------------------- | ------------------------------- | -------------- |
+| **Transaction Coordinator (TC)** | Điều phối toàn bộ giao dịch     | Flask Server   |
+| **Participant**                  | Thực hiện giao dịch trên mỗi DB | Bank A, Bank B |
+| **Resource Manager**             | Quản lý XA transaction          | MySQL          |
 
 ---
 
@@ -187,17 +187,17 @@ Two-Phase Commit (2PC) là giao thức phân tán đảm bảo **tính nguyên t
 
 ### 3.2. Phase Labels
 
-| Phase | Label | Ý nghĩa |
-|-------|-------|----------|
-| `PREPARING` | Phase 1 ▶ | TC bắt đầu giao dịch |
-| `PREPARED` | Phase 1 ✔ | Cả hai participant sẵn sàng |
-| `COMMITTING` | Phase 2 ▶ | TC bắt đầu gửi COMMIT |
-| `COMMIT_A` | Phase 2 ⚡ | Bank A đã COMMIT, Bank B chưa |
-| `COMMITTED` | Phase 2 ✔ | Hoàn tất thành công |
-| `ABORTED` | Phase * ✖ | Giao dịch bị hủy |
-| `TIMEOUT` | Phase 1 ⏱ | Participant phản hồi quá chậm |
-| `COMPENSATING` | Recover ↺ | Đang hoàn tiền cho Bank A |
-| `COMPENSATED` | Recover ✔ | Hoàn tiền thành công |
+| Phase          | Label      | Ý nghĩa                       |
+| -------------- | ---------- | ----------------------------- |
+| `PREPARING`    | Phase 1 ▶  | TC bắt đầu giao dịch          |
+| `PREPARED`     | Phase 1 ✔  | Cả hai participant sẵn sàng   |
+| `COMMITTING`   | Phase 2 ▶  | TC bắt đầu gửi COMMIT         |
+| `COMMIT_A`     | Phase 2 ⚡ | Bank A đã COMMIT, Bank B chưa |
+| `COMMITTED`    | Phase 2 ✔  | Hoàn tất thành công           |
+| `ABORTED`      | Phase \* ✖ | Giao dịch bị hủy              |
+| `TIMEOUT`      | Phase 1 ⏱  | Participant phản hồi quá chậm |
+| `COMPENSATING` | Recover ↺  | Đang hoàn tiền cho Bank A     |
+| `COMPENSATED`  | Recover ✔  | Hoàn tiền thành công          |
 
 ---
 
@@ -251,21 +251,21 @@ XA COMMIT '0a1b2c3d4e5f6';  -- Bank B
 
 ### 5.1. 2PC vs 3PC
 
-| Tiêu chí | 2PC | 3PC |
-|----------|-----|-----|
-| **Số pha** | 2 | 3 |
-| **Độ phức tạp** | Đơn giản | Phức tạp hơn |
-| **Blocking** | Có thể block nếu TC down | Ít khả năng block hơn |
-| **Trong V-Bank** | ✓ Sử dụng | Chưa cần |
+| Tiêu chí         | 2PC                      | 3PC                   |
+| ---------------- | ------------------------ | --------------------- |
+| **Số pha**       | 2                        | 3                     |
+| **Độ phức tạp**  | Đơn giản                 | Phức tạp hơn          |
+| **Blocking**     | Có thể block nếu TC down | Ít khả năng block hơn |
+| **Trong V-Bank** | ✓ Sử dụng                | Chưa cần              |
 
 ### 5.2. 2PC vs Saga Pattern
 
-| Tiêu chí | 2PC | Saga |
-|----------|-----|------|
-| **Đảm bảo atomicity** | Hoàn toàn | Eventual consistency |
-| **Latency** | Thấp | Cao hơn |
-| **Phù hợp** | Giao dịch tài chính | Microservices |
-| **Trong V-Bank** | ✓ Sử dụng | Không cần |
+| Tiêu chí              | 2PC                 | Saga                 |
+| --------------------- | ------------------- | -------------------- |
+| **Đảm bảo atomicity** | Hoàn toàn           | Eventual consistency |
+| **Latency**           | Thấp                | Cao hơn              |
+| **Phù hợp**           | Giao dịch tài chính | Microservices        |
+| **Trong V-Bank**      | ✓ Sử dụng           | Không cần            |
 
 ---
 
@@ -297,20 +297,21 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
 
 ### 7.1. Trong implementation
 
-| Practice | Lý do |
-|----------|-------|
-| Luôn log phase trước mỗi bước | Hỗ trợ recovery chính xác |
-| Timeout cho Phase 1 | Tránh block vô hạn |
-| Auto-recovery khi startup | Xử lý các giao dịch treo |
-| Compensation cho Kịch bản 4 | Đảm bảo không mất tiền |
+| Practice                      | Lý do                                                   |
+| ----------------------------- | ------------------------------------------------------- |
+| Luôn log phase trước mỗi bước | Hỗ trợ recovery chính xác                               |
+| Timeout cho Phase 1           | Tránh block vô hạn                                      |
+| Auto-recovery khi startup     | Xử lý các giao dịch treo                                |
+| Log số dư sau recovery        | Quan sát ảnh hưởng sau crash/restart (RECOVERY-...-A/B) |
+| Compensation cho Kịch bản 4   | Đảm bảo không mất tiền                                  |
 
 ### 7.2. Trong vận hành
 
-| Practice | Lý do |
-|----------|-------|
-| Monitor XA RECOVER thường xuyên | Phát hiện giao dịch treo |
-| Alert khi timeout xảy ra | Cảnh báo sớm vấn đề |
-| Backup transaction_log | Đảm bảo có dữ liệu recovery |
+| Practice                        | Lý do                       |
+| ------------------------------- | --------------------------- |
+| Monitor XA RECOVER thường xuyên | Phát hiện giao dịch treo    |
+| Alert khi timeout xảy ra        | Cảnh báo sớm vấn đề         |
+| Backup transaction_log          | Đảm bảo có dữ liệu recovery |
 
 ---
 

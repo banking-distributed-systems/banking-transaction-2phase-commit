@@ -34,9 +34,9 @@ Content-Type: application/json
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `account_number` | string | ✓ | Số tài khoản |
+| Field            | Type   | Required | Description  |
+| ---------------- | ------ | -------- | ------------ |
+| `account_number` | string | ✓        | Số tài khoản |
 
 **Response (Success)**
 
@@ -123,9 +123,9 @@ Content-Type: application/json
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `account_number` | string | ✓ | Số tài khoản cần tra cứu |
+| Field            | Type   | Required | Description              |
+| ---------------- | ------ | -------- | ------------------------ |
+| `account_number` | string | ✓        | Số tài khoản cần tra cứu |
 
 **Response (Success)**
 
@@ -182,12 +182,12 @@ Content-Type: application/json
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `from_account_number` | string | ✓ | Số tài khoản người gửi |
-| `to_account_number` | string | ✓ | Số tài khoản người nhận |
-| `amount` | number | ✓ | Số tiền chuyển ( > 0 ) |
-| `description` | string | ✗ | Mô tả giao dịch |
+| Field                 | Type   | Required | Description             |
+| --------------------- | ------ | -------- | ----------------------- |
+| `from_account_number` | string | ✓        | Số tài khoản người gửi  |
+| `to_account_number`   | string | ✓        | Số tài khoản người nhận |
+| `amount`              | number | ✓        | Số tiền chuyển ( > 0 )  |
+| `description`         | string | ✗        | Mô tả giao dịch         |
 
 **Response (Success)**
 
@@ -317,6 +317,8 @@ POST /api/recover
 }
 ```
 
+**Lưu ý:** Khi recovery chạy, backend log sẽ có thêm dòng `[BAL] RECOVERY-...-A/B` để hiển thị số dư sau khi phục hồi.
+
 ---
 
 ## Health Check
@@ -344,25 +346,25 @@ GET /
 
 ## Error Codes
 
-| HTTP Code | Meaning |
-|-----------|---------|
-| `200` | Success |
-| `400` | Bad Request - Invalid input |
-| `401` | Unauthorized - Login failed |
-| `404` | Not Found |
-| `408` | Request Timeout - Kịch bản 5 |
-| `500` | Internal Server Error |
+| HTTP Code | Meaning                      |
+| --------- | ---------------------------- |
+| `200`     | Success                      |
+| `400`     | Bad Request - Invalid input  |
+| `401`     | Unauthorized - Login failed  |
+| `404`     | Not Found                    |
+| `408`     | Request Timeout - Kịch bản 5 |
+| `500`     | Internal Server Error        |
 
 ---
 
 ## Transaction Status Codes
 
-| Code | Description |
-|------|-------------|
-| `SUCCESS` | Giao dịch hoàn tất |
-| `FAILED` | Giao dịch thất bại |
+| Code          | Description               |
+| ------------- | ------------------------- |
+| `SUCCESS`     | Giao dịch hoàn tất        |
+| `FAILED`      | Giao dịch thất bại        |
 | `COMPENSATED` | Đã hoàn tiền (Kịch bản 4) |
-| `TIMEOUT` | Timeout (Kịch bản 5) |
+| `TIMEOUT`     | Timeout (Kịch bản 5)      |
 
 ---
 
