@@ -1069,3 +1069,5 @@
 2026-05-05 21:52:42  INFO      127.0.0.1 - - [05/May/2026 21:52:42] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
 2026-05-05 21:52:42  INFO      [TIMING][6e01acbb43c6] GET /api/transfer/status/VB0DACDA8CE0 - Time: 0.0120s
 2026-05-05 21:52:42  INFO      127.0.0.1 - - [05/May/2026 21:52:42] "GET /api/transfer/status/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:42  INFO      [TIMING][20fd593a1eca] GET /api/transfer/log/VB0DACDA8CE0 - Time: 0.0121s
+2026-05-05 21:52:42  INFO      127.0.0.1 - - [05/May/2026 21:52:42] "GET /api/transfer/log/VB0DACDA8CE0 HTTP/1.1" 200 -
