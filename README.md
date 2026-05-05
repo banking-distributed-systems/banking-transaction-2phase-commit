@@ -292,6 +292,7 @@ curl -X POST http://localhost:8666/api/recover
   - Nút recovery thủ công
 - **Toàn bộ 2PC** được ghi log chi tiết ra `transaction_log` (DB) và console backend
 - **Recovery tự động** mỗi lần server khởi động
+- **Recovery log số dư** cho từng tài khoản A/B sau khi xử lý (nhãn `RECOVERY-...-A/B`)
 - **Chuẩn hóa lỗi API** với `error.code`, `status_code`, `request_id` và header `X-Request-ID`
 
 ---
