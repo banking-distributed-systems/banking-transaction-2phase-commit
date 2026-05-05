@@ -1031,3 +1031,41 @@
 2026-05-05 21:49:32  INFO      127.0.0.1 - - [05/May/2026 21:49:32] "GET /api/accounts HTTP/1.1" 200 -
 2026-05-05 21:49:32  INFO      [TIMING][70861e7c41b1] GET /api/transfer/log/VB0DACDA8CE0 - Time: 0.0124s
 2026-05-05 21:49:32  INFO      127.0.0.1 - - [05/May/2026 21:49:32] "GET /api/transfer/log/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:51:53  INFO      [TIMING][743eac1fcae5] GET /api/accounts - Time: 0.0241s
+2026-05-05 21:51:53  INFO      127.0.0.1 - - [05/May/2026 21:51:53] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-05 21:51:53  INFO      [TIMING][34292e875d22] GET /api/transfer/recent - Time: 0.2169s
+2026-05-05 21:51:53  INFO      127.0.0.1 - - [05/May/2026 21:51:53] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-05 21:52:02  INFO      [TIMING][13f820d853e1] GET /api/transfer/recent - Time: 0.2326s
+2026-05-05 21:52:02  INFO      127.0.0.1 - - [05/May/2026 21:52:02] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-05 21:52:02  INFO      [TIMING][e0b70f00ab75] GET /api/transfer/status/VB0DACDA8CE0 - Time: 0.0137s
+2026-05-05 21:52:02  INFO      127.0.0.1 - - [05/May/2026 21:52:02] "GET /api/transfer/status/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:02  INFO      [TIMING][7551e7f99830] GET /api/transfer/log/VB0DACDA8CE0 - Time: 0.0141s
+2026-05-05 21:52:02  INFO      127.0.0.1 - - [05/May/2026 21:52:02] "GET /api/transfer/log/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:10  INFO      [TIMING][a2300f037de9] GET /api/transfer/recent - Time: 0.1689s
+2026-05-05 21:52:10  INFO      127.0.0.1 - - [05/May/2026 21:52:10] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-05 21:52:10  INFO      [TIMING][6ded23e62af7] GET /api/transfer/status/VB0DACDA8CE0 - Time: 0.0155s
+2026-05-05 21:52:10  INFO      127.0.0.1 - - [05/May/2026 21:52:10] "GET /api/transfer/status/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:10  INFO      [TIMING][82287143f7c2] GET /api/transfer/log/VB0DACDA8CE0 - Time: 0.0111s
+2026-05-05 21:52:10  INFO      127.0.0.1 - - [05/May/2026 21:52:10] "GET /api/transfer/log/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:18  INFO      [TIMING][43e5d4668faf] GET /api/transfer/recent - Time: 0.1761s
+2026-05-05 21:52:18  INFO      127.0.0.1 - - [05/May/2026 21:52:18] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-05 21:52:18  INFO      [TIMING][239ae53191a4] GET /api/transfer/status/VB0DACDA8CE0 - Time: 0.0272s
+2026-05-05 21:52:18  INFO      127.0.0.1 - - [05/May/2026 21:52:18] "GET /api/transfer/status/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:18  INFO      [TIMING][0bbd1ef91019] GET /api/transfer/log/VB0DACDA8CE0 - Time: 0.0178s
+2026-05-05 21:52:18  INFO      127.0.0.1 - - [05/May/2026 21:52:18] "GET /api/transfer/log/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:26  INFO      [TIMING][448f2b94af1e] GET /api/transfer/recent - Time: 0.2467s
+2026-05-05 21:52:26  INFO      127.0.0.1 - - [05/May/2026 21:52:26] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-05 21:52:26  INFO      [TIMING][7fe15fe180e1] GET /api/transfer/status/VB0DACDA8CE0 - Time: 0.0172s
+2026-05-05 21:52:26  INFO      127.0.0.1 - - [05/May/2026 21:52:26] "GET /api/transfer/status/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:26  INFO      [TIMING][8fa7f1db3b1d] GET /api/transfer/log/VB0DACDA8CE0 - Time: 0.0145s
+2026-05-05 21:52:26  INFO      127.0.0.1 - - [05/May/2026 21:52:26] "GET /api/transfer/log/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:34  INFO      [TIMING][298661d1249e] GET /api/transfer/recent - Time: 0.2376s
+2026-05-05 21:52:34  INFO      127.0.0.1 - - [05/May/2026 21:52:34] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-05 21:52:34  INFO      [TIMING][6dee84373710] GET /api/transfer/status/VB0DACDA8CE0 - Time: 0.0336s
+2026-05-05 21:52:34  INFO      127.0.0.1 - - [05/May/2026 21:52:34] "GET /api/transfer/status/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:34  INFO      [TIMING][d1e53cd738b2] GET /api/transfer/log/VB0DACDA8CE0 - Time: 0.0111s
+2026-05-05 21:52:34  INFO      127.0.0.1 - - [05/May/2026 21:52:34] "GET /api/transfer/log/VB0DACDA8CE0 HTTP/1.1" 200 -
+2026-05-05 21:52:42  INFO      [TIMING][6930f5384eac] GET /api/transfer/recent - Time: 0.2031s
+2026-05-05 21:52:42  INFO      127.0.0.1 - - [05/May/2026 21:52:42] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-05 21:52:42  INFO      [TIMING][6e01acbb43c6] GET /api/transfer/status/VB0DACDA8CE0 - Time: 0.0120s
+2026-05-05 21:52:42  INFO      127.0.0.1 - - [05/May/2026 21:52:42] "GET /api/transfer/status/VB0DACDA8CE0 HTTP/1.1" 200 -
