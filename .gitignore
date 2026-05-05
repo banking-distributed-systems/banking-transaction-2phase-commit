@@ -1,0 +1,65 @@
+### Python
+__pycache__/
+**/__pycache__/
+*.py[cod]
+**/*.py[cod]
+*$py.class
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+.eggs/
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+
+### Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+### Logs
+*.log
+logs/
+
+### Node / frontend
+node_modules/
+dist/
+build/
+.parcel-cache/
+.vite/
+
+### Environment files
+.env
+.env.*
+
+### IDEs and editors
+.vscode/
+.idea/
+.project
+.classpath
+.settings/
+
+### OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### Test artifacts
+coverage.xml
+junit.xml
+test-results/
+
+### Misc
+*.sqlite
+*.db

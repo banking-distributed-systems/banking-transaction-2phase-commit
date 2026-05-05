@@ -26,6 +26,7 @@ TC07_CRASH_AFTER_PREPARE_TOKEN = 'TC07_CRASH_AFTER_PREPARE'
 TC08_CRASH_DURING_COMMITTING_TOKEN = 'TC08_CRASH_DURING_COMMITTING'
 TC09_COMMIT_TWICE_TOKEN = 'TC09_COMMIT_TWICE'
 TC10_ROLLBACK_TWICE_TOKEN = 'TC10_ROLLBACK_TWICE'
+_TX_LOG_SCHEMA_CACHE: Dict[str, Dict[str, Dict[str, Any]]] = {}
 
 
 def has_demo_token(description: str, token: str) -> bool:
@@ -46,6 +47,230 @@ def crash_coordinator_for_demo(tx_id: str, reason: str):
     logger.critical('[DEMO] tx=%s: %s', tx_id, reason)
     logging.shutdown()
     os._exit(1)
+
+
+def _phase_to_business_status(phase: str) -> str:
+    if phase in ('COMMITTED', 'COMPENSATED'):
+        return 'SUCCESS'
+    if phase in ('ABORTED', 'TIMEOUT'):
+        return 'FAILED'
+    if phase == 'COMPENSATING':
+        return 'COMPENSATING'
+    return 'PROCESSING'
+
+
+def _get_transaction_log_schema(config: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """
+    Đọc schema transaction_log thực tế từ từng bank để tương thích schema cũ/mới.
+    """
+    db_name = str(config.get('database') or '')
+    cached = _TX_LOG_SCHEMA_CACHE.get(db_name)
+    if cached is not None:
+        return cached
+
+    schema: Dict[str, Dict[str, Any]] = {}
+    conn = None
+    try:
+        conn = get_connection({**config, 'autocommit': True})
+        with conn.cursor(pymysql.cursors.DictCursor) as cur:
+            cur.execute(
+                "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, EXTRA "
+                "FROM information_schema.columns "
+                "WHERE table_schema = %s AND table_name = 'transaction_log' "
+                "ORDER BY ORDINAL_POSITION",
+                (db_name,),
+            )
+            for row in cur.fetchall():
+                col = str(row.get('COLUMN_NAME') or '')
+                if not col:
+                    continue
+                schema[col] = {
+                    'data_type': str(row.get('DATA_TYPE') or '').lower(),
+                    'is_nullable': str(row.get('IS_NULLABLE') or '').upper() == 'YES',
+                    'default': row.get('COLUMN_DEFAULT'),
+                    'extra': str(row.get('EXTRA') or '').lower(),
+                }
+    except Exception as e:
+        logger.warning(
+            '[PHASE] Khong the doc schema transaction_log tu %s: %s',
+            config.get('database'),
+            e,
+        )
+    finally:
+        if conn:
+            conn.close()
+
+    if not schema:
+        schema = {
+            'tx_id': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'xid': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'phase': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'amount': {'data_type': 'decimal', 'is_nullable': True, 'default': None, 'extra': ''},
+        }
+
+    _TX_LOG_SCHEMA_CACHE[db_name] = schema
+    return schema
+
+
+def _required_fallback_value(
+    column_name: str,
+    column_meta: Dict[str, Any],
+    tx_id: str,
+    xid: str,
+    phase: str,
+    from_acc: Optional[Dict[str, Any]],
+    to_acc: Optional[Dict[str, Any]],
+    amount: Optional[float],
+    description: str,
+):
+    from_acc = from_acc or {}
+    to_acc = to_acc or {}
+
+    mapping = {
+        'tx_id': tx_id,
+        'xid': xid or '',
+        'phase': phase,
+        'amount': amount if amount is not None else 0,
+        'from_account_number': from_acc.get('account_number') or '',
+        'to_account_number': to_acc.get('account_number') or '',
+        'from_account': from_acc.get('account_number') or '',
+        'to_account': to_acc.get('account_number') or '',
+        'from_name': from_acc.get('name') or '',
+        'to_name': to_acc.get('name') or '',
+        'description': description or '',
+        'status': _phase_to_business_status(phase),
+    }
+    if column_name in mapping:
+        return mapping[column_name]
+
+    data_type = str(column_meta.get('data_type') or '')
+    if data_type in ('tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'decimal', 'float', 'double'):
+        return 0
+    return ''
+
+
+def _build_participant_log_upsert(
+    tx_id: str,
+    xid: str,
+    phase: str,
+    from_acc: Optional[Dict[str, Any]],
+    to_acc: Optional[Dict[str, Any]],
+    amount: Optional[float],
+    description: str,
+    table_schema: Dict[str, Dict[str, Any]],
+) -> Tuple[str, Tuple[Any, ...]]:
+    candidates = {
+        'tx_id': tx_id,
+        'xid': xid,
+        'phase': phase,
+        'amount': amount,
+        'from_account_number': (from_acc or {}).get('account_number'),
+        'to_account_number': (to_acc or {}).get('account_number'),
+        'from_account': (from_acc or {}).get('account_number'),
+        'to_account': (to_acc or {}).get('account_number'),
+        'from_name': (from_acc or {}).get('name'),
+        'to_name': (to_acc or {}).get('name'),
+        'description': description or '',
+        'status': _phase_to_business_status(phase),
+    }
+
+    columns: List[str] = []
+    values: List[Any] = []
+
+    for col, meta in table_schema.items():
+        if 'auto_increment' in str(meta.get('extra') or ''):
+            continue
+        if col == 'created_at':
+            continue
+
+        value = candidates.get(col)
+        if value is None:
+            default_value = meta.get('default')
+            if default_value is not None:
+                continue
+            if meta.get('is_nullable'):
+                value = None
+            else:
+                value = _required_fallback_value(
+                    col, meta, tx_id, xid, phase, from_acc, to_acc, amount, description
+                )
+
+        columns.append(col)
+        values.append(value)
+
+    if 'tx_id' not in columns:
+        columns.insert(0, 'tx_id')
+        values.insert(0, tx_id)
+
+    update_columns = [c for c in columns if c not in ('tx_id', 'id', 'created_at')]
+    if update_columns:
+        update_sql = ', '.join(f"`{c}` = VALUES(`{c}`)" for c in update_columns)
+    else:
+        update_sql = "`tx_id` = `tx_id`"
+
+    column_sql = ', '.join(f"`{c}`" for c in columns)
+    placeholder_sql = ', '.join(['%s'] * len(columns))
+    sql = (
+        f"INSERT INTO transaction_log ({column_sql}) "
+        f"VALUES ({placeholder_sql}) "
+        f"ON DUPLICATE KEY UPDATE {update_sql}"
+    )
+    return sql, tuple(values)
+
+
+def _build_participant_recovery_select(table_schema: Dict[str, Dict[str, Any]]) -> str:
+    from_col = None
+    if 'from_account' in table_schema:
+        from_col = 'from_account'
+    elif 'from_account_number' in table_schema:
+        from_col = 'from_account_number'
+
+    to_col = None
+    if 'to_account' in table_schema:
+        to_col = 'to_account'
+    elif 'to_account_number' in table_schema:
+        to_col = 'to_account_number'
+
+    select_parts = ['tx_id', 'xid', 'phase', 'amount']
+    if from_col:
+        select_parts.append(f"{from_col} AS from_account")
+    else:
+        select_parts.append("NULL AS from_account")
+    if to_col:
+        select_parts.append(f"{to_col} AS to_account")
+    else:
+        select_parts.append("NULL AS to_account")
+
+    select_sql = ', '.join(select_parts)
+    return (
+        f"SELECT {select_sql} FROM transaction_log "
+        "WHERE phase IN ('PREPARING','PREPARED','COMMITTING','COMMIT_A','COMPENSATING')"
+    )
+
+
+def _pick_recovery_accounts(
+    tx_meta: Dict[str, Any],
+    log_entry: Dict[str, Any],
+) -> Tuple[Optional[str], Optional[str]]:
+    from_account = (
+        (tx_meta or {}).get('from_account')
+        or (log_entry or {}).get('from_account')
+    )
+    to_account = (
+        (tx_meta or {}).get('to_account')
+        or (log_entry or {}).get('to_account')
+    )
+    return from_account, to_account
+
+
+def _is_terminal_phase_or_status(value: Optional[str]) -> bool:
+    return str(value or '').upper() in {
+        'COMMITTED',
+        'ABORTED',
+        'COMPENSATED',
+        'SUCCESS',
+        'FAILED',
+    }
 
 
 # =============================================================================
@@ -128,14 +353,20 @@ def log_phase(
     for config in participant_targets:
         bank_conn = None
         try:
+            tx_log_schema = _get_transaction_log_schema(config)
+            participant_sql, participant_params = _build_participant_log_upsert(
+                tx_id=tx_id,
+                xid=xid,
+                phase=phase,
+                from_acc=from_acc,
+                to_acc=to_acc,
+                amount=amount,
+                description=description,
+                table_schema=tx_log_schema,
+            )
             bank_conn = get_connection({**config, 'autocommit': True})
             with bank_conn.cursor() as cur:
-                cur.execute(
-                    "INSERT INTO transaction_log (tx_id, xid, phase, amount) "
-                    "VALUES (%s, %s, %s, %s) "
-                    "ON DUPLICATE KEY UPDATE xid = VALUES(xid), phase = VALUES(phase), amount = VALUES(amount)",
-                    (tx_id, xid, phase, amount)
-                )
+                cur.execute(participant_sql, participant_params)
         except Exception as e:
             logger.error(
                 '[PHASE] Lỗi ghi participant transaction_log (%s/%s): %s',
@@ -169,13 +400,22 @@ def xa_rollback(config: Dict[str, Any], xid: str):
         logger.warning('[XA] Lỗi XA ROLLBACK (%s): %s', config['database'], e)
 
 
-def xa_commit(config: Dict[str, Any], xid: str) -> bool:
+def _is_xa_unknown_xid_error(err: Exception) -> bool:
+    code = None
+    if getattr(err, 'args', None):
+        code = err.args[0]
+    msg = str(err)
+    return code == 1397 or 'XAER_NOTA' in msg or 'Unknown XID' in msg
+
+
+def xa_commit(config: Dict[str, Any], xid: str, tolerate_unknown_xid: bool = False) -> bool:
     """
     Commit XA transaction trên một database
 
     Args:
         config: Database configuration
         xid: XA Transaction ID
+        tolerate_unknown_xid: Cho phép coi XAER_NOTA là hợp lệ (idempotent repeat)
 
     Returns:
         True nếu commit thành công
@@ -187,6 +427,13 @@ def xa_commit(config: Dict[str, Any], xid: str) -> bool:
         conn.close()
         return True
     except Exception as e:
+        if tolerate_unknown_xid and _is_xa_unknown_xid_error(e):
+            logger.info(
+                '[XA] COMMIT lặp lại trên %s bỏ qua XAER_NOTA cho xid=%s',
+                config['database'],
+                xid,
+            )
+            return True
         logger.error('[XA] Lỗi XA COMMIT (%s): %s', config['database'], e)
         return False
 
@@ -231,6 +478,20 @@ def log_balance(config: Dict[str, Any], account_number: str, tx_id: str, label: 
         )
 
 
+def _log_recovery_balances(tx_id: str, from_account: Optional[str], to_account: Optional[str], label: str) -> None:
+    from account_service import find_account_by_number
+
+    if from_account:
+        from_acc, from_cfg = find_account_by_number(from_account)
+        if from_acc and from_cfg:
+            log_balance(from_cfg, from_acc['account_number'], tx_id, f'{label}-A')
+
+    if to_account and to_account != from_account:
+        to_acc, to_cfg = find_account_by_number(to_account)
+        if to_acc and to_cfg:
+            log_balance(to_cfg, to_acc['account_number'], tx_id, f'{label}-B')
+
+
 # =============================================================================
 # Compensating Transaction — Kịch bản 4
 # =============================================================================
@@ -260,12 +521,21 @@ def do_compensation(
     """
     from account_service import find_account_by_number
 
+    from_account_number = str(from_account_number or '').strip()
     logger.warning('[COMPENSATE] Bắt đầu hoàn tiền | tx=%s | acc=%s | amount=%.0f',
                    tx_id, from_account_number, amount)
 
+    if not from_account_number and not from_acc:
+        logger.error(
+            '[COMPENSATE] tx=%s thiếu from_account_number, không thể tự động compensation',
+            tx_id,
+        )
+        return False
+
     # Lấy thông tin tài khoản nếu chưa có
     if from_acc is None or from_config is None:
-        from_acc, from_config = find_account_by_number(from_account_number)
+        lookup_key = from_account_number or (from_acc or {}).get('account_number')
+        from_acc, from_config = find_account_by_number(lookup_key)
 
     if not from_acc:
         logger.error('[COMPENSATE] Không tìm thấy tài khoản nguồn %s', from_account_number)
@@ -374,22 +644,27 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
     for config in ALL_DB_CONFIGS:
         bank_conn = None
         try:
+            tx_log_schema = _get_transaction_log_schema(config)
+            recovery_sql = _build_participant_recovery_select(tx_log_schema)
             bank_conn = get_connection({**config, 'autocommit': True})
             with bank_conn.cursor(pymysql.cursors.DictCursor) as cur:
-                cur.execute(
-                    "SELECT tx_id, xid, phase, amount FROM transaction_log "
-                    "WHERE phase IN ('PREPARING','PREPARED','COMMITTING','COMMIT_A','COMPENSATING')"
-                )
+                cur.execute(recovery_sql)
                 for row in cur.fetchall():
-                    pending_logs.setdefault(
+                    entry = pending_logs.setdefault(
                         row['tx_id'],
                         {
                             'tx_id': row['tx_id'],
                             'xid': row['xid'],
                             'phase': row['phase'],
                             'amount': row['amount'],
+                            'from_account': row.get('from_account'),
+                            'to_account': row.get('to_account'),
                         }
                     )
+                    if not entry.get('from_account') and row.get('from_account'):
+                        entry['from_account'] = row.get('from_account')
+                    if not entry.get('to_account') and row.get('to_account'):
+                        entry['to_account'] = row.get('to_account')
         except Exception as e:
             logger.error('[RECOVERY] Lỗi đọc transaction_log từ %s: %s', config['database'], e)
         finally:
@@ -413,10 +688,48 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                         'xid': None,
                         'phase': row['status'],
                         'amount': row['amount'],
+                        'from_account': row.get('from_account'),
+                        'to_account': row.get('to_account'),
                     }
                 )
                 pending_logs[row['tx_id']]['phase'] = row['status']
                 pending_logs[row['tx_id']]['amount'] = row['amount']
+                if row.get('from_account'):
+                    pending_logs[row['tx_id']]['from_account'] = row.get('from_account')
+                if row.get('to_account'):
+                    pending_logs[row['tx_id']]['to_account'] = row.get('to_account')
+
+            # Với transaction đọc từ participant log (kể cả phase cũ), luôn đối chiếu
+            # full trạng thái ở coordinator để tránh recovery lặp sai trên dữ liệu đã kết thúc.
+            if pending_logs:
+                tx_ids = list(pending_logs.keys())
+                placeholders = ', '.join(['%s'] * len(tx_ids))
+                cur.execute(
+                    "SELECT tx_id, from_account, to_account, amount, status "
+                    f"FROM transactions WHERE tx_id IN ({placeholders})",
+                    tuple(tx_ids),
+                )
+                for row in cur.fetchall():
+                    tx_to_accounts[row['tx_id']] = row
+                    entry = pending_logs.setdefault(
+                        row['tx_id'],
+                        {
+                            'tx_id': row['tx_id'],
+                            'xid': None,
+                            'phase': row['status'],
+                            'amount': row['amount'],
+                            'from_account': row.get('from_account'),
+                            'to_account': row.get('to_account'),
+                        },
+                    )
+                    if row.get('from_account'):
+                        entry['from_account'] = row.get('from_account')
+                    if row.get('to_account'):
+                        entry['to_account'] = row.get('to_account')
+                    if row.get('amount') is not None:
+                        entry['amount'] = row.get('amount')
+                    if row.get('status'):
+                        entry['phase'] = row.get('status')
         lc.close()
     except Exception as e:
         logger.error('[RECOVERY] Lỗi đọc coordinator transactions: %s', e)
@@ -441,8 +754,13 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
         phase = log_entry['phase'] if log_entry else None
         prepared_on = in_doubt.get(xid, [])  # configs còn PREPARED
         tx_meta = tx_to_accounts.get(tx_id, {})
+        from_account, to_account = _pick_recovery_accounts(tx_meta, log_entry or {})
 
         logger.info('[RECOVERY] tx=%s | phase=%s | PREPARED trên %d DB', tx_id, phase, len(prepared_on))
+
+        if _is_terminal_phase_or_status(phase):
+            logger.info('[RECOVERY] tx=%s đã ở trạng thái cuối (%s), bỏ qua recovery.', tx_id, phase)
+            continue
 
         # ── Kịch bản 4: Bank A đã COMMIT, Bank B chưa COMMIT ─────────────
         if phase == 'COMMIT_A':
@@ -453,21 +771,23 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                 if commit_ok:
                     log_phase(
                         tx_id, xid, 'COMMITTED',
-                        {'account_number': tx_meta.get('from_account')} if tx_meta.get('from_account') else None,
-                        {'account_number': tx_meta.get('to_account')} if tx_meta.get('to_account') else None,
+                        {'account_number': from_account} if from_account else None,
+                        {'account_number': to_account} if to_account else None,
                         None,
                         None,
                         float(tx_meta.get('amount') or log_entry['amount'] or 0)
                     )
+                    _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMMITTED')
                     recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'COMMIT_B_COMPLETED'})
                 else:
                     # Không COMMIT được → XA ROLLBACK Bank B + Compensation Bank A
                     rollback_xa_all(xid, prepared_on)
                     ok = do_compensation(
                         tx_id, xid,
-                        tx_meta.get('from_account'),
+                        from_account,
                         float(tx_meta.get('amount') or log_entry['amount'] or 0)
                     )
+                    _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMPENSATE')
                     recovered.append({
                         'tx_id': tx_id, 'xid': xid,
                         'action': 'COMPENSATED' if ok else 'COMPENSATION_FAILED'
@@ -477,9 +797,10 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                 logger.warning('[RECOVERY] tx=%s: Bank B mất XA state → thực hiện compensation', tx_id)
                 ok = do_compensation(
                     tx_id, xid,
-                    tx_meta.get('from_account'),
+                    from_account,
                     float(tx_meta.get('amount') or log_entry['amount'] or 0)
                 )
+                _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMPENSATE')
                 recovered.append({
                     'tx_id': tx_id, 'xid': xid,
                     'action': 'COMPENSATED' if ok else 'COMPENSATION_FAILED'
@@ -489,9 +810,10 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
         elif phase == 'COMPENSATING' and log_entry:
             ok = do_compensation(
                 tx_id, xid,
-                tx_meta.get('from_account'),
+                from_account,
                 float(tx_meta.get('amount') or log_entry['amount'] or 0)
             )
+            _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMPENSATE')
             recovered.append({
                 'tx_id': tx_id, 'xid': xid,
                 'action': 'COMPENSATED' if ok else 'COMPENSATION_FAILED'
@@ -503,12 +825,13 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                 xa_commit(config, xid)
             log_phase(
                 tx_id, xid, 'COMMITTED',
-                {'account_number': tx_meta.get('from_account')} if tx_meta.get('from_account') else None,
-                {'account_number': tx_meta.get('to_account')} if tx_meta.get('to_account') else None,
+                {'account_number': from_account} if from_account else None,
+                {'account_number': to_account} if to_account else None,
                 None,
                 None,
                 float(tx_meta.get('amount') or log_entry['amount'] or 0)
             )
+            _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMMITTED')
             recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'COMMITTED'})
 
         # ── PREPARING hoặc không rõ: rollback ────────────────────────────
@@ -517,12 +840,13 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
             if log_entry:
                 log_phase(
                     tx_id, xid, 'ABORTED',
-                    {'account_number': tx_meta.get('from_account')} if tx_meta.get('from_account') else None,
-                    {'account_number': tx_meta.get('to_account')} if tx_meta.get('to_account') else None,
+                    {'account_number': from_account} if from_account else None,
+                    {'account_number': to_account} if to_account else None,
                     None,
                     None,
                     float(tx_meta.get('amount') or log_entry['amount'] or 0)
                 )
+            _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-ABORTED')
             recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'ABORTED'})
 
     return recovered
@@ -652,8 +976,8 @@ def execute_transfer(
         if has_demo_token(description, TC09_COMMIT_TWICE_TOKEN):
             first_a = xa_commit(from_config, xid)
             first_b = xa_commit(to_config, xid)
-            second_a = xa_commit(from_config, xid)
-            second_b = xa_commit(to_config, xid)
+            second_a = xa_commit(from_config, xid, tolerate_unknown_xid=True)
+            second_b = xa_commit(to_config, xid, tolerate_unknown_xid=True)
 
             if not (first_a and first_b):
                 raise RuntimeError('TC09 demo: initial XA COMMIT failed')
