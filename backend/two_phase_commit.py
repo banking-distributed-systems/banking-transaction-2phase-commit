@@ -478,6 +478,20 @@ def log_balance(config: Dict[str, Any], account_number: str, tx_id: str, label: 
         )
 
 
+def _log_recovery_balances(tx_id: str, from_account: Optional[str], to_account: Optional[str], label: str) -> None:
+    from account_service import find_account_by_number
+
+    if from_account:
+        from_acc, from_cfg = find_account_by_number(from_account)
+        if from_acc and from_cfg:
+            log_balance(from_cfg, from_acc['account_number'], tx_id, f'{label}-A')
+
+    if to_account and to_account != from_account:
+        to_acc, to_cfg = find_account_by_number(to_account)
+        if to_acc and to_cfg:
+            log_balance(to_cfg, to_acc['account_number'], tx_id, f'{label}-B')
+
+
 # =============================================================================
 # Compensating Transaction — Kịch bản 4
 # =============================================================================
@@ -763,6 +777,7 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                         None,
                         float(tx_meta.get('amount') or log_entry['amount'] or 0)
                     )
+                    _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMMITTED')
                     recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'COMMIT_B_COMPLETED'})
                 else:
                     # Không COMMIT được → XA ROLLBACK Bank B + Compensation Bank A
@@ -772,6 +787,7 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                         from_account,
                         float(tx_meta.get('amount') or log_entry['amount'] or 0)
                     )
+                    _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMPENSATE')
                     recovered.append({
                         'tx_id': tx_id, 'xid': xid,
                         'action': 'COMPENSATED' if ok else 'COMPENSATION_FAILED'
@@ -784,6 +800,7 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                     from_account,
                     float(tx_meta.get('amount') or log_entry['amount'] or 0)
                 )
+                _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMPENSATE')
                 recovered.append({
                     'tx_id': tx_id, 'xid': xid,
                     'action': 'COMPENSATED' if ok else 'COMPENSATION_FAILED'
@@ -796,6 +813,7 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                 from_account,
                 float(tx_meta.get('amount') or log_entry['amount'] or 0)
             )
+            _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMPENSATE')
             recovered.append({
                 'tx_id': tx_id, 'xid': xid,
                 'action': 'COMPENSATED' if ok else 'COMPENSATION_FAILED'
@@ -813,6 +831,7 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                 None,
                 float(tx_meta.get('amount') or log_entry['amount'] or 0)
             )
+            _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-COMMITTED')
             recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'COMMITTED'})
 
         # ── PREPARING hoặc không rõ: rollback ────────────────────────────
@@ -827,6 +846,7 @@ def recover_in_doubt_transactions() -> List[Dict[str, Any]]:
                     None,
                     float(tx_meta.get('amount') or log_entry['amount'] or 0)
                 )
+            _log_recovery_balances(tx_id, from_account, to_account, 'RECOVERY-ABORTED')
             recovered.append({'tx_id': tx_id, 'xid': xid, 'action': 'ABORTED'})
 
     return recovered
