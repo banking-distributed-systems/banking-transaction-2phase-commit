@@ -158,12 +158,15 @@ function escHtml(str) {
 
 function _logLineClass(line) {
   if (line.includes("ERROR")) return "log-error";
-  if (line.includes("[PARTIAL COMMIT]") || line.includes("[COMPENSAT")) return "log-partial";
-  if (line.includes("WARNING") || line.includes("[COMPENSAT")) return "log-phase-warn";
+  if (line.includes("[PARTIAL COMMIT]") || line.includes("[COMPENSAT"))
+    return "log-partial";
+  if (line.includes("WARNING") || line.includes("[COMPENSAT"))
+    return "log-phase-warn";
   if (line.includes("[BAL]")) {
     const label = line.match(/\[BAL\]\s+(\S+)/)?.[1] || "";
     if (label.startsWith("TRƯỚC")) return "log-bal-before";
-    if (label.startsWith("SAU-COMPENS") || label.startsWith("TRƯỚC-COMP")) return "log-bal-comp";
+    if (label.startsWith("SAU-COMPENS") || label.startsWith("TRƯỚC-COMP"))
+      return "log-bal-comp";
     return "log-bal-after";
   }
   if (line.includes("[PHASE]")) return "log-phase";
@@ -175,7 +178,8 @@ function renderTxLog(lines) {
   if (!panel) return;
   if (!Array.isArray(lines) || lines.length === 0) {
     panel.classList.remove("has-lines");
-    panel.innerHTML = '<span class="tx-log-empty">Chưa có log cho giao dịch này.</span>';
+    panel.innerHTML =
+      '<span class="tx-log-empty">Chưa có log cho giao dịch này.</span>';
     return;
   }
   panel.classList.add("has-lines");
@@ -439,12 +443,18 @@ function getGreeting() {
 }
 
 async function doLogin() {
-  const accountNumber = document.getElementById("loginAccountNumber").value.trim();
+  const phone = document.getElementById("loginPhone").value.trim();
+  const password = document.getElementById("loginPassword").value;
   const msgDiv = document.getElementById("loginMessage");
   msgDiv.textContent = "";
 
-  if (!accountNumber) {
-    showToast("error", "Thiếu thông tin", "Vui lòng nhập số tài khoản");
+  if (!phone) {
+    showToast("error", "Thiếu thông tin", "Vui lòng nhập số điện thoại");
+    return;
+  }
+
+  if (!password) {
+    showToast("error", "Thiếu thông tin", "Vui lòng nhập mật khẩu");
     return;
   }
 
@@ -454,7 +464,7 @@ async function doLogin() {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ account_number: accountNumber }),
+        body: JSON.stringify({ phone, password }),
       },
       "LOGIN",
     );
@@ -505,8 +515,11 @@ function showDashboard() {
     .toUpperCase();
   document.getElementById("accountNumber").textContent =
     currentUser.account_number;
-  document.getElementById("accountBadge").textContent =
-    (currentUser.account_type || currentUser.bank || "BANK").toUpperCase();
+  document.getElementById("accountBadge").textContent = (
+    currentUser.account_type ||
+    currentUser.bank ||
+    "BANK"
+  ).toUpperCase();
 
   balanceVisible = false;
   document.getElementById("mainBalance").textContent = "******* VND";
@@ -583,8 +596,11 @@ async function fetchAccounts() {
         currentUser.account_type = me.account_type || currentUser.account_type;
         currentUser.bank = me.bank || currentUser.bank;
         persistCurrentUser();
-        document.getElementById("accountBadge").textContent =
-          (currentUser.account_type || currentUser.bank || "BANK").toUpperCase();
+        document.getElementById("accountBadge").textContent = (
+          currentUser.account_type ||
+          currentUser.bank ||
+          "BANK"
+        ).toUpperCase();
         if (balanceVisible) {
           document.getElementById("mainBalance").textContent = formatMoney(
             currentUser.balance,
@@ -814,9 +830,20 @@ async function executeTransfer() {
 
 // Allow Enter key to login
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("loginAccountNumber").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") doLogin();
-  });
+  const loginPhoneInput = document.getElementById("loginPhone");
+  const loginPasswordInput = document.getElementById("loginPassword");
+
+  if (loginPhoneInput) {
+    loginPhoneInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doLogin();
+    });
+  }
+
+  if (loginPasswordInput) {
+    loginPasswordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doLogin();
+    });
+  }
 
   const restoredUser = restoreSessionFromStorage();
   if (restoredUser) {

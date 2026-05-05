@@ -16,9 +16,11 @@ CREATE TABLE transaction_log (
 CREATE TABLE accounts (
     account_number VARCHAR(20) PRIMARY KEY,
     name VARCHAR(100),
+    phone VARCHAR(20),
+    password VARCHAR(255),
     balance DECIMAL(15,2) CHECK (balance >= 0),
     account_type VARCHAR(50) DEFAULT NULL
 ) ENGINE=InnoDB;
 
-INSERT INTO accounts (account_number, name, balance)
-VALUES ('102938475612', 'Nguyễn Văn A', 1234567890);
+INSERT INTO accounts (account_number, name, phone, password, balance)
+VALUES ('102938475612', 'Nguyễn Văn A', '0901234567', '123456', 1234567890);

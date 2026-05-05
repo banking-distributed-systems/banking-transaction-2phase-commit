@@ -1616,7 +1616,7 @@ def menu():
         print("L. Thêm Limit Data (Packet Loss)")
         print("K. Thêm Close Stream (Server chết)")
         print("M. Thêm Bandwidth (Slow network)")
-        print("P. Thêm Slicer (Random packet loss)")
+        # print("P. Thêm Slicer (Random packet loss)")
         print("S. Xem thông tin Proxy & Toxics")
         print("E. Xóa tất cả Toxics")
         print("---")
