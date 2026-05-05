@@ -24,13 +24,24 @@
         </div>
         <div class="login-form">
           <div class="input-group">
-            <label>Số tài khoản</label>
+            <label>Số điện thoại</label>
             <div class="input-wrapper">
-              <i class="fas fa-credit-card"></i>
+              <i class="fas fa-phone"></i>
               <input
                 type="text"
-                id="loginAccountNumber"
-                placeholder="Nhập số tài khoản"
+                id="loginPhone"
+                placeholder="Nhập số điện thoại"
+              />
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Mật khẩu</label>
+            <div class="input-wrapper">
+              <i class="fas fa-lock"></i>
+              <input
+                type="password"
+                id="loginPassword"
+                placeholder="Nhập mật khẩu"
               />
             </div>
           </div>
@@ -72,165 +83,169 @@
         style="display: none"
       >
         <div class="dash-body">
-        <!-- Header -->
-        <div class="dash-header">
-          <div class="dash-header-left">
-            <div class="avatar-circle" id="avatarCircle">A</div>
-            <div>
-              <span class="greeting" id="greeting">CHÀO BUỔI SÁNG,</span>
-              <h2 id="dashUserName">Nguyễn Văn A</h2>
+          <!-- Header -->
+          <div class="dash-header">
+            <div class="dash-header-left">
+              <div class="avatar-circle" id="avatarCircle">A</div>
+              <div>
+                <span class="greeting" id="greeting">CHÀO BUỔI SÁNG,</span>
+                <h2 id="dashUserName">Nguyễn Văn A</h2>
+              </div>
+            </div>
+            <div class="dash-header-right">
+              <i class="fas fa-bell"></i>
             </div>
           </div>
-          <div class="dash-header-right">
-            <i class="fas fa-bell"></i>
-          </div>
-        </div>
 
-        <!-- Balance Card -->
-        <div class="balance-card">
-          <div class="balance-top">
-            <span>Số dư khả dụng</span>
-            <i
-              class="fas fa-eye"
-              id="toggleBalanceEye"
-              onclick="toggleBalance()"
-            ></i>
-          </div>
-          <h2 id="mainBalance">******* VND</h2>
-          <div class="balance-bottom">
-            <div class="account-info">
-              <span class="label">SỐ TÀI KHOẢN</span>
-              <span class="account-num" id="accountNumber">**** **** ****</span>
-              <i class="fas fa-copy" onclick="copyAccountNumber()"></i>
+          <!-- Balance Card -->
+          <div class="balance-card">
+            <div class="balance-top">
+              <span>Số dư khả dụng</span>
+              <i
+                class="fas fa-eye"
+                id="toggleBalanceEye"
+                onclick="toggleBalance()"
+              ></i>
             </div>
-            <span class="account-badge" id="accountBadge">BANK</span>
+            <h2 id="mainBalance">******* VND</h2>
+            <div class="balance-bottom">
+              <div class="account-info">
+                <span class="label">SỐ TÀI KHOẢN</span>
+                <span class="account-num" id="accountNumber"
+                  >**** **** ****</span
+                >
+                <i class="fas fa-copy" onclick="copyAccountNumber()"></i>
+              </div>
+              <span class="account-badge" id="accountBadge">BANK</span>
+            </div>
           </div>
-        </div>
 
-        <!-- Quick Services -->
-        <div class="quick-services">
-          <div class="services-header">
-            <h3>Dịch vụ nhanh</h3>
-            <a href="#">Xem tất cả</a>
+          <!-- Quick Services -->
+          <div class="quick-services">
+            <div class="services-header">
+              <h3>Dịch vụ nhanh</h3>
+              <a href="#">Xem tất cả</a>
+            </div>
+            <div class="services-grid">
+              <div class="service-item" onclick="openTransferModal()">
+                <div class="service-icon blue">
+                  <i class="fas fa-exchange-alt"></i>
+                </div>
+                <span>Chuyển tiền</span>
+              </div>
+              <div class="service-item">
+                <div class="service-icon orange">
+                  <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <span>Thanh toán</span>
+              </div>
+              <div class="service-item">
+                <div class="service-icon green">
+                  <i class="fas fa-mobile-alt"></i>
+                </div>
+                <span>Nạp tiền ĐT</span>
+              </div>
+              <div class="service-item">
+                <div class="service-icon purple">
+                  <i class="fas fa-qrcode"></i>
+                </div>
+                <span>QR Pay</span>
+              </div>
+            </div>
           </div>
-          <div class="services-grid">
-            <div class="service-item" onclick="openTransferModal()">
-              <div class="service-icon blue">
-                <i class="fas fa-exchange-alt"></i>
-              </div>
-              <span>Chuyển tiền</span>
-            </div>
-            <div class="service-item">
-              <div class="service-icon orange">
-                <i class="fas fa-file-invoice-dollar"></i>
-              </div>
-              <span>Thanh toán</span>
-            </div>
-            <div class="service-item">
-              <div class="service-icon green">
-                <i class="fas fa-mobile-alt"></i>
-              </div>
-              <span>Nạp tiền ĐT</span>
-            </div>
-            <div class="service-item">
-              <div class="service-icon purple">
-                <i class="fas fa-qrcode"></i>
-              </div>
-              <span>QR Pay</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- Spending Chart -->
-        <div class="spending-section">
-          <div class="spending-header">
-            <h3>Biểu đồ chi tiêu</h3>
-            <select class="month-select">
-              <option>Tháng này</option>
-            </select>
-          </div>
-          <div class="chart-area">
-            <div class="chart-bars">
-              <div class="bar-group">
-                <div class="bar" style="height: 40%"></div>
-                <span>T2</span>
-              </div>
-              <div class="bar-group">
-                <div class="bar" style="height: 65%"></div>
-                <span>T3</span>
-              </div>
-              <div class="bar-group">
-                <div class="bar" style="height: 50%"></div>
-                <span>T4</span>
-              </div>
-              <div class="bar-group">
-                <div class="bar" style="height: 80%"></div>
-                <span>T5</span>
-              </div>
-              <div class="bar-group">
-                <div class="bar" style="height: 55%"></div>
-                <span>T6</span>
-              </div>
-              <div class="bar-group">
-                <div class="bar" style="height: 70%"></div>
-                <span>T7</span>
-              </div>
-              <div class="bar-group">
-                <div class="bar" style="height: 35%"></div>
-                <span>CN</span>
+          <!-- Spending Chart -->
+          <div class="spending-section">
+            <div class="spending-header">
+              <h3>Biểu đồ chi tiêu</h3>
+              <select class="month-select">
+                <option>Tháng này</option>
+              </select>
+            </div>
+            <div class="chart-area">
+              <div class="chart-bars">
+                <div class="bar-group">
+                  <div class="bar" style="height: 40%"></div>
+                  <span>T2</span>
+                </div>
+                <div class="bar-group">
+                  <div class="bar" style="height: 65%"></div>
+                  <span>T3</span>
+                </div>
+                <div class="bar-group">
+                  <div class="bar" style="height: 50%"></div>
+                  <span>T4</span>
+                </div>
+                <div class="bar-group">
+                  <div class="bar" style="height: 80%"></div>
+                  <span>T5</span>
+                </div>
+                <div class="bar-group">
+                  <div class="bar" style="height: 55%"></div>
+                  <span>T6</span>
+                </div>
+                <div class="bar-group">
+                  <div class="bar" style="height: 70%"></div>
+                  <span>T7</span>
+                </div>
+                <div class="bar-group">
+                  <div class="bar" style="height: 35%"></div>
+                  <span>CN</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="spending-total">
-            <div>
-              <span class="spending-label">TỔNG CHI TIÊU</span>
-              <h3 id="totalSpending">12,450,000 VND</h3>
+            <div class="spending-total">
+              <div>
+                <span class="spending-label">TỔNG CHI TIÊU</span>
+                <h3 id="totalSpending">12,450,000 VND</h3>
+              </div>
+              <span class="spending-change negative"
+                ><i class="fas fa-arrow-down"></i> 8%</span
+              >
             </div>
-            <span class="spending-change negative"
-              ><i class="fas fa-arrow-down"></i> 8%</span
-            >
           </div>
-        </div>
 
-        <!-- 2PC Monitor -->
-        <div class="tx-monitor-section">
-          <div class="services-header">
-            <h3>Theo dõi giao dịch 2PC</h3>
-          </div>
-          <div class="tx-monitor-inputs">
-            <input
-              type="text"
-              id="statusTxIdInput"
-              placeholder="Nhập mã giao dịch (VD: VB123...)"
-            />
-            <button onclick="lookupTransactionStatus()">Tra cứu</button>
-          </div>
-          <div class="tx-monitor-actions">
-            <button class="tx-btn-secondary" onclick="runManualRecovery()">
-              Chạy Recovery
-            </button>
-            <label class="tx-auto-refresh">
+          <!-- 2PC Monitor -->
+          <div class="tx-monitor-section">
+            <div class="services-header">
+              <h3>Theo dõi giao dịch 2PC</h3>
+            </div>
+            <div class="tx-monitor-inputs">
               <input
-                type="checkbox"
-                id="txAutoRefresh"
-                checked
-                onchange="toggleTxAutoRefresh()"
+                type="text"
+                id="statusTxIdInput"
+                placeholder="Nhập mã giao dịch (VD: VB123...)"
               />
-              Tự động cập nhật
-            </label>
-          </div>
-          <div id="statusTxResult" class="tx-status-result">
-            Chưa có dữ liệu giao dịch.
-          </div>
-          <div id="txRecentList" class="tx-recent-list">
-            Đang tải giao dịch gần nhất...
-          </div>
-          <div id="txLogPanel" class="tx-log-panel">
-            <span class="tx-log-empty">Chọn một giao dịch để xem log chi tiết.</span>
+              <button onclick="lookupTransactionStatus()">Tra cứu</button>
+            </div>
+            <div class="tx-monitor-actions">
+              <button class="tx-btn-secondary" onclick="runManualRecovery()">
+                Chạy Recovery
+              </button>
+              <label class="tx-auto-refresh">
+                <input
+                  type="checkbox"
+                  id="txAutoRefresh"
+                  checked
+                  onchange="toggleTxAutoRefresh()"
+                />
+                Tự động cập nhật
+              </label>
+            </div>
+            <div id="statusTxResult" class="tx-status-result">
+              Chưa có dữ liệu giao dịch.
+            </div>
+            <div id="txRecentList" class="tx-recent-list">
+              Đang tải giao dịch gần nhất...
+            </div>
+            <div id="txLogPanel" class="tx-log-panel">
+              <span class="tx-log-empty"
+                >Chọn một giao dịch để xem log chi tiết.</span
+              >
+            </div>
           </div>
         </div>
-
-        </div><!-- /.dash-body -->
+        <!-- /.dash-body -->
         <!-- Bottom Nav -->
         <div class="bottom-nav">
           <div class="nav-item active">

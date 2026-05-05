@@ -81,19 +81,38 @@ class TestFindAccountByNumber:
 
 
 class TestAuthenticateUser:
-    @patch('account_service.find_account_by_number')
-    def test_authenticate_user_returns_user_on_success(self, mock_find):
-        mock_find.return_value = (
-            {'name': 'Nguyễn Văn A', 'balance': 1000000, 'account_number': '102938475612'},
-            DB1_CONFIG,
-        )
-        result = authenticate_user('102938475612')
+    @patch('account_service.get_connection')
+    def test_authenticate_user_returns_user_on_success(self, mock_get_conn):
+        mock_cursor = MagicMock()
+        mock_cursor.fetchone.return_value = {
+            'name': 'Nguyễn Văn A',
+            'balance': 1000000,
+            'account_number': '102938475612',
+            'account_type': None,
+        }
+
+        mock_conn = MagicMock()
+        mock_conn.cursor.return_value.__enter__ = Mock(return_value=mock_cursor)
+        mock_conn.cursor.return_value.__exit__ = Mock(return_value=False)
+        mock_get_conn.return_value = mock_conn
+
+        result = authenticate_user('0901234567', '123456')
         assert result['bank'] == 'bank1'
         assert result['account_number'] == '102938475612'
+        sql = mock_cursor.execute.call_args[0][0]
+        assert 'REPLACE(phone' in sql
 
-    @patch('account_service.find_account_by_number', return_value=(None, None))
-    def test_authenticate_user_returns_none_on_failure(self, _mock_find):
-        assert authenticate_user('999999999999') is None
+    @patch('account_service.get_connection')
+    def test_authenticate_user_returns_none_on_failure(self, mock_get_conn):
+        mock_cursor = MagicMock()
+        mock_cursor.fetchone.return_value = None
+
+        mock_conn = MagicMock()
+        mock_conn.cursor.return_value.__enter__ = Mock(return_value=mock_cursor)
+        mock_conn.cursor.return_value.__exit__ = Mock(return_value=False)
+        mock_get_conn.return_value = mock_conn
+
+        assert authenticate_user('0901234567', 'wrong-password') is None
 
 
 class TestSaveTransaction:
