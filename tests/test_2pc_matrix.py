@@ -123,6 +123,50 @@ class Test2PCCoreCases:
         assert mock_compensate.called
         mock_xa_rollback.assert_called_once()
 
+    def test_log_phase_writes_extended_transaction_log_schema(self):
+        participant_conn, participant_cursor = _make_conn()
+        coordinator_conn, _ = _make_conn()
+        table_schema = {
+            'tx_id': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'xid': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'phase': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'amount': {'data_type': 'decimal', 'is_nullable': True, 'default': None, 'extra': ''},
+            'from_account_number': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'to_account_number': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'from_name': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'to_name': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'description': {'data_type': 'varchar', 'is_nullable': True, 'default': '', 'extra': ''},
+            'status': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'created_at': {'data_type': 'datetime', 'is_nullable': True, 'default': 'CURRENT_TIMESTAMP', 'extra': ''},
+        }
+
+        with patch('two_phase_commit.get_coordinator_conn', return_value=coordinator_conn), patch(
+            'two_phase_commit.get_connection', return_value=participant_conn
+        ), patch('two_phase_commit._get_transaction_log_schema', return_value=table_schema):
+            tpc.log_phase(
+                tx_id='VBEXTENDED01',
+                xid='xid-extended-01',
+                phase='ABORTED',
+                from_acc={'name': 'User A', 'account_number': '102938475612'},
+                to_acc={'name': 'User B', 'account_number': '203847569801'},
+                from_config={'database': 'bank1'},
+                to_config={'database': 'bank1'},
+                amount=50000,
+                description='extended-schema',
+            )
+
+        participant_sql, participant_params = participant_cursor.execute.call_args.args
+        assert 'from_account_number' in participant_sql
+        assert 'to_account_number' in participant_sql
+        assert 'from_name' in participant_sql
+        assert 'to_name' in participant_sql
+        assert 'status' in participant_sql
+        assert '102938475612' in participant_params
+        assert '203847569801' in participant_params
+        assert 'User A' in participant_params
+        assert 'User B' in participant_params
+        assert 'FAILED' in participant_params
+
 
 class Test2PCRecoveryCases:
     def test_tc05_coordinator_crash_after_commit_a_recover_commit_b(self):

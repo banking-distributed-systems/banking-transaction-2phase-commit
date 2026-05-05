@@ -26,6 +26,7 @@ TC07_CRASH_AFTER_PREPARE_TOKEN = 'TC07_CRASH_AFTER_PREPARE'
 TC08_CRASH_DURING_COMMITTING_TOKEN = 'TC08_CRASH_DURING_COMMITTING'
 TC09_COMMIT_TWICE_TOKEN = 'TC09_COMMIT_TWICE'
 TC10_ROLLBACK_TWICE_TOKEN = 'TC10_ROLLBACK_TWICE'
+_TX_LOG_SCHEMA_CACHE: Dict[str, Dict[str, Dict[str, Any]]] = {}
 
 
 def has_demo_token(description: str, token: str) -> bool:
@@ -46,6 +47,175 @@ def crash_coordinator_for_demo(tx_id: str, reason: str):
     logger.critical('[DEMO] tx=%s: %s', tx_id, reason)
     logging.shutdown()
     os._exit(1)
+
+
+def _phase_to_business_status(phase: str) -> str:
+    if phase in ('COMMITTED', 'COMPENSATED'):
+        return 'SUCCESS'
+    if phase in ('ABORTED', 'TIMEOUT'):
+        return 'FAILED'
+    if phase == 'COMPENSATING':
+        return 'COMPENSATING'
+    return 'PROCESSING'
+
+
+def _get_transaction_log_schema(config: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """
+    Đọc schema transaction_log thực tế từ từng bank để tương thích schema cũ/mới.
+    """
+    db_name = str(config.get('database') or '')
+    cached = _TX_LOG_SCHEMA_CACHE.get(db_name)
+    if cached is not None:
+        return cached
+
+    schema: Dict[str, Dict[str, Any]] = {}
+    conn = None
+    try:
+        conn = get_connection({**config, 'autocommit': True})
+        with conn.cursor(pymysql.cursors.DictCursor) as cur:
+            cur.execute(
+                "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, EXTRA "
+                "FROM information_schema.columns "
+                "WHERE table_schema = %s AND table_name = 'transaction_log' "
+                "ORDER BY ORDINAL_POSITION",
+                (db_name,),
+            )
+            for row in cur.fetchall():
+                col = str(row.get('COLUMN_NAME') or '')
+                if not col:
+                    continue
+                schema[col] = {
+                    'data_type': str(row.get('DATA_TYPE') or '').lower(),
+                    'is_nullable': str(row.get('IS_NULLABLE') or '').upper() == 'YES',
+                    'default': row.get('COLUMN_DEFAULT'),
+                    'extra': str(row.get('EXTRA') or '').lower(),
+                }
+    except Exception as e:
+        logger.warning(
+            '[PHASE] Khong the doc schema transaction_log tu %s: %s',
+            config.get('database'),
+            e,
+        )
+    finally:
+        if conn:
+            conn.close()
+
+    if not schema:
+        schema = {
+            'tx_id': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'xid': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'phase': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'amount': {'data_type': 'decimal', 'is_nullable': True, 'default': None, 'extra': ''},
+        }
+
+    _TX_LOG_SCHEMA_CACHE[db_name] = schema
+    return schema
+
+
+def _required_fallback_value(
+    column_name: str,
+    column_meta: Dict[str, Any],
+    tx_id: str,
+    xid: str,
+    phase: str,
+    from_acc: Optional[Dict[str, Any]],
+    to_acc: Optional[Dict[str, Any]],
+    amount: Optional[float],
+    description: str,
+):
+    from_acc = from_acc or {}
+    to_acc = to_acc or {}
+
+    mapping = {
+        'tx_id': tx_id,
+        'xid': xid or '',
+        'phase': phase,
+        'amount': amount if amount is not None else 0,
+        'from_account_number': from_acc.get('account_number') or '',
+        'to_account_number': to_acc.get('account_number') or '',
+        'from_account': from_acc.get('account_number') or '',
+        'to_account': to_acc.get('account_number') or '',
+        'from_name': from_acc.get('name') or '',
+        'to_name': to_acc.get('name') or '',
+        'description': description or '',
+        'status': _phase_to_business_status(phase),
+    }
+    if column_name in mapping:
+        return mapping[column_name]
+
+    data_type = str(column_meta.get('data_type') or '')
+    if data_type in ('tinyint', 'smallint', 'mediumint', 'int', 'bigint', 'decimal', 'float', 'double'):
+        return 0
+    return ''
+
+
+def _build_participant_log_upsert(
+    tx_id: str,
+    xid: str,
+    phase: str,
+    from_acc: Optional[Dict[str, Any]],
+    to_acc: Optional[Dict[str, Any]],
+    amount: Optional[float],
+    description: str,
+    table_schema: Dict[str, Dict[str, Any]],
+) -> Tuple[str, Tuple[Any, ...]]:
+    candidates = {
+        'tx_id': tx_id,
+        'xid': xid,
+        'phase': phase,
+        'amount': amount,
+        'from_account_number': (from_acc or {}).get('account_number'),
+        'to_account_number': (to_acc or {}).get('account_number'),
+        'from_account': (from_acc or {}).get('account_number'),
+        'to_account': (to_acc or {}).get('account_number'),
+        'from_name': (from_acc or {}).get('name'),
+        'to_name': (to_acc or {}).get('name'),
+        'description': description or '',
+        'status': _phase_to_business_status(phase),
+    }
+
+    columns: List[str] = []
+    values: List[Any] = []
+
+    for col, meta in table_schema.items():
+        if 'auto_increment' in str(meta.get('extra') or ''):
+            continue
+        if col == 'created_at':
+            continue
+
+        value = candidates.get(col)
+        if value is None:
+            default_value = meta.get('default')
+            if default_value is not None:
+                continue
+            if meta.get('is_nullable'):
+                value = None
+            else:
+                value = _required_fallback_value(
+                    col, meta, tx_id, xid, phase, from_acc, to_acc, amount, description
+                )
+
+        columns.append(col)
+        values.append(value)
+
+    if 'tx_id' not in columns:
+        columns.insert(0, 'tx_id')
+        values.insert(0, tx_id)
+
+    update_columns = [c for c in columns if c not in ('tx_id', 'id', 'created_at')]
+    if update_columns:
+        update_sql = ', '.join(f"`{c}` = VALUES(`{c}`)" for c in update_columns)
+    else:
+        update_sql = "`tx_id` = `tx_id`"
+
+    column_sql = ', '.join(f"`{c}`" for c in columns)
+    placeholder_sql = ', '.join(['%s'] * len(columns))
+    sql = (
+        f"INSERT INTO transaction_log ({column_sql}) "
+        f"VALUES ({placeholder_sql}) "
+        f"ON DUPLICATE KEY UPDATE {update_sql}"
+    )
+    return sql, tuple(values)
 
 
 # =============================================================================
@@ -128,14 +298,20 @@ def log_phase(
     for config in participant_targets:
         bank_conn = None
         try:
+            tx_log_schema = _get_transaction_log_schema(config)
+            participant_sql, participant_params = _build_participant_log_upsert(
+                tx_id=tx_id,
+                xid=xid,
+                phase=phase,
+                from_acc=from_acc,
+                to_acc=to_acc,
+                amount=amount,
+                description=description,
+                table_schema=tx_log_schema,
+            )
             bank_conn = get_connection({**config, 'autocommit': True})
             with bank_conn.cursor() as cur:
-                cur.execute(
-                    "INSERT INTO transaction_log (tx_id, xid, phase, amount) "
-                    "VALUES (%s, %s, %s, %s) "
-                    "ON DUPLICATE KEY UPDATE xid = VALUES(xid), phase = VALUES(phase), amount = VALUES(amount)",
-                    (tx_id, xid, phase, amount)
-                )
+                cur.execute(participant_sql, participant_params)
         except Exception as e:
             logger.error(
                 '[PHASE] Lỗi ghi participant transaction_log (%s/%s): %s',
