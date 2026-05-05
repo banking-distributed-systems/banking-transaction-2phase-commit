@@ -336,6 +336,11 @@ class Test2PCIdempotencyAndConcurrency:
             assert tpc.xa_commit(DB1_CONFIG, 'XID09') is True
             assert tpc.xa_commit(DB1_CONFIG, 'XID09') is False
 
+    def test_tc09_commit_repeat_can_tolerate_unknown_xid(self):
+        conn_fail, _ = _make_conn(execute_side_effect=Exception('XAER_NOTA: Unknown XID'))
+        with patch('two_phase_commit.get_connection', return_value=conn_fail):
+            assert tpc.xa_commit(DB1_CONFIG, 'XID09', tolerate_unknown_xid=True) is True
+
     @patch('account_service.save_transaction', return_value=True)
     @patch('two_phase_commit.log_phase')
     @patch('two_phase_commit.xa_prepare_participant', return_value=None)

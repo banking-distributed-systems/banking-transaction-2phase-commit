@@ -400,13 +400,22 @@ def xa_rollback(config: Dict[str, Any], xid: str):
         logger.warning('[XA] Lỗi XA ROLLBACK (%s): %s', config['database'], e)
 
 
-def xa_commit(config: Dict[str, Any], xid: str) -> bool:
+def _is_xa_unknown_xid_error(err: Exception) -> bool:
+    code = None
+    if getattr(err, 'args', None):
+        code = err.args[0]
+    msg = str(err)
+    return code == 1397 or 'XAER_NOTA' in msg or 'Unknown XID' in msg
+
+
+def xa_commit(config: Dict[str, Any], xid: str, tolerate_unknown_xid: bool = False) -> bool:
     """
     Commit XA transaction trên một database
 
     Args:
         config: Database configuration
         xid: XA Transaction ID
+        tolerate_unknown_xid: Cho phép coi XAER_NOTA là hợp lệ (idempotent repeat)
 
     Returns:
         True nếu commit thành công
@@ -418,6 +427,13 @@ def xa_commit(config: Dict[str, Any], xid: str) -> bool:
         conn.close()
         return True
     except Exception as e:
+        if tolerate_unknown_xid and _is_xa_unknown_xid_error(e):
+            logger.info(
+                '[XA] COMMIT lặp lại trên %s bỏ qua XAER_NOTA cho xid=%s',
+                config['database'],
+                xid,
+            )
+            return True
         logger.error('[XA] Lỗi XA COMMIT (%s): %s', config['database'], e)
         return False
 
@@ -940,8 +956,8 @@ def execute_transfer(
         if has_demo_token(description, TC09_COMMIT_TWICE_TOKEN):
             first_a = xa_commit(from_config, xid)
             first_b = xa_commit(to_config, xid)
-            second_a = xa_commit(from_config, xid)
-            second_b = xa_commit(to_config, xid)
+            second_a = xa_commit(from_config, xid, tolerate_unknown_xid=True)
+            second_b = xa_commit(to_config, xid, tolerate_unknown_xid=True)
 
             if not (first_a and first_b):
                 raise RuntimeError('TC09 demo: initial XA COMMIT failed')
