@@ -35,7 +35,7 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
   -- cho phép bank B nhận giao dịch
   docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_bank_b_prepare;"
 
--- cấu hình để cho TC04 – Commit A thành công, B thất bại
+-- TC04 – Commit A thành công, B thất bại
   - chuyển tiền với nội dung y như bên dưới
     Từ A: 102938475612
     Đến B: 203847569801
@@ -48,7 +48,7 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
       Tài khoản B (203847569801):
       ❌ Không nhận tiền
 
--- cấu hình để chạy TC05 – Coordinator chết sau khi commit A
+-- TC05 – Coordinator chết sau khi commit A
   - chuyển tiền với nội dung y như bên dưới
     Từ A: 102938475612
     Đến B: 203847569801
@@ -132,7 +132,7 @@ B không được cộng tiền
 API trả error demo
 Rollback gửi 2 lần nhưng hệ thống không crash
 
-TC 11
+TC 11 - Giao dịch đồng thời (concurrent)
 Mở 2 tab hoặc 2 trình duyệt
 Cùng chuyển từ A sang B
 Bấm gần như cùng lúc
@@ -158,7 +158,7 @@ API trả lỗi tài khoản đích không tồn tại
 Không chạy 2PC commit
 Không đổi số dư A/B
 
-Tc 14
+Tc 14 - Double submit (chi xu ly 1 lan)
 mở Powershell và chạy
 
   $body = @{

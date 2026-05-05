@@ -199,11 +199,20 @@ class Test2PCRecoveryCases:
                 return conn_b
             return conn_b
 
+        schema = {
+            'tx_id': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'xid': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'phase': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'amount': {'data_type': 'decimal', 'is_nullable': True, 'default': None, 'extra': ''},
+        }
+
         with patch.object(tpc, 'ALL_DB_CONFIGS', [cfg_a, cfg_b]), patch(
             'two_phase_commit.get_connection', side_effect=fake_get_connection
         ), patch('two_phase_commit.get_coordinator_conn', return_value=coordinator_conn), patch(
             'two_phase_commit.xa_commit', return_value=True
-        ) as mock_commit, patch('two_phase_commit.log_phase'):
+        ) as mock_commit, patch('two_phase_commit.log_phase'), patch(
+            'two_phase_commit._get_transaction_log_schema', return_value=schema
+        ):
             recovered = tpc.recover_in_doubt_transactions()
 
         assert recovered[0]['action'] == 'COMMIT_B_COMPLETED'
@@ -227,15 +236,96 @@ class Test2PCRecoveryCases:
             'status': 'PREPARING',
         }])
 
+        schema = {
+            'tx_id': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'xid': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'phase': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'amount': {'data_type': 'decimal', 'is_nullable': True, 'default': None, 'extra': ''},
+        }
+
         with patch.object(tpc, 'ALL_DB_CONFIGS', [cfg_a]), patch(
             'two_phase_commit.get_connection', side_effect=[bank_conn, bank_log_conn]
         ), patch('two_phase_commit.get_coordinator_conn', return_value=coordinator_conn), patch(
             'two_phase_commit.rollback_xa_all'
-        ) as mock_rollback, patch('two_phase_commit.log_phase'):
+        ) as mock_rollback, patch('two_phase_commit.log_phase'), patch(
+            'two_phase_commit._get_transaction_log_schema', return_value=schema
+        ):
             recovered = tpc.recover_in_doubt_transactions()
 
         assert recovered[0]['action'] == 'ABORTED'
         assert mock_rollback.called
+
+    def test_recovery_uses_participant_from_account_when_coordinator_missing(self):
+        xid = 'XID-COMMIT-A'
+        cfg_a = {'database': 'bank1'}
+        xa_recover_conn, _ = _make_conn(fetchall_rows=[])
+        participant_log_conn, _ = _make_conn(fetchall_rows=[{
+            'tx_id': 'VBPARTIAL01',
+            'xid': xid,
+            'phase': 'COMMIT_A',
+            'amount': 10000,
+            'from_account': '102938475612',
+            'to_account': '203847569801',
+        }])
+        coordinator_conn, _ = _make_conn(fetchall_rows=[])
+
+        schema = {
+            'tx_id': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'xid': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'phase': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'amount': {'data_type': 'decimal', 'is_nullable': True, 'default': None, 'extra': ''},
+            'from_account': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'to_account': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+        }
+
+        with patch.object(tpc, 'ALL_DB_CONFIGS', [cfg_a]), patch(
+            'two_phase_commit.get_connection', side_effect=[xa_recover_conn, participant_log_conn]
+        ), patch('two_phase_commit.get_coordinator_conn', return_value=coordinator_conn), patch(
+            'two_phase_commit._get_transaction_log_schema', return_value=schema
+        ), patch('two_phase_commit.do_compensation', return_value=False) as mock_comp:
+            recovered = tpc.recover_in_doubt_transactions()
+
+        assert recovered[0]['action'] == 'COMPENSATION_FAILED'
+        assert mock_comp.call_args.args[2] == '102938475612'
+
+    def test_recovery_skips_when_coordinator_already_compensated(self):
+        xid = 'XID-SKIP-COMP'
+        cfg_a = {'database': 'bank1'}
+        xa_recover_conn, _ = _make_conn(fetchall_rows=[])
+        participant_log_conn, _ = _make_conn(fetchall_rows=[{
+            'tx_id': 'VBSKIP0001',
+            'xid': xid,
+            'phase': 'COMMIT_A',
+            'amount': 10000,
+            'from_account': None,
+            'to_account': None,
+        }])
+        coordinator_conn, coordinator_cursor = _make_conn(fetchall_rows=[{
+            'tx_id': 'VBSKIP0001',
+            'from_account': '102938475612',
+            'to_account': '203847569801',
+            'amount': 10000,
+            'status': 'COMPENSATED',
+        }])
+
+        schema = {
+            'tx_id': {'data_type': 'varchar', 'is_nullable': False, 'default': None, 'extra': ''},
+            'xid': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'phase': {'data_type': 'varchar', 'is_nullable': True, 'default': None, 'extra': ''},
+            'amount': {'data_type': 'decimal', 'is_nullable': True, 'default': None, 'extra': ''},
+        }
+
+        with patch.object(tpc, 'ALL_DB_CONFIGS', [cfg_a]), patch(
+            'two_phase_commit.get_connection', side_effect=[xa_recover_conn, participant_log_conn]
+        ), patch('two_phase_commit.get_coordinator_conn', return_value=coordinator_conn), patch(
+            'two_phase_commit._get_transaction_log_schema', return_value=schema
+        ), patch('two_phase_commit.do_compensation') as mock_comp:
+            recovered = tpc.recover_in_doubt_transactions()
+
+        assert recovered == []
+        assert not mock_comp.called
+        # Đảm bảo recovery có chạy query đối chiếu theo tx_id.
+        assert coordinator_cursor.execute.call_count >= 2
 
 
 class Test2PCIdempotencyAndConcurrency:

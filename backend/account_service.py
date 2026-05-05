@@ -23,6 +23,10 @@ def find_account_by_number(account_number: str) -> Tuple[Optional[Dict[str, Any]
     Returns:
         Tuple (account, db_config) hoặc (None, None)
     """
+    normalized_account_number = str(account_number or '').strip().replace(' ', '')
+    if not normalized_account_number:
+        return None, None
+
     for config in ALL_DB_CONFIGS:
         try:
             conn = get_connection(config)
@@ -30,7 +34,7 @@ def find_account_by_number(account_number: str) -> Tuple[Optional[Dict[str, Any]
                 cursor.execute(
                     "SELECT name, balance, account_number, account_type "
                     "FROM accounts WHERE REPLACE(account_number, ' ', '') = %s",
-                    (account_number.replace(' ', ''),)
+                    (normalized_account_number,)
                 )
                 acc = cursor.fetchone()
             conn.close()

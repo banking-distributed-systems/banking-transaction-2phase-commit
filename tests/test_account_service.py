@@ -20,6 +20,13 @@ from config import DB1_CONFIG, DB2_CONFIG
 
 class TestFindAccountByNumber:
     @patch('account_service.get_connection')
+    def test_find_account_returns_none_for_empty_input(self, mock_get_conn):
+        result, config = find_account_by_number(None)
+        assert result is None
+        assert config is None
+        mock_get_conn.assert_not_called()
+
+    @patch('account_service.get_connection')
     def test_find_account_returns_account_and_config(self, mock_get_conn):
         mock_cursor = MagicMock()
         mock_cursor.fetchone.return_value = {
