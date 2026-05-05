@@ -666,6 +666,8 @@ Time: 0.05s
 
 ## 8. Kịch bản 2PC với Toxiproxy
 
+**Lưu ý:** Sau khi restart backend để recovery (TC05–TC08), log sẽ có thêm dòng `[BAL] RECOVERY-...-A/B` để hiển thị số dư sau phục hồi.
+
 ### 8.1 Kịch bản 4: Partial Commit Failure
 
 **Mô tả:** Bank A commit thành công, nhưng Bank B fail

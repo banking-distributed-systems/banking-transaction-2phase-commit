@@ -9,11 +9,11 @@
 
 Hệ thống V-Bank sử dụng 4 MySQL containers với các database riêng biệt:
 
-| Container | Port | Database | Mục đích |
-|-----------|------|---------|----------|
-| `mysql1` | 3306 | `bank1` | Bank A — tài khoản, transaction_log |
-| `mysql2` | 3307 | `bank2` | Bank B — tài khoản, transaction_log |
-| `mysql3` | 3308 | `bank3` | Bank C — tài khoản, transaction_log |
+| Container     | Port | Database      | Mục đích                                      |
+| ------------- | ---- | ------------- | --------------------------------------------- |
+| `mysql1`      | 3306 | `bank1`       | Bank A — tài khoản, transaction_log           |
+| `mysql2`      | 3307 | `bank2`       | Bank B — tài khoản, transaction_log           |
+| `mysql3`      | 3308 | `bank3`       | Bank C — tài khoản, transaction_log           |
 | `coordinator` | 3309 | `coordinator` | Coordinator — giao dịch tổng hợp, idempotency |
 
 ---
@@ -32,11 +32,11 @@ CREATE TABLE accounts (
 ) ENGINE=InnoDB;
 ```
 
-| Column | Type | Constraints | Mô tả |
-|--------|------|-------------|--------|
-| `account_number` | VARCHAR(20) | PRIMARY KEY | Số tài khoản |
-| `name` | VARCHAR(100) | | Tên chủ tài khoản |
-| `balance` | DECIMAL(15,2) | CHECK >= 0 | Số dư tài khoản |
+| Column           | Type          | Constraints | Mô tả             |
+| ---------------- | ------------- | ----------- | ----------------- |
+| `account_number` | VARCHAR(20)   | PRIMARY KEY | Số tài khoản      |
+| `name`           | VARCHAR(100)  |             | Tên chủ tài khoản |
+| `balance`        | DECIMAL(15,2) | CHECK >= 0  | Số dư tài khoản   |
 
 **Sample Data:**
 
@@ -47,83 +47,55 @@ VALUES ('102938475612', 'Nguyễn Văn A', 1234567890);
 
 ---
 
-### 2.2. Table: transactions
-
-Lưu trữ lịch sử giao dịch thành công.
-
-```sql
-CREATE TABLE transactions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    tx_id VARCHAR(30) NOT NULL UNIQUE,
-    from_account_number VARCHAR(20) NOT NULL,
-    from_name VARCHAR(100) NOT NULL,
-    to_account_number VARCHAR(20) NOT NULL,
-    to_name VARCHAR(100) NOT NULL,
-    amount DECIMAL(15, 2) NOT NULL,
-    description VARCHAR(255) DEFAULT '',
-    status VARCHAR(20) DEFAULT 'SUCCESS',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
-```
-
-| Column | Type | Constraints | Mô tả |
-|--------|------|-------------|--------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | ID giao dịch |
-| `tx_id` | VARCHAR(30) | NOT NULL, UNIQUE | Mã giao dịch (VB...) |
-| `from_account_number` | VARCHAR(20) | NOT NULL | Số TK người gửi |
-| `from_name` | VARCHAR(100) | NOT NULL | Tên người gửi |
-| `to_account_number` | VARCHAR(20) | NOT NULL | Số TK người nhận |
-| `to_name` | VARCHAR(100) | NOT NULL | Tên người nhận |
-| `amount` | DECIMAL(15,2) | NOT NULL | Số tiền |
-| `description` | VARCHAR(255) | DEFAULT '' | Mô tả giao dịch |
-| `status` | VARCHAR(20) | DEFAULT 'SUCCESS' | Trạng thái |
-| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Thời gian tạo |
-
-**Status Values:**
-
-| Status | Mô tả |
-|--------|--------|
-| `SUCCESS` | Giao dịch hoàn tất |
-| `FAILED` | Giao dịch thất bại |
-| `COMPENSATED` | Đã hoàn tiền (compensation) |
-
----
-
-### 2.3. Table: transaction_log
+### 2.2. Table: transaction_log
 
 Bảng ghi trạng thái XA transaction tại từng participant — dùng cho recovery.
 
 ```sql
 CREATE TABLE transaction_log (
-    tx_id VARCHAR(30) PRIMARY KEY,
-    xid   VARCHAR(64),
-    phase VARCHAR(20),
-    amount DECIMAL(15,2),
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  tx_id VARCHAR(30) NOT NULL UNIQUE,
+  xid VARCHAR(64) NOT NULL,
+  from_account_number VARCHAR(20) NOT NULL,
+  from_name VARCHAR(100) NOT NULL,
+  to_account_number VARCHAR(20) NOT NULL,
+  to_name VARCHAR(100) NOT NULL,
+  amount DECIMAL(15,2) NOT NULL,
+  description VARCHAR(255) NOT NULL DEFAULT '',
+  phase VARCHAR(20) NOT NULL DEFAULT 'PREPARING',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 ```
 
-| Column | Type | Constraints | Mô tả |
-|--------|------|-------------|--------|
-| `tx_id` | VARCHAR(30) | PRIMARY KEY | Mã giao dịch |
-| `xid` | VARCHAR(64) | | XA Transaction ID |
-| `phase` | VARCHAR(20) | | Phase hiện tại của 2PC |
-| `amount` | DECIMAL(15,2) | | Số tiền giao dịch |
-| `created_at` | DATETIME | DEFAULT CURRENT_TIMESTAMP | Thời gian ghi log |
+| Column                | Type          | Constraints                 | Mô tả                  |
+| --------------------- | ------------- | --------------------------- | ---------------------- |
+| `id`                  | INT           | PRIMARY KEY, AUTO_INCREMENT | ID log                 |
+| `tx_id`               | VARCHAR(30)   | NOT NULL, UNIQUE            | Mã giao dịch           |
+| `xid`                 | VARCHAR(64)   | NOT NULL                    | XA Transaction ID      |
+| `from_account_number` | VARCHAR(20)   | NOT NULL                    | Số TK người gửi        |
+| `from_name`           | VARCHAR(100)  | NOT NULL                    | Tên người gửi          |
+| `to_account_number`   | VARCHAR(20)   | NOT NULL                    | Số TK người nhận       |
+| `to_name`             | VARCHAR(100)  | NOT NULL                    | Tên người nhận         |
+| `amount`              | DECIMAL(15,2) | NOT NULL                    | Số tiền giao dịch      |
+| `description`         | VARCHAR(255)  | NOT NULL                    | Mô tả giao dịch        |
+| `phase`               | VARCHAR(20)   | NOT NULL                    | Phase hiện tại của 2PC |
+| `created_at`          | DATETIME      | DEFAULT CURRENT_TIMESTAMP   | Thời gian ghi log      |
+| `updated_at`          | DATETIME      | AUTO UPDATE                 | Thời gian cập nhật     |
 
 **Phase Values:**
 
-| Phase | Mô tả |
-|-------|--------|
-| `PREPARING` | Đang chuẩn bị |
-| `PREPARED` | Đã sẵn sàng commit |
-| `COMMITTING` | Đang commit |
-| `COMMIT_A` | Bank A đã commit |
-| `COMMITTED` | Hoàn tất |
-| `ABORTED` | Đã hủy |
-| `TIMEOUT` | Timeout |
-| `COMPENSATING` | Đang hoàn tiền |
-| `COMPENSATED` | Đã hoàn tiền |
+| Phase          | Mô tả              |
+| -------------- | ------------------ |
+| `PREPARING`    | Đang chuẩn bị      |
+| `PREPARED`     | Đã sẵn sàng commit |
+| `COMMITTING`   | Đang commit        |
+| `COMMIT_A`     | Bank A đã commit   |
+| `COMMITTED`    | Hoàn tất           |
+| `ABORTED`      | Đã hủy             |
+| `TIMEOUT`      | Timeout            |
+| `COMPENSATING` | Đang hoàn tiền     |
+| `COMPENSATED`  | Đã hoàn tiền       |
 
 ---
 
@@ -200,14 +172,14 @@ CREATE TABLE transactions (
 ) ENGINE=InnoDB;
 ```
 
-| Column | Type | Mô tả |
-|--------|------|--------|
-| `tx_id` | VARCHAR(30) | Mã giao dịch duy nhất |
-| `from_account` | VARCHAR(20) | Số TK người gửi |
-| `to_account` | VARCHAR(20) | Số TK người nhận |
-| `amount` | DECIMAL(15,2) | Số tiền |
-| `status` | VARCHAR(20) | Trạng thái (SUCCESS / FAILED / COMPENSATED / TIMEOUT) |
-| `created_at` | DATETIME | Thời gian tạo |
+| Column         | Type          | Mô tả                                                 |
+| -------------- | ------------- | ----------------------------------------------------- |
+| `tx_id`        | VARCHAR(30)   | Mã giao dịch duy nhất                                 |
+| `from_account` | VARCHAR(20)   | Số TK người gửi                                       |
+| `to_account`   | VARCHAR(20)   | Số TK người nhận                                      |
+| `amount`       | DECIMAL(15,2) | Số tiền                                               |
+| `status`       | VARCHAR(20)   | Trạng thái (SUCCESS / FAILED / COMPENSATED / TIMEOUT) |
+| `created_at`   | DATETIME      | Thời gian tạo                                         |
 
 ### 5.2. Table: idempotency_keys
 
@@ -215,17 +187,17 @@ CREATE TABLE transactions (
 
 ```sql
 CREATE TABLE idempotency_keys (
-    idem_key VARCHAR(64) PRIMARY KEY,
+  idem_key VARCHAR(128) PRIMARY KEY,
     status   VARCHAR(20),
     tx_id    VARCHAR(30)
 ) ENGINE=InnoDB;
 ```
 
-| Column | Type | Mô tả |
-|--------|------|--------|
-| `idem_key` | VARCHAR(64) | Idempotency key từ header `Idempotency-Key` |
-| `status` | VARCHAR(20) | `PROCESSING` hoặc `SUCCESS` / `FAILED` |
-| `tx_id` | VARCHAR(30) | Mã giao dịch liên kết |
+| Column     | Type         | Mô tả                                       |
+| ---------- | ------------ | ------------------------------------------- |
+| `idem_key` | VARCHAR(128) | Idempotency key từ header `Idempotency-Key` |
+| `status`   | VARCHAR(20)  | `PROCESSING` hoặc `SUCCESS` / `FAILED`      |
+| `tx_id`    | VARCHAR(30)  | Mã giao dịch liên kết                       |
 
 ---
 
@@ -236,11 +208,15 @@ CREATE TABLE idempotency_keys (
   ┌──────────────────────┐   ┌─────────────────────────┐
   │      accounts        │   │     transaction_log     │
   ├──────────────────────┤   ├─────────────────────────┤
-  │ account_number (PK)  │   │ tx_id (PK)              │
-  │ name                 │   │ xid                     │
-  │ balance              │   │ phase                   │
-  └──────────────────────┘   │ amount                  │
+  │ account_number (PK)  │   │ id (PK)                 │
+  │ name                 │   │ tx_id (UNIQUE)          │
+  │ balance              │   │ xid                     │
+  └──────────────────────┘   │ from_account_number     │
+                             │ to_account_number       │
+                             │ amount                  │
+                             │ phase                   │
                              │ created_at              │
+                             │ updated_at              │
                              └─────────────────────────┘
 
   coordinator

@@ -127,15 +127,15 @@ backend/
 
 ### 3.2. Module Responsibilities
 
-| Module                | Responsibility                    | Public API                                                                   |
-| --------------------- | --------------------------------- | ---------------------------------------------------------------------------- |
-| `config.py`           | Cấu hình DB, constants            | `DB1_CONFIG`, `DB2_CONFIG`, `DB3_CONFIG`, `COORDINATOR_DB_CONFIG`, `ALL_DB_CONFIGS`, `PREPARE_TIMEOUT`, `PHASE_LABELS` |
-| `logger.py`           | Logging tập trung                 | `get_logger(name)`                                                           |
-| `database.py`         | DB connection, query helpers      | `get_connection()`, `get_coordinator_conn()`, `execute_query()`              |
-| `account_service.py`  | Tìm kiếm, xác thực tài khoản      | `authenticate_user()`, `find_account_by_number()`, `save_transaction()`      |
-| `two_phase_commit.py` | Logic 2PC, recovery, compensation | `execute_transfer()`, `recover_in_doubt_transactions()`, `do_compensation()` |
-| `idempotency_service.py` | Idempotency cho /api/transfer  | `get_idempotency_record()`, `create_processing_record()`, `finalize_record()` |
-| `routes/*.py`         | HTTP endpoints                    | Flask blueprints                                                             |
+| Module                   | Responsibility                    | Public API                                                                                                             |
+| ------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `config.py`              | Cấu hình DB, constants            | `DB1_CONFIG`, `DB2_CONFIG`, `DB3_CONFIG`, `COORDINATOR_DB_CONFIG`, `ALL_DB_CONFIGS`, `PREPARE_TIMEOUT`, `PHASE_LABELS` |
+| `logger.py`              | Logging tập trung                 | `get_logger(name)`                                                                                                     |
+| `database.py`            | DB connection, query helpers      | `get_connection()`, `get_coordinator_conn()`, `execute_query()`                                                        |
+| `account_service.py`     | Tìm kiếm, xác thực tài khoản      | `authenticate_user()`, `find_account_by_number()`, `save_transaction()`                                                |
+| `two_phase_commit.py`    | Logic 2PC, recovery, compensation | `execute_transfer()`, `recover_in_doubt_transactions()`, `do_compensation()`                                           |
+| `idempotency_service.py` | Idempotency cho /api/transfer     | `get_idempotency_record()`, `create_processing_record()`, `finalize_record()`                                          |
+| `routes/*.py`            | HTTP endpoints                    | Flask blueprints                                                                                                       |
 
 ---
 
@@ -211,13 +211,13 @@ sequenceDiagram
 
 ### 5.1. Docker Services
 
-| Service  | Image   | Port | Database | Purpose          |
-| -------- | ------- | ---- | -------- | ---------------- |
-| `mysql1` | mysql:8 | 3306 | bank1    | Bank A           |
-| `mysql2` | mysql:8 | 3307 | bank2    | Bank B           |
-| `mysql3` | mysql:8 | 3308 | bank3    | Bank C           |
-| `coordinator` | mysql:8 | 3309 | coordinator | Transaction log, idempotency |
-| `toxiproxy` | ghcr.io/shopify/toxiproxy:2.12.0 | 8474/8666 | — | Network fault injection |
+| Service       | Image                            | Port      | Database    | Purpose                      |
+| ------------- | -------------------------------- | --------- | ----------- | ---------------------------- |
+| `mysql1`      | mysql:8                          | 3306      | bank1       | Bank A                       |
+| `mysql2`      | mysql:8                          | 3307      | bank2       | Bank B                       |
+| `mysql3`      | mysql:8                          | 3308      | bank3       | Bank C                       |
+| `coordinator` | mysql:8                          | 3309      | coordinator | Transaction log, idempotency |
+| `toxiproxy`   | ghcr.io/shopify/toxiproxy:2.12.0 | 8474/8666 | —           | Network fault injection      |
 
 ### 5.2. Network Configuration
 
@@ -259,10 +259,10 @@ CORS(app)  # Allow all origins for development
 
 ### 7.1. Current Limitations
 
-| Area                   | Current              | Future Enhancement             |
-| ---------------------- | -------------------- | ------------------------------ |
-| **DB Connection**      | Per-request creation | Connection pooling             |
-| **Horizontal Scaling** | Single TC instance   | Multiple TC with load balancer |
+| Area                   | Current              | Future Enhancement               |
+| ---------------------- | -------------------- | -------------------------------- |
+| **DB Connection**      | Per-request creation | Connection pooling               |
+| **Horizontal Scaling** | Single TC instance   | Multiple TC with load balancer   |
 | **3+ Banks**           | 3 banks hiện tại     | Thêm config vào `ALL_DB_CONFIGS` |
 
 ### 7.2. Extension Points
@@ -296,11 +296,12 @@ CORS(app)  # Allow all origins for development
 
 ### 9.1. Logging Strategy
 
-| Log Type       | Destination                            | Content                 |
-| -------------- | -------------------------------------- | ----------------------- |
-| **Phase Log**  | Console backend + `transaction_log` DB | Chi tiết từng phase 2PC |
-| **Error Log**  | Console backend                        | Exception stack trace   |
-| **Access Log** | Flask default                          | HTTP request/response   |
+| Log Type        | Destination                            | Content                                 |
+| --------------- | -------------------------------------- | --------------------------------------- |
+| **Phase Log**   | Console backend + `transaction_log` DB | Chi tiết từng phase 2PC                 |
+| **Balance Log** | Console backend                        | Số dư trước/sau, gồm `RECOVERY-...-A/B` |
+| **Error Log**   | Console backend                        | Exception stack trace                   |
+| **Access Log**  | Flask default                          | HTTP request/response                   |
 
 ### 9.2. Key Metrics
 
