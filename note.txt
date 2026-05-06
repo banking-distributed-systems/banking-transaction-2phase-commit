@@ -8,8 +8,12 @@ tài khoản
 
 kích thước response login: khoảng 398 bytes
 
+============================================================================================================
 TC02 – Bank A fail ở prepare.
--- cấu hình mô phỏng để Bank A từ chối giao dịch
+============================================================================================================
+
+-- cấu hình mô phỏng để Bank A từ chối giao dịch:
+
 docker exec mysql mysql -uroot -proot bank1 -e "DROP TRIGGER IF EXISTS reject_bank_a_prepare; CREATE TRIGGER reject_bank_a_prepare BEFORE UPDATE ON accounts FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Bank A rejected transaction (TC02)';"
 
   -- chạy transfer để test TC02
@@ -26,16 +30,22 @@ docker exec mysql mysql -uroot -proot bank1 -e "DROP TRIGGER IF EXISTS reject_ba
   B không được cộng tiền
 
   -- tắt mô phỏng TC02 (trả môi trường về bình thường)
-  docker exec mysql mysql -uroot -proot bank1 -e "DROP TRIGGER IF EXISTS reject_bank_a_prepare;"
+docker exec mysql mysql -uroot -proot bank1 -e "DROP TRIGGER IF EXISTS reject_bank_a_prepare;"
 
+============================================================================================================
 TC03 – B trả NO.
+============================================================================================================
+
 -- cấu hình mô phỏng để Bank B từ chối giao dịch 
 docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_bank_b_prepare; CREATE TRIGGER reject_bank_b_prepare BEFORE UPDATE ON accounts FOR EACH ROW SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Bank B rejected transaction (TC03)';"
 
   -- cho phép bank B nhận giao dịch
-  docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_bank_b_prepare;"
+docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_bank_b_prepare;"
 
+============================================================================================================
 -- TC04 – Commit A thành công, B thất bại
+============================================================================================================
+
   - chuyển tiền với nội dung y như bên dưới
     Từ A: 102938475612
     Đến B: 203847569801
@@ -48,7 +58,10 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
       Tài khoản B (203847569801):
       ❌ Không nhận tiền
 
+============================================================================================================
 -- TC05 – Coordinator chết sau khi commit A
+============================================================================================================
+
   - chuyển tiền với nội dung y như bên dưới
     Từ A: 102938475612
     Đến B: 203847569801
@@ -66,7 +79,9 @@ docker exec mysql2 mysql -uroot -proot bank2 -e "DROP TRIGGER IF EXISTS reject_b
       A bị trừ 50000 đúng 1 lần
       B được cộng 50000 đúng 1 lần
 
+============================================================================================================
 TC06 – Coordinator crash trước commit
+============================================================================================================
 
 Từ A: 102938475612
 Đến B: 203847569801
@@ -77,8 +92,9 @@ A không bị trừ tiền
 B không được cộng tiền
 transaction_log = ABORTED
 
-
+============================================================================================================
 TC07 – Participant crash sau prepare
+============================================================================================================
 
 Từ A: 102938475612
 Đến B: 203847569801
@@ -89,7 +105,9 @@ A bị trừ tiền
 B được cộng tiền
 transaction_log = COMMITTED
 
+============================================================================================================
 TC08 – Giao dịch in-doubt / crash lúc COMMITTING
+============================================================================================================
 
 Từ A: 102938475612
 Đến B: 203847569801
@@ -103,8 +121,9 @@ A bị trừ tiền
 B được cộng tiền
 
 
-
+============================================================================================================
 TC09 – Commit gửi nhiều lần
+============================================================================================================
 
 Từ A: 102938475612
 Đến B: 203847569801
@@ -118,8 +137,9 @@ Không bị nhân đôi tiền dù commit được gọi lại
 API trả success
 
 
-
+============================================================================================================
 TC10 – Rollback gửi nhiều lần
+============================================================================================================
 
 Từ A: 102938475612
 Đến B: 203847569801
@@ -132,7 +152,9 @@ B không được cộng tiền
 API trả error demo
 Rollback gửi 2 lần nhưng hệ thống không crash
 
+============================================================================================================
 TC 11 - Giao dịch đồng thời (concurrent)
+============================================================================================================
 Mở 2 tab hoặc 2 trình duyệt
 Cùng chuyển từ A sang B
 Bấm gần như cùng lúc
@@ -144,7 +166,9 @@ Nếu cả hai đủ số dư thì cả hai COMMITTED
 A bị trừ tổng số tiền của 2 giao dịch
 B được cộng tổng số tiền của 2 giao dịch
 
+============================================================================================================
 TC12 nhập số tiền 0 hoặc âm
+============================================================================================================
 Kỳ vọng:
 
 API trả lỗi validation
@@ -152,13 +176,17 @@ Không tạo giao dịch 2PC thành công
 Không đổi số dư A/B
 Không COMMITTED
 
+============================================================================================================
 TC13 nhập tài khoản không tồn tại
+============================================================================================================
 Kỳ vọng
 API trả lỗi tài khoản đích không tồn tại
 Không chạy 2PC commit
 Không đổi số dư A/B
 
+============================================================================================================
 Tc 14 - Double submit (chi xu ly 1 lan)
+============================================================================================================
 mở Powershell và chạy
 
   $body = @{
@@ -201,9 +229,9 @@ A/B chỉ đổi số dư 1 lần
 }
 
 
-
+============================================================================================================
 TC15 – Logging phase đầy đủ
-
+============================================================================================================
 Không cần keyword riêng. Có thể dùng một giao dịch thường hoặc các token trên.
 
 Kỳ vọng với giao dịch thành công bình thường:
@@ -214,9 +242,9 @@ COMMITTING
 COMMIT_A
 COMMITTED
 
-
+============================================================================================================
 TC16 – Recovery từ log
-
+============================================================================================================
 Không cần keyword riêng, dùng lại TC06/TC07/TC08 để tạo giao dịch treo.
 
 Cách test:
@@ -238,7 +266,9 @@ Nếu phase PREPARED   => recovery commit   => COMMITTED
 Nếu phase COMMITTING => recovery commit   => COMMITTED
 Nếu phase COMMIT_A   => recovery commit B => COMMITTED
 
+============================================================================================================
 Note test bằng proxy
+============================================================================================================
 - `L. Thêm Limit Data (Packet Loss)`: nhập `50`
   → login fail do response bị cắt/truncated.
 
