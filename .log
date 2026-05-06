@@ -2048,3 +2048,11 @@
 2026-05-06 10:05:16  INFO      127.0.0.1 - - [06/May/2026 10:05:16] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
 2026-05-06 10:05:16  INFO      [TIMING][a87c079964d5] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0178s
 2026-05-06 10:05:16  INFO      127.0.0.1 - - [06/May/2026 10:05:16] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:05:53  INFO      [TIMING][850279e5493c] GET /api/accounts - Time: 0.0466s
+2026-05-06 10:05:53  INFO      127.0.0.1 - - [06/May/2026 10:05:53] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 10:05:53  INFO      [TIMING][46f3bc1d86c2] GET /api/transfer/recent - Time: 0.2001s
+2026-05-06 10:05:53  INFO      127.0.0.1 - - [06/May/2026 10:05:53] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:06:02  INFO      [TIMING][e57c07ab5c9a] GET /api/transfer/recent - Time: 0.1916s
+2026-05-06 10:06:02  INFO      127.0.0.1 - - [06/May/2026 10:06:02] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:06:10  INFO      [TIMING][1b2fc708488a] GET /api/transfer/recent - Time: 0.1417s
+2026-05-06 10:06:10  INFO      127.0.0.1 - - [06/May/2026 10:06:10] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
