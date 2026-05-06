@@ -326,3 +326,1725 @@
 2026-05-06 00:27:25  INFO      127.0.0.1 - - [06/May/2026 00:27:25] "GET /api/accounts HTTP/1.1" 200 -
 2026-05-06 00:27:26  INFO      [TIMING][f28296884b00] GET /api/accounts - Time: 0.0264s
 2026-05-06 00:27:26  INFO      127.0.0.1 - - [06/May/2026 00:27:26] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:05:49  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:05:49  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 08:05:49  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:05:49  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 08:05:50  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 08:05:50  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 08:05:50  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 08:05:50  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 08:05:50  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 08:05:50  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 08:05:50  INFO      [RECOVERY] Tìm thấy 21 giao dịch cần xử lý.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 08:05:50  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 08:05:50  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-05-06 08:05:50  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:05:50  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 08:05:50  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 08:05:50  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 08:05:50  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 08:05:50  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 08:05:50  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:05:50  INFO      [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.10.2:5000
+2026-05-06 08:05:50  INFO      [33mPress CTRL+C to quit[0m
+2026-05-06 08:05:50  INFO       * Restarting with stat
+2026-05-06 08:05:51  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:05:51  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 08:05:51  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:05:51  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 08:05:51  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 08:05:51  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 08:05:51  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 08:05:51  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 08:05:51  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 08:05:51  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 08:05:51  INFO      [RECOVERY] Tìm thấy 21 giao dịch cần xử lý.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:05:51  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:05:51  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-05-06 08:05:51  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:05:51  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 08:05:51  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 08:05:51  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 08:05:51  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 08:05:51  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 08:05:51  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:05:51  WARNING    * Debugger is active!
+2026-05-06 08:05:51  INFO       * Debugger PIN: 535-083-205
+2026-05-06 08:06:03  INFO      [TIMING][eeb75ce144f1] GET /api/accounts - Time: 0.0461s
+2026-05-06 08:06:03  INFO      127.0.0.1 - - [06/May/2026 08:06:03] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:07:21  INFO      [TIMING][bc20c98f1242] OPTIONS /api/login - Time: 0.0001s
+2026-05-06 08:07:21  INFO      127.0.0.1 - - [06/May/2026 08:07:21] "OPTIONS /api/login HTTP/1.1" 200 -
+2026-05-06 08:07:22  INFO      [TIMING][1357c9c74c2c] POST /api/login - Time: 0.0223s
+2026-05-06 08:07:22  INFO      127.0.0.1 - - [06/May/2026 08:07:22] "POST /api/login HTTP/1.1" 200 -
+2026-05-06 08:07:22  INFO      [TIMING][558bf7ec864f] GET /api/accounts - Time: 0.0255s
+2026-05-06 08:07:22  INFO      127.0.0.1 - - [06/May/2026 08:07:22] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:07:22  INFO      [TIMING][06bd84f3661f] GET /api/transfer/recent - Time: 0.0654s
+2026-05-06 08:07:22  INFO      127.0.0.1 - - [06/May/2026 08:07:22] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:07:30  INFO      [TIMING][168c0858a474] GET /api/transfer/recent - Time: 0.0991s
+2026-05-06 08:07:30  INFO      127.0.0.1 - - [06/May/2026 08:07:30] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:07:30  INFO      [TIMING][5e64720f52f8] GET /api/transfer/status/VB48591DBB7C - Time: 0.0126s
+2026-05-06 08:07:30  INFO      127.0.0.1 - - [06/May/2026 08:07:30] "GET /api/transfer/status/VB48591DBB7C HTTP/1.1" 200 -
+2026-05-06 08:07:30  INFO      [TIMING][e38a5bb0ebe5] GET /api/transfer/log/VB48591DBB7C - Time: 0.0099s
+2026-05-06 08:07:30  INFO      127.0.0.1 - - [06/May/2026 08:07:30] "GET /api/transfer/log/VB48591DBB7C HTTP/1.1" 200 -
+2026-05-06 08:07:30  INFO      [TIMING][0e756c66c27f] OPTIONS /api/lookup-account - Time: 0.0001s
+2026-05-06 08:07:30  INFO      127.0.0.1 - - [06/May/2026 08:07:30] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:07:30  INFO      [TIMING][469e46d000b4] POST /api/lookup-account - Time: 0.0542s
+2026-05-06 08:07:30  INFO      127.0.0.1 - - [06/May/2026 08:07:30] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:07:33  INFO      [TIMING][578d34734ff8] OPTIONS /api/transfer - Time: 0.0001s
+2026-05-06 08:07:33  INFO      127.0.0.1 - - [06/May/2026 08:07:33] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-05-06 08:07:33  INFO      [TRANSFER] ── Giao dịch mới | tx=VB84F74EABED | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "TC02_A_PREPARE_FAIL"
+2026-05-06 08:07:33  INFO      [BAL] TRƯỚC                  | tx=VB84F74EABED   | acc=1029 3847 5612 | balance=233490000 đ
+2026-05-06 08:07:33  INFO      [BAL] TRƯỚC                  | tx=VB84F74EABED   | acc=2038 4756 9801 | balance=180000 đ
+2026-05-06 08:07:33  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB84F74EABED | 84f74eabedba | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "TC02_A_PREPARE_FAIL"
+2026-05-06 08:07:33  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB84F74EABED
+2026-05-06 08:07:33  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB84F74EABED
+2026-05-06 08:07:33  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB84F74EABED
+2026-05-06 08:07:33  INFO      [BAL] SAU-COMMIT_A(-trừ)     | tx=VB84F74EABED   | acc=1029 3847 5612 | balance=233480000 đ
+2026-05-06 08:07:33  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB84F74EABED
+2026-05-06 08:07:33  INFO      [BAL] SAU-COMMITTED          | tx=VB84F74EABED   | acc=1029 3847 5612 | balance=233480000 đ
+2026-05-06 08:07:33  INFO      [BAL] SAU-COMMITTED(+nhận)   | tx=VB84F74EABED   | acc=2038 4756 9801 | balance=190000 đ
+2026-05-06 08:07:33  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB84F74EABED | 10000đ | 1029 3847 5612 → 2038 4756 9801
+2026-05-06 08:07:33  INFO      [TIMING][bd32525c316c] POST /api/transfer - Time: 0.6422s
+2026-05-06 08:07:33  INFO      127.0.0.1 - - [06/May/2026 08:07:33] "POST /api/transfer HTTP/1.1" 200 -
+2026-05-06 08:07:34  INFO      [TIMING][2d6fda271d8c] GET /api/transfer/status/VB84F74EABED - Time: 0.0317s
+2026-05-06 08:07:34  INFO      127.0.0.1 - - [06/May/2026 08:07:34] "GET /api/transfer/status/VB84F74EABED HTTP/1.1" 200 -
+2026-05-06 08:07:34  INFO      [TIMING][195966b06546] GET /api/transfer/log/VB84F74EABED - Time: 0.0082s
+2026-05-06 08:07:34  INFO      127.0.0.1 - - [06/May/2026 08:07:34] "GET /api/transfer/log/VB84F74EABED HTTP/1.1" 200 -
+2026-05-06 08:07:34  INFO      [TIMING][c0dd7baebc1d] GET /api/accounts - Time: 0.0630s
+2026-05-06 08:07:34  INFO      127.0.0.1 - - [06/May/2026 08:07:34] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:07:38  INFO      [TIMING][75dbcbb78203] GET /api/accounts - Time: 0.0363s
+2026-05-06 08:07:38  INFO      127.0.0.1 - - [06/May/2026 08:07:38] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:07:38  INFO      [TIMING][7b80e21c5cf9] GET /api/transfer/recent - Time: 0.1254s
+2026-05-06 08:07:38  INFO      127.0.0.1 - - [06/May/2026 08:07:38] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:07:46  INFO      [TIMING][74729ac25a81] GET /api/transfer/recent - Time: 0.1511s
+2026-05-06 08:07:46  INFO      127.0.0.1 - - [06/May/2026 08:07:46] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:07:46  INFO      [TIMING][98699ee2d4ac] GET /api/transfer/status/VB84F74EABED - Time: 0.0227s
+2026-05-06 08:07:46  INFO      127.0.0.1 - - [06/May/2026 08:07:46] "GET /api/transfer/status/VB84F74EABED HTTP/1.1" 200 -
+2026-05-06 08:07:46  INFO      [TIMING][64e73ab74e36] GET /api/transfer/log/VB84F74EABED - Time: 0.0105s
+2026-05-06 08:07:46  INFO      127.0.0.1 - - [06/May/2026 08:07:46] "GET /api/transfer/log/VB84F74EABED HTTP/1.1" 200 -
+2026-05-06 08:07:49  INFO      [TIMING][37e0794b757f] GET /api/accounts - Time: 0.0467s
+2026-05-06 08:07:49  INFO      127.0.0.1 - - [06/May/2026 08:07:49] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:07:49  INFO      [TIMING][700e8ae6555d] GET /api/transfer/recent - Time: 0.0974s
+2026-05-06 08:07:49  INFO      127.0.0.1 - - [06/May/2026 08:07:49] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:07:58  INFO      [TIMING][be0388129719] GET /api/transfer/recent - Time: 0.1242s
+2026-05-06 08:07:58  INFO      127.0.0.1 - - [06/May/2026 08:07:58] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:08:06  INFO      [TIMING][d421a3235c34] GET /api/transfer/recent - Time: 0.1486s
+2026-05-06 08:08:06  INFO      127.0.0.1 - - [06/May/2026 08:08:06] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:08:14  INFO      [TIMING][f5943a318226] GET /api/transfer/recent - Time: 0.1366s
+2026-05-06 08:08:14  INFO      127.0.0.1 - - [06/May/2026 08:08:14] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:08:22  INFO      [TIMING][59dddda1a5d8] GET /api/transfer/recent - Time: 0.1542s
+2026-05-06 08:08:22  INFO      127.0.0.1 - - [06/May/2026 08:08:22] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:08:29  INFO      [TIMING][66ebf84b2fb7] GET /api/transfer/recent - Time: 0.1005s
+2026-05-06 08:08:29  INFO      127.0.0.1 - - [06/May/2026 08:08:29] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:08:31  INFO      [TIMING][962ddd4d41fc] OPTIONS /api/lookup-account - Time: 0.0002s
+2026-05-06 08:08:31  INFO      127.0.0.1 - - [06/May/2026 08:08:31] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:08:31  INFO      [TIMING][ac7ad35c8153] POST /api/lookup-account - Time: 0.0385s
+2026-05-06 08:08:31  INFO      127.0.0.1 - - [06/May/2026 08:08:31] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:08:34  INFO      [TIMING][28ef69f630a1] OPTIONS /api/transfer - Time: 0.0002s
+2026-05-06 08:08:34  INFO      127.0.0.1 - - [06/May/2026 08:08:34] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-05-06 08:08:34  INFO      [TRANSFER] ── Giao dịch mới | tx=VBBCE07A2962 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 08:08:34  INFO      [BAL] TRƯỚC                  | tx=VBBCE07A2962   | acc=1029 3847 5612 | balance=233480000 đ
+2026-05-06 08:08:34  INFO      [BAL] TRƯỚC                  | tx=VBBCE07A2962   | acc=2038 4756 9801 | balance=190000 đ
+2026-05-06 08:08:34  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VBBCE07A2962 | bce07a2962f7 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 08:08:34  ERROR     [TRANSFER] tx=VBBCE07A2962: Phase 1 thất bại | lỗi=(1644, 'Bank A rejected transaction (TC02)')
+2026-05-06 08:08:34  WARNING   [PHASE] Phase *  ✖ ABORTED     — Giao dịch bị hủy (Rollback) | tx=VBBCE07A2962
+2026-05-06 08:08:34  WARNING   [XA] Lỗi XA ROLLBACK (bank1): (1397, 'XAER_NOTA: Unknown XID')
+2026-05-06 08:08:34  INFO      [BAL] SAU-ABORTED(Phase1)    | tx=VBBCE07A2962   | acc=1029 3847 5612 | balance=233480000 đ
+2026-05-06 08:08:34  INFO      [BAL] SAU-ABORTED(Phase1)    | tx=VBBCE07A2962   | acc=2038 4756 9801 | balance=190000 đ
+2026-05-06 08:08:34  INFO      [TIMING][d96b284f0ba2] POST /api/transfer - Time: 0.3323s
+2026-05-06 08:08:34  INFO      127.0.0.1 - - [06/May/2026 08:08:34] "[35m[1mPOST /api/transfer HTTP/1.1[0m" 500 -
+2026-05-06 08:08:34  INFO      [TIMING][5f276f0598e7] GET /api/transfer/status/VBBCE07A2962 - Time: 0.0291s
+2026-05-06 08:08:34  INFO      127.0.0.1 - - [06/May/2026 08:08:34] "GET /api/transfer/status/VBBCE07A2962 HTTP/1.1" 200 -
+2026-05-06 08:08:34  INFO      [TIMING][c80cf6d9e405] GET /api/transfer/log/VBBCE07A2962 - Time: 0.0134s
+2026-05-06 08:08:34  INFO      127.0.0.1 - - [06/May/2026 08:08:34] "GET /api/transfer/log/VBBCE07A2962 HTTP/1.1" 200 -
+2026-05-06 08:08:37  INFO      [TIMING][5613de6f6f22] GET /api/transfer/recent - Time: 0.1213s
+2026-05-06 08:08:37  INFO      127.0.0.1 - - [06/May/2026 08:08:37] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:08:37  INFO      [TIMING][430ef677c351] GET /api/transfer/status/VBBCE07A2962 - Time: 0.0367s
+2026-05-06 08:08:37  INFO      127.0.0.1 - - [06/May/2026 08:08:37] "GET /api/transfer/status/VBBCE07A2962 HTTP/1.1" 200 -
+2026-05-06 08:08:37  INFO      [TIMING][37da082dc3d8] GET /api/transfer/log/VBBCE07A2962 - Time: 0.0129s
+2026-05-06 08:08:37  INFO      127.0.0.1 - - [06/May/2026 08:08:37] "GET /api/transfer/log/VBBCE07A2962 HTTP/1.1" 200 -
+2026-05-06 08:08:39  INFO      [TIMING][049a1263f587] GET /api/accounts - Time: 0.0242s
+2026-05-06 08:08:39  INFO      127.0.0.1 - - [06/May/2026 08:08:39] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:08:39  INFO      [TIMING][2ae98da57e6b] GET /api/transfer/recent - Time: 0.0952s
+2026-05-06 08:08:39  INFO      127.0.0.1 - - [06/May/2026 08:08:39] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:08:47  INFO      [TIMING][9ae3b43c0bcb] GET /api/transfer/recent - Time: 0.1460s
+2026-05-06 08:08:47  INFO      127.0.0.1 - - [06/May/2026 08:08:47] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:08:56  INFO      [TIMING][c797dc3507e3] GET /api/transfer/recent - Time: 0.1355s
+2026-05-06 08:08:56  INFO      127.0.0.1 - - [06/May/2026 08:08:56] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:09:01  INFO      [TIMING][53584ea48f2c] GET /api/accounts - Time: 0.0513s
+2026-05-06 08:09:01  INFO      127.0.0.1 - - [06/May/2026 08:09:01] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:09:01  INFO      [TIMING][c5e78d894c49] GET /api/transfer/recent - Time: 0.1083s
+2026-05-06 08:09:01  INFO      127.0.0.1 - - [06/May/2026 08:09:01] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:09:09  INFO      [TIMING][359ca7b3588b] GET /api/transfer/recent - Time: 0.1757s
+2026-05-06 08:09:09  INFO      127.0.0.1 - - [06/May/2026 08:09:09] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:09:11  INFO      [TIMING][04a15d0ce9ce] OPTIONS /api/lookup-account - Time: 0.0002s
+2026-05-06 08:09:11  INFO      127.0.0.1 - - [06/May/2026 08:09:11] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:09:11  INFO      [TIMING][dbac0c7f7f40] POST /api/lookup-account - Time: 0.0347s
+2026-05-06 08:09:11  INFO      127.0.0.1 - - [06/May/2026 08:09:11] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:09:13  INFO      [TIMING][88f03044020a] OPTIONS /api/transfer - Time: 0.0002s
+2026-05-06 08:09:13  INFO      127.0.0.1 - - [06/May/2026 08:09:13] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-05-06 08:09:13  INFO      [TRANSFER] ── Giao dịch mới | tx=VB4CC687B7FC | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 08:09:13  INFO      [BAL] TRƯỚC                  | tx=VB4CC687B7FC   | acc=1029 3847 5612 | balance=233480000 đ
+2026-05-06 08:09:13  INFO      [BAL] TRƯỚC                  | tx=VB4CC687B7FC   | acc=2038 4756 9801 | balance=190000 đ
+2026-05-06 08:09:13  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB4CC687B7FC | 4cc687b7fc9f | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 08:09:13  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB4CC687B7FC
+2026-05-06 08:09:13  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB4CC687B7FC
+2026-05-06 08:09:13  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB4CC687B7FC
+2026-05-06 08:09:13  INFO      [BAL] SAU-COMMIT_A(-trừ)     | tx=VB4CC687B7FC   | acc=1029 3847 5612 | balance=233470000 đ
+2026-05-06 08:09:13  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB4CC687B7FC
+2026-05-06 08:09:13  INFO      [BAL] SAU-COMMITTED          | tx=VB4CC687B7FC   | acc=1029 3847 5612 | balance=233470000 đ
+2026-05-06 08:09:13  INFO      [BAL] SAU-COMMITTED(+nhận)   | tx=VB4CC687B7FC   | acc=2038 4756 9801 | balance=200000 đ
+2026-05-06 08:09:13  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB4CC687B7FC | 10000đ | 1029 3847 5612 → 2038 4756 9801
+2026-05-06 08:09:13  INFO      [TIMING][74aac8584a0b] POST /api/transfer - Time: 0.5154s
+2026-05-06 08:09:13  INFO      127.0.0.1 - - [06/May/2026 08:09:13] "POST /api/transfer HTTP/1.1" 200 -
+2026-05-06 08:09:13  INFO      [TIMING][b1eaff91b3e0] GET /api/transfer/status/VB4CC687B7FC - Time: 0.0212s
+2026-05-06 08:09:13  INFO      127.0.0.1 - - [06/May/2026 08:09:13] "GET /api/transfer/status/VB4CC687B7FC HTTP/1.1" 200 -
+2026-05-06 08:09:13  INFO      [TIMING][6537d7b136ee] GET /api/accounts - Time: 0.0364s
+2026-05-06 08:09:13  INFO      127.0.0.1 - - [06/May/2026 08:09:13] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:09:13  INFO      [TIMING][641c5f9c8b8a] GET /api/transfer/log/VB4CC687B7FC - Time: 0.0108s
+2026-05-06 08:09:13  INFO      127.0.0.1 - - [06/May/2026 08:09:13] "GET /api/transfer/log/VB4CC687B7FC HTTP/1.1" 200 -
+2026-05-06 08:09:14  INFO      [TIMING][a44f446c45fa] GET /api/accounts - Time: 0.0214s
+2026-05-06 08:09:14  INFO      127.0.0.1 - - [06/May/2026 08:09:14] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:09:14  INFO      [TIMING][abc523f9fce7] GET /api/transfer/recent - Time: 0.1127s
+2026-05-06 08:09:14  INFO      127.0.0.1 - - [06/May/2026 08:09:14] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:09:23  INFO      [TIMING][e2ad9a9dac30] GET /api/transfer/recent - Time: 0.1489s
+2026-05-06 08:09:23  INFO      127.0.0.1 - - [06/May/2026 08:09:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:09:23  INFO      [TIMING][db7f79aa452a] GET /api/transfer/status/VB4CC687B7FC - Time: 0.0257s
+2026-05-06 08:09:23  INFO      127.0.0.1 - - [06/May/2026 08:09:23] "GET /api/transfer/status/VB4CC687B7FC HTTP/1.1" 200 -
+2026-05-06 08:09:23  INFO      [TIMING][0ea95fc10b85] GET /api/transfer/log/VB4CC687B7FC - Time: 0.0118s
+2026-05-06 08:09:23  INFO      127.0.0.1 - - [06/May/2026 08:09:23] "GET /api/transfer/log/VB4CC687B7FC HTTP/1.1" 200 -
+2026-05-06 08:09:26  INFO      [TIMING][f91b15163877] GET /api/accounts - Time: 0.0497s
+2026-05-06 08:09:26  INFO      127.0.0.1 - - [06/May/2026 08:09:26] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:09:26  INFO      [TIMING][3409a43986ec] GET /api/transfer/recent - Time: 0.1362s
+2026-05-06 08:09:26  INFO      127.0.0.1 - - [06/May/2026 08:09:26] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:09:34  INFO      [TIMING][9ba38579ca9a] GET /api/transfer/recent - Time: 0.0777s
+2026-05-06 08:09:34  INFO      127.0.0.1 - - [06/May/2026 08:09:34] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:09:43  INFO      [TIMING][55179b5fb14b] GET /api/transfer/recent - Time: 0.1584s
+2026-05-06 08:09:43  INFO      127.0.0.1 - - [06/May/2026 08:09:43] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:09:47  INFO      [TIMING][bdf04e94a87f] OPTIONS /api/lookup-account - Time: 0.0002s
+2026-05-06 08:09:47  INFO      127.0.0.1 - - [06/May/2026 08:09:47] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:09:47  INFO      [TIMING][e03c398620aa] POST /api/lookup-account - Time: 0.0424s
+2026-05-06 08:09:47  INFO      127.0.0.1 - - [06/May/2026 08:09:47] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:09:50  INFO      [TIMING][6cd29f3adfa0] GET /api/transfer/recent - Time: 0.1823s
+2026-05-06 08:09:50  INFO      127.0.0.1 - - [06/May/2026 08:09:50] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:09:50  INFO      [TIMING][c1a365b5497b] GET /api/transfer/status/VB4CC687B7FC - Time: 0.0410s
+2026-05-06 08:09:50  INFO      127.0.0.1 - - [06/May/2026 08:09:50] "GET /api/transfer/status/VB4CC687B7FC HTTP/1.1" 200 -
+2026-05-06 08:09:50  INFO      [TIMING][bd449edce809] GET /api/transfer/log/VB4CC687B7FC - Time: 0.0106s
+2026-05-06 08:09:50  INFO      127.0.0.1 - - [06/May/2026 08:09:50] "GET /api/transfer/log/VB4CC687B7FC HTTP/1.1" 200 -
+2026-05-06 08:09:54  INFO      [TIMING][dee3483b7337] OPTIONS /api/lookup-account - Time: 0.0001s
+2026-05-06 08:09:54  INFO      127.0.0.1 - - [06/May/2026 08:09:54] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:09:54  INFO      [TIMING][795a24efec7a] POST /api/lookup-account - Time: 0.0145s
+2026-05-06 08:09:54  INFO      127.0.0.1 - - [06/May/2026 08:09:54] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 08:09:57  INFO      [TIMING][b5821469e6c8] OPTIONS /api/transfer - Time: 0.0002s
+2026-05-06 08:09:57  INFO      127.0.0.1 - - [06/May/2026 08:09:57] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-05-06 08:09:57  INFO      [TRANSFER] ── Giao dịch mới | tx=VBCF937A6DB3 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "TC05_CRASH_AFTER_COMMIT_A"
+2026-05-06 08:09:57  INFO      [BAL] TRƯỚC                  | tx=VBCF937A6DB3   | acc=1029 3847 5612 | balance=233470000 đ
+2026-05-06 08:09:57  INFO      [BAL] TRƯỚC                  | tx=VBCF937A6DB3   | acc=2038 4756 9801 | balance=200000 đ
+2026-05-06 08:09:57  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VBCF937A6DB3 | cf937a6db383 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "TC05_CRASH_AFTER_COMMIT_A"
+2026-05-06 08:09:57  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VBCF937A6DB3
+2026-05-06 08:09:57  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VBCF937A6DB3
+2026-05-06 08:09:58  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VBCF937A6DB3
+2026-05-06 08:09:58  INFO      [BAL] SAU-COMMIT_A(-trừ)     | tx=VBCF937A6DB3   | acc=1029 3847 5612 | balance=233460000 đ
+2026-05-06 08:09:58  CRITICAL  [DEMO] tx=VBCF937A6DB3: TC05 crash after COMMIT_A, before COMMIT_B
+2026-05-06 08:10:13  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:10:13  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 08:10:13  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:10:13  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 08:10:13  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 08:10:13  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 08:10:13  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 08:10:13  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 08:10:13  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 08:10:13  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 08:10:13  INFO      [RECOVERY] Tìm thấy 22 giao dịch cần xử lý.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VBCF937A6DB3 | phase=COMMIT_A | PREPARED trên 1 DB
+2026-05-06 08:10:13  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VBCF937A6DB3
+2026-05-06 08:10:13  INFO      [BAL] RECOVERY-COMMITTED-A   | tx=VBCF937A6DB3   | acc=1029 3847 5612 | balance=233460000 đ
+2026-05-06 08:10:13  INFO      [BAL] RECOVERY-COMMITTED-B   | tx=VBCF937A6DB3   | acc=2038 4756 9801 | balance=210000 đ
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:13  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:13  INFO      [STARTUP] ✓ Đã khôi phục 1 giao dịch treo
+2026-05-06 08:10:13  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:10:14  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 08:10:14  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 08:10:14  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 08:10:14  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 08:10:14  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 08:10:14  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:10:14  INFO      [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.10.2:5000
+2026-05-06 08:10:14  INFO      [33mPress CTRL+C to quit[0m
+2026-05-06 08:10:14  INFO       * Restarting with stat
+2026-05-06 08:10:14  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:10:14  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 08:10:14  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:10:14  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 08:10:14  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 08:10:14  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 08:10:14  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 08:10:14  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 08:10:14  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 08:10:14  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 08:10:14  INFO      [RECOVERY] Tìm thấy 22 giao dịch cần xử lý.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBCF937A6DB3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBCF937A6DB3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 08:10:14  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 08:10:14  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-05-06 08:10:14  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:10:14  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 08:10:14  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 08:10:14  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 08:10:14  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 08:10:14  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 08:10:14  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 08:10:14  WARNING    * Debugger is active!
+2026-05-06 08:10:14  INFO       * Debugger PIN: 535-083-205
+2026-05-06 08:10:15  INFO      [TIMING][5a70b50a1e3a] GET /api/transfer/recent - Time: 0.1152s
+2026-05-06 08:10:15  INFO      127.0.0.1 - - [06/May/2026 08:10:15] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:10:15  INFO      [TIMING][6443f108d681] GET /api/transfer/status/VB4CC687B7FC - Time: 0.0306s
+2026-05-06 08:10:15  INFO      127.0.0.1 - - [06/May/2026 08:10:15] "GET /api/transfer/status/VB4CC687B7FC HTTP/1.1" 200 -
+2026-05-06 08:10:15  INFO      [TIMING][8310a5fd18c6] GET /api/transfer/log/VB4CC687B7FC - Time: 0.0126s
+2026-05-06 08:10:15  INFO      127.0.0.1 - - [06/May/2026 08:10:15] "GET /api/transfer/log/VB4CC687B7FC HTTP/1.1" 200 -
+2026-05-06 08:10:21  INFO      [TIMING][01eb01ee5a1a] GET /api/accounts - Time: 0.0285s
+2026-05-06 08:10:21  INFO      127.0.0.1 - - [06/May/2026 08:10:21] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 08:10:21  INFO      [TIMING][8600842079c5] GET /api/transfer/recent - Time: 0.0782s
+2026-05-06 08:10:21  INFO      127.0.0.1 - - [06/May/2026 08:10:21] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:10:30  INFO      [TIMING][65b90cd05d54] GET /api/transfer/recent - Time: 0.1684s
+2026-05-06 08:10:30  INFO      127.0.0.1 - - [06/May/2026 08:10:30] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:10:38  INFO      [TIMING][b025c82222f1] GET /api/transfer/recent - Time: 0.0945s
+2026-05-06 08:10:38  INFO      127.0.0.1 - - [06/May/2026 08:10:38] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:10:46  INFO      [TIMING][ea284f73a362] GET /api/transfer/recent - Time: 0.1349s
+2026-05-06 08:10:46  INFO      127.0.0.1 - - [06/May/2026 08:10:46] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:10:54  INFO      [TIMING][ac3f6b2d4e97] GET /api/transfer/recent - Time: 0.1026s
+2026-05-06 08:10:54  INFO      127.0.0.1 - - [06/May/2026 08:10:54] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:11:02  INFO      [TIMING][3e58116fb9a4] GET /api/transfer/recent - Time: 0.1653s
+2026-05-06 08:11:02  INFO      127.0.0.1 - - [06/May/2026 08:11:02] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:11:10  INFO      [TIMING][165f19265d60] GET /api/transfer/recent - Time: 0.1252s
+2026-05-06 08:11:10  INFO      127.0.0.1 - - [06/May/2026 08:11:10] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:11:18  INFO      [TIMING][b5c4e66231e0] GET /api/transfer/recent - Time: 0.1202s
+2026-05-06 08:11:18  INFO      127.0.0.1 - - [06/May/2026 08:11:18] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:12:16  INFO      [TIMING][84c90325256f] GET /api/transfer/recent - Time: 0.1256s
+2026-05-06 08:12:16  INFO      127.0.0.1 - - [06/May/2026 08:12:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:13:12  INFO      [TIMING][2290b96ef344] GET /api/transfer/recent - Time: 0.1165s
+2026-05-06 08:13:12  INFO      127.0.0.1 - - [06/May/2026 08:13:12] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:13:18  INFO      [TIMING][0c6a3c6fd6ca] GET /api/transfer/recent - Time: 0.1290s
+2026-05-06 08:13:18  INFO      127.0.0.1 - - [06/May/2026 08:13:18] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:13:26  INFO      [TIMING][6eebf7ce6b36] GET /api/transfer/recent - Time: 0.1329s
+2026-05-06 08:13:26  INFO      127.0.0.1 - - [06/May/2026 08:13:26] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:13:34  INFO      [TIMING][e31835304fc1] GET /api/transfer/recent - Time: 0.0950s
+2026-05-06 08:13:34  INFO      127.0.0.1 - - [06/May/2026 08:13:34] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:13:42  INFO      [TIMING][e362387129ec] GET /api/transfer/recent - Time: 0.0536s
+2026-05-06 08:13:42  INFO      127.0.0.1 - - [06/May/2026 08:13:42] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:13:50  INFO      [TIMING][975c7559314c] GET /api/transfer/recent - Time: 0.1071s
+2026-05-06 08:13:50  INFO      127.0.0.1 - - [06/May/2026 08:13:50] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:13:58  INFO      [TIMING][baf713e36258] GET /api/transfer/recent - Time: 0.0719s
+2026-05-06 08:13:58  INFO      127.0.0.1 - - [06/May/2026 08:13:58] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:14:06  INFO      [TIMING][6d2ebcb52e8d] GET /api/transfer/recent - Time: 0.1642s
+2026-05-06 08:14:06  INFO      127.0.0.1 - - [06/May/2026 08:14:06] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:14:16  INFO      [TIMING][822b11cd89f1] GET /api/transfer/recent - Time: 0.1688s
+2026-05-06 08:14:16  INFO      127.0.0.1 - - [06/May/2026 08:14:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:15:16  INFO      [TIMING][635bc3c47541] GET /api/transfer/recent - Time: 0.1626s
+2026-05-06 08:15:16  INFO      127.0.0.1 - - [06/May/2026 08:15:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:16:16  INFO      [TIMING][ff66e7f3946d] GET /api/transfer/recent - Time: 0.1297s
+2026-05-06 08:16:16  INFO      127.0.0.1 - - [06/May/2026 08:16:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:17:16  INFO      [TIMING][19631bf8a821] GET /api/transfer/recent - Time: 0.0819s
+2026-05-06 08:17:16  INFO      127.0.0.1 - - [06/May/2026 08:17:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:18:16  INFO      [TIMING][a632ec679c3f] GET /api/transfer/recent - Time: 0.1558s
+2026-05-06 08:18:16  INFO      127.0.0.1 - - [06/May/2026 08:18:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:19:16  INFO      [TIMING][06d3b7287f06] GET /api/transfer/recent - Time: 0.0937s
+2026-05-06 08:19:16  INFO      127.0.0.1 - - [06/May/2026 08:19:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:20:16  INFO      [TIMING][118358be1390] GET /api/transfer/recent - Time: 0.1434s
+2026-05-06 08:20:16  INFO      127.0.0.1 - - [06/May/2026 08:20:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:21:16  INFO      [TIMING][fad1a45e923f] GET /api/transfer/recent - Time: 0.1197s
+2026-05-06 08:21:16  INFO      127.0.0.1 - - [06/May/2026 08:21:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:22:16  INFO      [TIMING][3d374c9c8fc5] GET /api/transfer/recent - Time: 0.1632s
+2026-05-06 08:22:16  INFO      127.0.0.1 - - [06/May/2026 08:22:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:23:16  INFO      [TIMING][d33f17e862a8] GET /api/transfer/recent - Time: 0.1388s
+2026-05-06 08:23:16  INFO      127.0.0.1 - - [06/May/2026 08:23:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:24:16  INFO      [TIMING][a0eb24d8366f] GET /api/transfer/recent - Time: 0.1414s
+2026-05-06 08:24:16  INFO      127.0.0.1 - - [06/May/2026 08:24:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:25:16  INFO      [TIMING][f6ececb892b9] GET /api/transfer/recent - Time: 0.1519s
+2026-05-06 08:25:16  INFO      127.0.0.1 - - [06/May/2026 08:25:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:26:16  INFO      [TIMING][5959e1497e42] GET /api/transfer/recent - Time: 0.1287s
+2026-05-06 08:26:16  INFO      127.0.0.1 - - [06/May/2026 08:26:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:27:16  INFO      [TIMING][c1a59cd06370] GET /api/transfer/recent - Time: 0.1430s
+2026-05-06 08:27:16  INFO      127.0.0.1 - - [06/May/2026 08:27:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:27:32  INFO      [TIMING][80c7e71e4198] GET /api/transfer/recent - Time: 0.1245s
+2026-05-06 08:27:32  INFO      127.0.0.1 - - [06/May/2026 08:27:32] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:27:33  INFO      [TIMING][37a9ce6e30ed] GET /api/transfer/recent - Time: 0.1033s
+2026-05-06 08:27:33  INFO      127.0.0.1 - - [06/May/2026 08:27:33] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:27:42  INFO      [TIMING][beef76d9945a] GET /api/transfer/recent - Time: 0.1364s
+2026-05-06 08:27:42  INFO      127.0.0.1 - - [06/May/2026 08:27:42] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:27:50  INFO      [TIMING][12ac5b6fffa7] GET /api/transfer/recent - Time: 0.1053s
+2026-05-06 08:27:50  INFO      127.0.0.1 - - [06/May/2026 08:27:50] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:27:58  INFO      [TIMING][7fcc3b02988e] GET /api/transfer/recent - Time: 0.1026s
+2026-05-06 08:27:58  INFO      127.0.0.1 - - [06/May/2026 08:27:58] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:28:06  INFO      [TIMING][757cfde5a33c] GET /api/transfer/recent - Time: 0.1195s
+2026-05-06 08:28:06  INFO      127.0.0.1 - - [06/May/2026 08:28:06] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:28:14  INFO      [TIMING][049d76f4aea6] GET /api/transfer/recent - Time: 0.1506s
+2026-05-06 08:28:14  INFO      127.0.0.1 - - [06/May/2026 08:28:14] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:28:22  INFO      [TIMING][49929c66078a] GET /api/transfer/recent - Time: 0.1273s
+2026-05-06 08:28:22  INFO      127.0.0.1 - - [06/May/2026 08:28:22] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:28:30  INFO      [TIMING][c5256d0147b5] GET /api/transfer/recent - Time: 0.0592s
+2026-05-06 08:28:30  INFO      127.0.0.1 - - [06/May/2026 08:28:30] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:29:16  INFO      [TIMING][006a5ca1cf84] GET /api/transfer/recent - Time: 0.1082s
+2026-05-06 08:29:16  INFO      127.0.0.1 - - [06/May/2026 08:29:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:30:16  INFO      [TIMING][76c9e2dffeff] GET /api/transfer/recent - Time: 0.0691s
+2026-05-06 08:30:16  INFO      127.0.0.1 - - [06/May/2026 08:30:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:31:16  INFO      [TIMING][d0d0bac16e65] GET /api/transfer/recent - Time: 0.0643s
+2026-05-06 08:31:16  INFO      127.0.0.1 - - [06/May/2026 08:31:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:32:16  INFO      [TIMING][b57baad16808] GET /api/transfer/recent - Time: 0.1206s
+2026-05-06 08:32:16  INFO      127.0.0.1 - - [06/May/2026 08:32:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:33:16  INFO      [TIMING][14b809d9520d] GET /api/transfer/recent - Time: 0.0661s
+2026-05-06 08:33:16  INFO      127.0.0.1 - - [06/May/2026 08:33:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:34:16  INFO      [TIMING][4036711bb951] GET /api/transfer/recent - Time: 0.1200s
+2026-05-06 08:34:16  INFO      127.0.0.1 - - [06/May/2026 08:34:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:35:16  INFO      [TIMING][3c71cf019c44] GET /api/transfer/recent - Time: 0.0990s
+2026-05-06 08:35:16  INFO      127.0.0.1 - - [06/May/2026 08:35:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:36:16  INFO      [TIMING][247e6e56f12e] GET /api/transfer/recent - Time: 0.0775s
+2026-05-06 08:36:16  INFO      127.0.0.1 - - [06/May/2026 08:36:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:37:16  INFO      [TIMING][c40a13da2544] GET /api/transfer/recent - Time: 0.0603s
+2026-05-06 08:37:16  INFO      127.0.0.1 - - [06/May/2026 08:37:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:38:16  INFO      [TIMING][ec0e02be73da] GET /api/transfer/recent - Time: 0.1006s
+2026-05-06 08:38:16  INFO      127.0.0.1 - - [06/May/2026 08:38:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:39:16  INFO      [TIMING][bd5b4b42f29f] GET /api/transfer/recent - Time: 0.1158s
+2026-05-06 08:39:16  INFO      127.0.0.1 - - [06/May/2026 08:39:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:40:16  INFO      [TIMING][5de34aa1f8ec] GET /api/transfer/recent - Time: 0.0825s
+2026-05-06 08:40:16  INFO      127.0.0.1 - - [06/May/2026 08:40:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:41:16  INFO      [TIMING][b3037f2653e6] GET /api/transfer/recent - Time: 0.0792s
+2026-05-06 08:41:16  INFO      127.0.0.1 - - [06/May/2026 08:41:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:42:16  INFO      [TIMING][ededed1a7751] GET /api/transfer/recent - Time: 0.1063s
+2026-05-06 08:42:16  INFO      127.0.0.1 - - [06/May/2026 08:42:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:43:16  INFO      [TIMING][7d1b0cb749af] GET /api/transfer/recent - Time: 0.0560s
+2026-05-06 08:43:16  INFO      127.0.0.1 - - [06/May/2026 08:43:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:44:16  INFO      [TIMING][6c25f94d4a7c] GET /api/transfer/recent - Time: 0.0648s
+2026-05-06 08:44:16  INFO      127.0.0.1 - - [06/May/2026 08:44:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:45:16  INFO      [TIMING][0f1846f9e409] GET /api/transfer/recent - Time: 0.1316s
+2026-05-06 08:45:16  INFO      127.0.0.1 - - [06/May/2026 08:45:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:46:16  INFO      [TIMING][aecffe0b4add] GET /api/transfer/recent - Time: 0.0965s
+2026-05-06 08:46:16  INFO      127.0.0.1 - - [06/May/2026 08:46:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:47:16  INFO      [TIMING][1c01b9289410] GET /api/transfer/recent - Time: 0.0649s
+2026-05-06 08:47:16  INFO      127.0.0.1 - - [06/May/2026 08:47:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:48:16  INFO      [TIMING][299a8e7cf595] GET /api/transfer/recent - Time: 0.1216s
+2026-05-06 08:48:16  INFO      127.0.0.1 - - [06/May/2026 08:48:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:49:16  INFO      [TIMING][eb9b2644e90a] GET /api/transfer/recent - Time: 0.1305s
+2026-05-06 08:49:16  INFO      127.0.0.1 - - [06/May/2026 08:49:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:50:16  INFO      [TIMING][4a9923e35353] GET /api/transfer/recent - Time: 0.0954s
+2026-05-06 08:50:16  INFO      127.0.0.1 - - [06/May/2026 08:50:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:51:16  INFO      [TIMING][16d81b9b9370] GET /api/transfer/recent - Time: 0.0800s
+2026-05-06 08:51:16  INFO      127.0.0.1 - - [06/May/2026 08:51:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:52:16  INFO      [TIMING][5173bb7b01ed] GET /api/transfer/recent - Time: 0.0708s
+2026-05-06 08:52:16  INFO      127.0.0.1 - - [06/May/2026 08:52:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:53:16  INFO      [TIMING][2e851341267d] GET /api/transfer/recent - Time: 0.1305s
+2026-05-06 08:53:16  INFO      127.0.0.1 - - [06/May/2026 08:53:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:54:16  INFO      [TIMING][bdd686dfb974] GET /api/transfer/recent - Time: 0.1344s
+2026-05-06 08:54:16  INFO      127.0.0.1 - - [06/May/2026 08:54:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:55:16  INFO      [TIMING][12b46ed3e34a] GET /api/transfer/recent - Time: 0.0811s
+2026-05-06 08:55:16  INFO      127.0.0.1 - - [06/May/2026 08:55:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:56:16  INFO      [TIMING][47fae1d8278d] GET /api/transfer/recent - Time: 0.1174s
+2026-05-06 08:56:16  INFO      127.0.0.1 - - [06/May/2026 08:56:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:57:16  INFO      [TIMING][653fdc4022c5] GET /api/transfer/recent - Time: 0.1345s
+2026-05-06 08:57:16  INFO      127.0.0.1 - - [06/May/2026 08:57:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:59:29  INFO      [TIMING][850acc7b63cb] GET /api/transfer/recent - Time: 0.1182s
+2026-05-06 08:59:29  INFO      127.0.0.1 - - [06/May/2026 08:59:29] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:59:33  INFO      [TIMING][2113488a6387] GET /api/transfer/recent - Time: 0.1082s
+2026-05-06 08:59:33  INFO      127.0.0.1 - - [06/May/2026 08:59:33] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:59:41  INFO      [TIMING][b8f9194eba38] GET /api/transfer/recent - Time: 0.1102s
+2026-05-06 08:59:41  INFO      127.0.0.1 - - [06/May/2026 08:59:41] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:59:49  INFO      [TIMING][ea1d20948b67] GET /api/transfer/recent - Time: 0.1569s
+2026-05-06 08:59:49  INFO      127.0.0.1 - - [06/May/2026 08:59:49] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 08:59:57  INFO      [TIMING][8eef7018b333] GET /api/transfer/recent - Time: 0.1202s
+2026-05-06 08:59:57  INFO      127.0.0.1 - - [06/May/2026 08:59:57] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:00:05  INFO      [TIMING][9e661c650043] GET /api/transfer/recent - Time: 0.1048s
+2026-05-06 09:00:05  INFO      127.0.0.1 - - [06/May/2026 09:00:05] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:00:13  INFO      [TIMING][8069b8e444f3] GET /api/transfer/recent - Time: 0.1186s
+2026-05-06 09:00:13  INFO      127.0.0.1 - - [06/May/2026 09:00:13] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:00:22  INFO      [TIMING][e6684fe41c52] GET /api/transfer/recent - Time: 0.1601s
+2026-05-06 09:00:22  INFO      127.0.0.1 - - [06/May/2026 09:00:22] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:00:30  INFO      [TIMING][b88f98216965] GET /api/transfer/recent - Time: 0.1195s
+2026-05-06 09:00:30  INFO      127.0.0.1 - - [06/May/2026 09:00:30] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:00:38  INFO      [TIMING][7da13d7abbf5] GET /api/transfer/recent - Time: 0.1532s
+2026-05-06 09:00:38  INFO      127.0.0.1 - - [06/May/2026 09:00:38] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:00:46  INFO      [TIMING][17ce8a7cdf97] GET /api/transfer/recent - Time: 0.1839s
+2026-05-06 09:00:46  INFO      127.0.0.1 - - [06/May/2026 09:00:46] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:00:54  INFO      [TIMING][9a0e2a9e235a] GET /api/transfer/recent - Time: 0.1161s
+2026-05-06 09:00:54  INFO      127.0.0.1 - - [06/May/2026 09:00:54] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:01:02  INFO      [TIMING][e39962bfec13] GET /api/transfer/recent - Time: 0.1490s
+2026-05-06 09:01:02  INFO      127.0.0.1 - - [06/May/2026 09:01:02] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:01:10  INFO      [TIMING][06ef9a0082ec] GET /api/transfer/recent - Time: 0.1403s
+2026-05-06 09:01:10  INFO      127.0.0.1 - - [06/May/2026 09:01:10] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:01:18  INFO      [TIMING][949bddf49429] GET /api/transfer/recent - Time: 0.1467s
+2026-05-06 09:01:18  INFO      127.0.0.1 - - [06/May/2026 09:01:18] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:02:16  INFO      [TIMING][cab8c24f11d0] GET /api/transfer/recent - Time: 0.1657s
+2026-05-06 09:02:16  INFO      127.0.0.1 - - [06/May/2026 09:02:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:03:16  INFO      [TIMING][f7c6d4533e11] GET /api/transfer/recent - Time: 0.2000s
+2026-05-06 09:03:16  INFO      127.0.0.1 - - [06/May/2026 09:03:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:04:16  INFO      [TIMING][fd2edf5989d3] GET /api/transfer/recent - Time: 0.1606s
+2026-05-06 09:04:16  INFO      127.0.0.1 - - [06/May/2026 09:04:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:05:16  INFO      [TIMING][85e5b13bbf3a] GET /api/transfer/recent - Time: 0.1705s
+2026-05-06 09:05:16  INFO      127.0.0.1 - - [06/May/2026 09:05:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:06:16  INFO      [TIMING][9fcadb6f960a] GET /api/transfer/recent - Time: 0.1328s
+2026-05-06 09:06:16  INFO      127.0.0.1 - - [06/May/2026 09:06:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:07:12  INFO      [TIMING][fd6458a42ff8] GET /api/transfer/recent - Time: 0.1396s
+2026-05-06 09:07:12  INFO      127.0.0.1 - - [06/May/2026 09:07:12] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:07:18  INFO      [TIMING][a5256d087672] GET /api/transfer/recent - Time: 0.1356s
+2026-05-06 09:07:18  INFO      127.0.0.1 - - [06/May/2026 09:07:18] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:07:26  INFO      [TIMING][bcfe50224133] GET /api/transfer/recent - Time: 0.1340s
+2026-05-06 09:07:26  INFO      127.0.0.1 - - [06/May/2026 09:07:26] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:07:34  INFO      [TIMING][30d8dfc53098] GET /api/transfer/recent - Time: 0.1306s
+2026-05-06 09:07:34  INFO      127.0.0.1 - - [06/May/2026 09:07:34] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:07:42  INFO      [TIMING][c18a06fe774d] GET /api/transfer/recent - Time: 0.1761s
+2026-05-06 09:07:42  INFO      127.0.0.1 - - [06/May/2026 09:07:42] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:07:50  INFO      [TIMING][30e1ad4cee5c] GET /api/transfer/recent - Time: 0.1503s
+2026-05-06 09:07:50  INFO      127.0.0.1 - - [06/May/2026 09:07:50] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:07:58  INFO      [TIMING][a7c9d13b42e6] GET /api/transfer/recent - Time: 0.1397s
+2026-05-06 09:07:58  INFO      127.0.0.1 - - [06/May/2026 09:07:58] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:08:06  INFO      [TIMING][61bdd24e4e18] GET /api/transfer/recent - Time: 0.1545s
+2026-05-06 09:08:06  INFO      127.0.0.1 - - [06/May/2026 09:08:06] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:08:14  INFO      [TIMING][225008cc921b] GET /api/transfer/recent - Time: 0.1274s
+2026-05-06 09:08:14  INFO      127.0.0.1 - - [06/May/2026 09:08:14] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:09:16  INFO      [TIMING][576fdfd48f8e] GET /api/transfer/recent - Time: 0.0951s
+2026-05-06 09:09:16  INFO      127.0.0.1 - - [06/May/2026 09:09:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:10:16  INFO      [TIMING][2307541f3f47] GET /api/transfer/recent - Time: 0.1476s
+2026-05-06 09:10:16  INFO      127.0.0.1 - - [06/May/2026 09:10:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:11:16  INFO      [TIMING][c8693c286345] GET /api/transfer/recent - Time: 0.1498s
+2026-05-06 09:11:16  INFO      127.0.0.1 - - [06/May/2026 09:11:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:12:16  INFO      [TIMING][b9e79d0da33b] GET /api/transfer/recent - Time: 0.1261s
+2026-05-06 09:12:16  INFO      127.0.0.1 - - [06/May/2026 09:12:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:13:16  INFO      [TIMING][b74c6a80b0c3] GET /api/transfer/recent - Time: 0.1391s
+2026-05-06 09:13:16  INFO      127.0.0.1 - - [06/May/2026 09:13:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:14:16  INFO      [TIMING][4a3a66b725df] GET /api/transfer/recent - Time: 0.1484s
+2026-05-06 09:14:16  INFO      127.0.0.1 - - [06/May/2026 09:14:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:14:56  INFO      [TIMING][924cc72905bf] GET /api/accounts - Time: 0.0475s
+2026-05-06 09:14:56  INFO      127.0.0.1 - - [06/May/2026 09:14:56] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:14:56  INFO      [TIMING][171697180100] GET /api/transfer/recent - Time: 0.0913s
+2026-05-06 09:14:56  INFO      127.0.0.1 - - [06/May/2026 09:14:56] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:14:56  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\idempotency_service.py', reloading
+2026-05-06 09:14:56  INFO       * Restarting with stat
+2026-05-06 09:14:57  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:14:57  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 09:14:57  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:14:57  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 09:14:57  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 09:14:57  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 09:14:57  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 09:14:57  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 09:14:57  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 09:14:57  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 09:14:57  INFO      [RECOVERY] Tìm thấy 22 giao dịch cần xử lý.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBCF937A6DB3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBCF937A6DB3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:14:57  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:14:57  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-05-06 09:14:57  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:14:57  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 09:14:57  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 09:14:57  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 09:14:57  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 09:14:57  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 09:14:57  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:14:57  WARNING    * Debugger is active!
+2026-05-06 09:14:57  INFO       * Debugger PIN: 535-083-205
+2026-05-06 09:15:05  INFO      [TIMING][276a9133822b] GET /api/transfer/recent - Time: 0.1057s
+2026-05-06 09:15:05  INFO      127.0.0.1 - - [06/May/2026 09:15:05] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:15:06  INFO      [TIMING][c782da0f8f15] GET /api/accounts - Time: 0.0434s
+2026-05-06 09:15:06  INFO      127.0.0.1 - - [06/May/2026 09:15:06] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:15:06  INFO      [TIMING][9a47adb8d1a3] GET /api/transfer/recent - Time: 0.1258s
+2026-05-06 09:15:06  INFO      127.0.0.1 - - [06/May/2026 09:15:06] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:15:07  INFO       * Detected change in 'D:\\Program\\banking-transaction-2phase-commit\\backend\\idempotency_service.py', reloading
+2026-05-06 09:15:07  INFO       * Restarting with stat
+2026-05-06 09:15:07  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:15:07  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 09:15:07  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:15:07  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 09:15:07  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 09:15:07  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 09:15:07  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 09:15:07  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 09:15:07  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 09:15:07  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 09:15:07  INFO      [RECOVERY] Tìm thấy 22 giao dịch cần xử lý.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBCF937A6DB3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBCF937A6DB3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:07  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:07  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-05-06 09:15:07  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:15:07  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 09:15:07  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 09:15:07  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 09:15:07  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 09:15:07  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 09:15:07  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:15:07  WARNING    * Debugger is active!
+2026-05-06 09:15:07  INFO       * Debugger PIN: 535-083-205
+2026-05-06 09:15:15  INFO      [TIMING][246a81e62780] GET /api/transfer/recent - Time: 0.1692s
+2026-05-06 09:15:15  INFO      127.0.0.1 - - [06/May/2026 09:15:15] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:15:23  INFO      [TIMING][89eb92fb4b0d] GET /api/transfer/recent - Time: 0.1597s
+2026-05-06 09:15:23  INFO      127.0.0.1 - - [06/May/2026 09:15:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:15:31  INFO      [TIMING][567701e80d36] GET /api/transfer/recent - Time: 0.1279s
+2026-05-06 09:15:31  INFO      127.0.0.1 - - [06/May/2026 09:15:31] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:15:39  INFO      [TIMING][c2591d89916d] GET /api/transfer/recent - Time: 0.1341s
+2026-05-06 09:15:39  INFO      127.0.0.1 - - [06/May/2026 09:15:39] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:15:46  INFO      [TIMING][21d54a055390] GET /api/transfer/recent - Time: 0.1132s
+2026-05-06 09:15:46  INFO      127.0.0.1 - - [06/May/2026 09:15:46] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:15:54  INFO      [TIMING][6086eba37681] GET /api/transfer/recent - Time: 0.1490s
+2026-05-06 09:15:54  INFO      127.0.0.1 - - [06/May/2026 09:15:54] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:15:58  INFO      [TIMING][e9dc3abfb88a] OPTIONS /api/recover - Time: 0.0004s
+2026-05-06 09:15:58  INFO      127.0.0.1 - - [06/May/2026 09:15:58] "OPTIONS /api/recover HTTP/1.1" 200 -
+2026-05-06 09:15:58  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 09:15:58  INFO      [RECOVERY] Tìm thấy 22 giao dịch cần xử lý.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBCF937A6DB3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBCF937A6DB3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:15:58  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:15:58  INFO      [TIMING][5b20b36ca57c] POST /api/recover - Time: 0.1168s
+2026-05-06 09:15:58  INFO      127.0.0.1 - - [06/May/2026 09:15:58] "POST /api/recover HTTP/1.1" 200 -
+2026-05-06 09:15:58  INFO      [TIMING][8080a2f44f95] GET /api/transfer/recent - Time: 0.1388s
+2026-05-06 09:15:58  INFO      127.0.0.1 - - [06/May/2026 09:15:58] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:16:03  INFO      [TIMING][bcb237eb8ff4] GET /api/transfer/recent - Time: 0.1668s
+2026-05-06 09:16:03  INFO      127.0.0.1 - - [06/May/2026 09:16:03] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:16:11  INFO      [TIMING][43f46ceed723] GET /api/transfer/recent - Time: 0.1537s
+2026-05-06 09:16:11  INFO      127.0.0.1 - - [06/May/2026 09:16:11] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:16:19  INFO      [TIMING][780f4e867e5d] GET /api/transfer/recent - Time: 0.1058s
+2026-05-06 09:16:19  INFO      127.0.0.1 - - [06/May/2026 09:16:19] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:16:27  INFO      [TIMING][e16c93164bf6] GET /api/transfer/recent - Time: 0.1599s
+2026-05-06 09:16:27  INFO      127.0.0.1 - - [06/May/2026 09:16:27] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:16:35  INFO      [TIMING][92657767a86f] GET /api/transfer/recent - Time: 0.2070s
+2026-05-06 09:16:35  INFO      127.0.0.1 - - [06/May/2026 09:16:35] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:16:43  INFO      [TIMING][0d954f523169] GET /api/transfer/recent - Time: 0.1588s
+2026-05-06 09:16:43  INFO      127.0.0.1 - - [06/May/2026 09:16:43] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:16:51  INFO      [TIMING][9ef1fd588236] GET /api/transfer/recent - Time: 0.1196s
+2026-05-06 09:16:51  INFO      127.0.0.1 - - [06/May/2026 09:16:51] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:16:59  INFO      [TIMING][ee6a1ff3319a] GET /api/transfer/recent - Time: 0.1236s
+2026-05-06 09:16:59  INFO      127.0.0.1 - - [06/May/2026 09:16:59] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:17:07  INFO      [TIMING][154f09dfb006] GET /api/transfer/recent - Time: 0.0968s
+2026-05-06 09:17:07  INFO      127.0.0.1 - - [06/May/2026 09:17:07] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:17:15  INFO      [TIMING][8282c04771b0] GET /api/transfer/recent - Time: 0.1336s
+2026-05-06 09:17:15  INFO      127.0.0.1 - - [06/May/2026 09:17:15] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:17:23  INFO      [TIMING][5e2eb9faa106] GET /api/transfer/recent - Time: 0.1247s
+2026-05-06 09:17:23  INFO      127.0.0.1 - - [06/May/2026 09:17:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:17:31  INFO      [TIMING][d44f080a5d14] GET /api/transfer/recent - Time: 0.1750s
+2026-05-06 09:17:31  INFO      127.0.0.1 - - [06/May/2026 09:17:31] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:17:39  INFO      [TIMING][b993e04f6e55] GET /api/transfer/recent - Time: 0.1560s
+2026-05-06 09:17:39  INFO      127.0.0.1 - - [06/May/2026 09:17:39] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:17:47  INFO      [TIMING][4d6c10506e25] GET /api/transfer/recent - Time: 0.1615s
+2026-05-06 09:17:47  INFO      127.0.0.1 - - [06/May/2026 09:17:47] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:17:55  INFO      [TIMING][80abb1c20024] GET /api/transfer/recent - Time: 0.1419s
+2026-05-06 09:17:55  INFO      127.0.0.1 - - [06/May/2026 09:17:55] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:18:03  INFO      [TIMING][6e78d4823807] GET /api/transfer/recent - Time: 0.1563s
+2026-05-06 09:18:03  INFO      127.0.0.1 - - [06/May/2026 09:18:03] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:18:16  INFO      [TIMING][c081172cecb6] GET /api/transfer/recent - Time: 0.1247s
+2026-05-06 09:18:16  INFO      127.0.0.1 - - [06/May/2026 09:18:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:18:34  INFO      [TIMING][973cd1ab9e90] GET /api/transfer/recent - Time: 0.1140s
+2026-05-06 09:18:34  INFO      127.0.0.1 - - [06/May/2026 09:18:34] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:18:34  INFO      [TIMING][dc8321877dec] GET /api/transfer/recent - Time: 0.1151s
+2026-05-06 09:18:34  INFO      127.0.0.1 - - [06/May/2026 09:18:34] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:18:42  INFO      [TIMING][f5e10c86569c] GET /api/transfer/recent - Time: 0.1722s
+2026-05-06 09:18:42  INFO      127.0.0.1 - - [06/May/2026 09:18:42] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:18:51  INFO      [TIMING][99728f89c294] GET /api/transfer/recent - Time: 0.1657s
+2026-05-06 09:18:51  INFO      127.0.0.1 - - [06/May/2026 09:18:51] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:18:53  INFO      [TIMING][d5b1be2b8056] GET /api/accounts - Time: 0.0460s
+2026-05-06 09:18:53  INFO      127.0.0.1 - - [06/May/2026 09:18:53] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:18:54  INFO      [TIMING][c7d87ea011c1] GET /api/transfer/recent - Time: 0.1456s
+2026-05-06 09:18:54  INFO      127.0.0.1 - - [06/May/2026 09:18:54] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:37:21  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:37:21  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 09:37:21  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:37:21  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 09:37:22  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 09:37:22  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 09:37:22  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 09:37:22  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 09:37:22  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 09:37:22  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 09:37:22  INFO      [RECOVERY] Tìm thấy 22 giao dịch cần xử lý.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBCF937A6DB3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBCF937A6DB3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:22  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:22  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-05-06 09:37:22  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:37:22  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 09:37:22  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 09:37:22  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 09:37:22  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 09:37:22  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 09:37:22  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:37:22  INFO      [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.10.2:5000
+2026-05-06 09:37:22  INFO      [33mPress CTRL+C to quit[0m
+2026-05-06 09:37:22  INFO       * Restarting with stat
+2026-05-06 09:37:22  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:37:22  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 09:37:22  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:37:22  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 09:37:22  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 09:37:22  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 09:37:22  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 09:37:22  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 09:37:22  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 09:37:22  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 09:37:23  INFO      [RECOVERY] Tìm thấy 22 giao dịch cần xử lý.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBCF937A6DB3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBCF937A6DB3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:37:23  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:37:23  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-05-06 09:37:23  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:37:23  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 09:37:23  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 09:37:23  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 09:37:23  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 09:37:23  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 09:37:23  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:37:23  WARNING    * Debugger is active!
+2026-05-06 09:37:23  INFO       * Debugger PIN: 535-083-205
+2026-05-06 09:37:23  INFO      [TIMING][c50b36cde596] GET /api/accounts - Time: 0.0466s
+2026-05-06 09:37:23  INFO      127.0.0.1 - - [06/May/2026 09:37:23] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:37:23  INFO      [TIMING][8b84463b05f2] GET /api/accounts - Time: 0.0561s
+2026-05-06 09:37:23  INFO      127.0.0.1 - - [06/May/2026 09:37:23] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:37:25  INFO      [TIMING][ccc9795467ba] GET /api/transfer/recent - Time: 0.1387s
+2026-05-06 09:37:25  INFO      127.0.0.1 - - [06/May/2026 09:37:25] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:37:33  INFO      [TIMING][e7a70339c0d7] GET /api/transfer/recent - Time: 0.2042s
+2026-05-06 09:37:33  INFO      127.0.0.1 - - [06/May/2026 09:37:33] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:37:41  INFO      [TIMING][c31ff2145094] GET /api/transfer/recent - Time: 0.1585s
+2026-05-06 09:37:41  INFO      127.0.0.1 - - [06/May/2026 09:37:41] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:37:49  INFO      [TIMING][b5765d29438b] GET /api/transfer/recent - Time: 0.1577s
+2026-05-06 09:37:49  INFO      127.0.0.1 - - [06/May/2026 09:37:49] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:37:56  INFO      [TIMING][9bf56ca6deac] GET /api/transfer/recent - Time: 0.2186s
+2026-05-06 09:37:56  INFO      127.0.0.1 - - [06/May/2026 09:37:56] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:38:05  INFO      [TIMING][ebb00df7479d] GET /api/transfer/recent - Time: 0.1266s
+2026-05-06 09:38:05  INFO      127.0.0.1 - - [06/May/2026 09:38:05] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:38:13  INFO      [TIMING][de64eb63c25f] GET /api/transfer/recent - Time: 0.1673s
+2026-05-06 09:38:13  INFO      127.0.0.1 - - [06/May/2026 09:38:13] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:38:21  INFO      [TIMING][64126a7ec6e9] GET /api/transfer/recent - Time: 0.1642s
+2026-05-06 09:38:21  INFO      127.0.0.1 - - [06/May/2026 09:38:21] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:38:29  INFO      [TIMING][6ff2795740c4] GET /api/transfer/recent - Time: 0.1344s
+2026-05-06 09:38:29  INFO      127.0.0.1 - - [06/May/2026 09:38:29] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:38:37  INFO      [TIMING][3fe89446b6f3] GET /api/transfer/recent - Time: 0.1521s
+2026-05-06 09:38:37  INFO      127.0.0.1 - - [06/May/2026 09:38:37] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:38:45  INFO      [TIMING][e15d6b688fb2] GET /api/transfer/recent - Time: 0.1627s
+2026-05-06 09:38:45  INFO      127.0.0.1 - - [06/May/2026 09:38:45] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:38:53  INFO      [TIMING][8ddc1f163f8a] GET /api/transfer/recent - Time: 0.1251s
+2026-05-06 09:38:53  INFO      127.0.0.1 - - [06/May/2026 09:38:53] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:39:01  INFO      [TIMING][689ba75c6786] GET /api/transfer/recent - Time: 0.1778s
+2026-05-06 09:39:01  INFO      127.0.0.1 - - [06/May/2026 09:39:01] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:39:09  INFO      [TIMING][972e7d801f39] GET /api/transfer/recent - Time: 0.1617s
+2026-05-06 09:39:09  INFO      127.0.0.1 - - [06/May/2026 09:39:09] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:39:17  INFO      [TIMING][8d701eb863a7] GET /api/transfer/recent - Time: 0.1909s
+2026-05-06 09:39:17  INFO      127.0.0.1 - - [06/May/2026 09:39:17] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:39:25  INFO      [TIMING][ddb89c85068c] GET /api/transfer/recent - Time: 0.1923s
+2026-05-06 09:39:25  INFO      127.0.0.1 - - [06/May/2026 09:39:25] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:39:33  INFO      [TIMING][5cab5a41947c] GET /api/transfer/recent - Time: 0.1752s
+2026-05-06 09:39:33  INFO      127.0.0.1 - - [06/May/2026 09:39:33] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:39:41  INFO      [TIMING][da9e6f108898] GET /api/transfer/recent - Time: 0.1850s
+2026-05-06 09:39:41  INFO      127.0.0.1 - - [06/May/2026 09:39:41] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:40:16  INFO      [TIMING][e4567ad72b63] GET /api/transfer/recent - Time: 0.2142s
+2026-05-06 09:40:16  INFO      127.0.0.1 - - [06/May/2026 09:40:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:41:16  INFO      [TIMING][9abee0fd9384] GET /api/transfer/recent - Time: 0.2060s
+2026-05-06 09:41:16  INFO      127.0.0.1 - - [06/May/2026 09:41:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:42:16  INFO      [TIMING][fc6941361afa] GET /api/transfer/recent - Time: 0.2005s
+2026-05-06 09:42:16  INFO      127.0.0.1 - - [06/May/2026 09:42:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:43:16  INFO      [TIMING][ad1636646e35] GET /api/transfer/recent - Time: 0.1516s
+2026-05-06 09:43:16  INFO      127.0.0.1 - - [06/May/2026 09:43:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:44:16  INFO      [TIMING][4a06002b2a4d] GET /api/transfer/recent - Time: 0.1978s
+2026-05-06 09:44:16  INFO      127.0.0.1 - - [06/May/2026 09:44:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:45:16  INFO      [TIMING][8f461fdd3c92] GET /api/transfer/recent - Time: 0.2291s
+2026-05-06 09:45:16  INFO      127.0.0.1 - - [06/May/2026 09:45:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:46:16  INFO      [TIMING][111afaeb553c] GET /api/transfer/recent - Time: 0.2033s
+2026-05-06 09:46:16  INFO      127.0.0.1 - - [06/May/2026 09:46:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:47:16  INFO      [TIMING][8197f30ebf7d] GET /api/transfer/recent - Time: 0.2213s
+2026-05-06 09:47:16  INFO      127.0.0.1 - - [06/May/2026 09:47:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:48:16  INFO      [TIMING][474c0ccd2bd2] GET /api/transfer/recent - Time: 0.1507s
+2026-05-06 09:48:16  INFO      127.0.0.1 - - [06/May/2026 09:48:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:49:05  INFO      [TIMING][0db41a71b322] GET /api/transfer/recent - Time: 0.1595s
+2026-05-06 09:49:05  INFO      127.0.0.1 - - [06/May/2026 09:49:05] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:49:08  INFO      [TIMING][c9d14e07dbab] GET /api/transfer/recent - Time: 0.1545s
+2026-05-06 09:49:08  INFO      127.0.0.1 - - [06/May/2026 09:49:08] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:49:11  INFO      [TIMING][2eae4cc1efb9] OPTIONS /api/lookup-account - Time: 0.0003s
+2026-05-06 09:49:11  INFO      127.0.0.1 - - [06/May/2026 09:49:11] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 09:49:11  INFO      [TIMING][da2243815233] POST /api/lookup-account - Time: 0.0463s
+2026-05-06 09:49:11  INFO      127.0.0.1 - - [06/May/2026 09:49:11] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 09:49:13  INFO      [TIMING][b120cae38122] OPTIONS /api/transfer - Time: 0.0002s
+2026-05-06 09:49:13  INFO      127.0.0.1 - - [06/May/2026 09:49:13] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-05-06 09:49:13  INFO      [TRANSFER] ── Giao dịch mới | tx=VB94380D4608 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 09:49:13  INFO      [BAL] TRƯỚC                  | tx=VB94380D4608   | acc=1029 3847 5612 | balance=233460000 đ
+2026-05-06 09:49:13  INFO      [BAL] TRƯỚC                  | tx=VB94380D4608   | acc=2038 4756 9801 | balance=210000 đ
+2026-05-06 09:49:13  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB94380D4608 | 94380d460866 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 09:49:13  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB94380D4608
+2026-05-06 09:49:13  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB94380D4608
+2026-05-06 09:49:13  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB94380D4608
+2026-05-06 09:49:13  INFO      [BAL] SAU-COMMIT_A(-trừ)     | tx=VB94380D4608   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 09:49:13  INFO      [PHASE] Phase 2  ✔ COMMITTED   — Hoàn tất thành công | tx=VB94380D4608
+2026-05-06 09:49:13  INFO      [BAL] SAU-COMMITTED          | tx=VB94380D4608   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 09:49:13  INFO      [BAL] SAU-COMMITTED(+nhận)   | tx=VB94380D4608   | acc=2038 4756 9801 | balance=220000 đ
+2026-05-06 09:49:13  INFO      [TRANSFER] ✓ Hoàn tất | tx=VB94380D4608 | 10000đ | 1029 3847 5612 → 2038 4756 9801
+2026-05-06 09:49:13  INFO      [TIMING][7d5d18adf0ea] POST /api/transfer - Time: 0.6888s
+2026-05-06 09:49:13  INFO      127.0.0.1 - - [06/May/2026 09:49:13] "POST /api/transfer HTTP/1.1" 200 -
+2026-05-06 09:49:13  INFO      [TIMING][96191b38195a] GET /api/transfer/status/VB94380D4608 - Time: 0.0243s
+2026-05-06 09:49:13  INFO      127.0.0.1 - - [06/May/2026 09:49:13] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:13  INFO      [TIMING][c979e346b595] GET /api/accounts - Time: 0.0476s
+2026-05-06 09:49:13  INFO      127.0.0.1 - - [06/May/2026 09:49:13] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:49:13  INFO      [TIMING][684c891d91e0] GET /api/transfer/log/VB94380D4608 - Time: 0.0207s
+2026-05-06 09:49:13  INFO      127.0.0.1 - - [06/May/2026 09:49:13] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:17  INFO      [TIMING][73cce1f12d9f] GET /api/accounts - Time: 0.0537s
+2026-05-06 09:49:17  INFO      127.0.0.1 - - [06/May/2026 09:49:17] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:49:17  INFO      [TIMING][2433dd596804] GET /api/transfer/recent - Time: 0.1686s
+2026-05-06 09:49:17  INFO      127.0.0.1 - - [06/May/2026 09:49:17] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:49:25  INFO      [TIMING][188b9e5c0684] GET /api/transfer/recent - Time: 0.1186s
+2026-05-06 09:49:25  INFO      127.0.0.1 - - [06/May/2026 09:49:25] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:49:25  INFO      [TIMING][71e79898f6f1] GET /api/transfer/status/VB94380D4608 - Time: 0.0203s
+2026-05-06 09:49:25  INFO      127.0.0.1 - - [06/May/2026 09:49:25] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:25  INFO      [TIMING][7bd565043952] GET /api/transfer/log/VB94380D4608 - Time: 0.0177s
+2026-05-06 09:49:25  INFO      127.0.0.1 - - [06/May/2026 09:49:25] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:33  INFO      [TIMING][eb3d170ef466] GET /api/transfer/recent - Time: 0.1670s
+2026-05-06 09:49:33  INFO      127.0.0.1 - - [06/May/2026 09:49:33] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:49:33  INFO      [TIMING][e6b97da10af0] GET /api/transfer/status/VB94380D4608 - Time: 0.0517s
+2026-05-06 09:49:33  INFO      127.0.0.1 - - [06/May/2026 09:49:33] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:33  INFO      [TIMING][75686c329621] GET /api/transfer/log/VB94380D4608 - Time: 0.0190s
+2026-05-06 09:49:33  INFO      127.0.0.1 - - [06/May/2026 09:49:33] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:41  INFO      [TIMING][7b5cba3dc9f2] GET /api/transfer/recent - Time: 0.1577s
+2026-05-06 09:49:41  INFO      127.0.0.1 - - [06/May/2026 09:49:41] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:49:41  INFO      [TIMING][77f08585ddde] GET /api/transfer/status/VB94380D4608 - Time: 0.0450s
+2026-05-06 09:49:41  INFO      127.0.0.1 - - [06/May/2026 09:49:41] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:41  INFO      [TIMING][1585bd7c9e62] GET /api/transfer/log/VB94380D4608 - Time: 0.0152s
+2026-05-06 09:49:41  INFO      127.0.0.1 - - [06/May/2026 09:49:41] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:49  INFO      [TIMING][0bc7daa1de81] GET /api/transfer/recent - Time: 0.1700s
+2026-05-06 09:49:49  INFO      127.0.0.1 - - [06/May/2026 09:49:49] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:49:49  INFO      [TIMING][3c6e0e618243] GET /api/transfer/status/VB94380D4608 - Time: 0.0412s
+2026-05-06 09:49:49  INFO      127.0.0.1 - - [06/May/2026 09:49:49] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:49  INFO      [TIMING][a95c6f1ee855] GET /api/transfer/log/VB94380D4608 - Time: 0.0169s
+2026-05-06 09:49:49  INFO      127.0.0.1 - - [06/May/2026 09:49:49] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:57  INFO      [TIMING][931f6f14e677] GET /api/transfer/recent - Time: 0.1607s
+2026-05-06 09:49:57  INFO      127.0.0.1 - - [06/May/2026 09:49:57] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:49:57  INFO      [TIMING][a81ec157c01b] GET /api/transfer/status/VB94380D4608 - Time: 0.0304s
+2026-05-06 09:49:57  INFO      127.0.0.1 - - [06/May/2026 09:49:57] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:49:57  INFO      [TIMING][1465287cce9f] GET /api/transfer/log/VB94380D4608 - Time: 0.0145s
+2026-05-06 09:49:57  INFO      127.0.0.1 - - [06/May/2026 09:49:57] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:50:05  INFO      [TIMING][1169eef29a54] GET /api/transfer/recent - Time: 0.1512s
+2026-05-06 09:50:05  INFO      127.0.0.1 - - [06/May/2026 09:50:05] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:50:05  INFO      [TIMING][5ef196c2a383] GET /api/transfer/status/VB94380D4608 - Time: 0.0271s
+2026-05-06 09:50:05  INFO      127.0.0.1 - - [06/May/2026 09:50:05] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:50:05  INFO      [TIMING][621a43a31247] GET /api/transfer/log/VB94380D4608 - Time: 0.0159s
+2026-05-06 09:50:05  INFO      127.0.0.1 - - [06/May/2026 09:50:05] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:50:13  INFO      [TIMING][61bf8744f097] GET /api/transfer/recent - Time: 0.1356s
+2026-05-06 09:50:13  INFO      127.0.0.1 - - [06/May/2026 09:50:13] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:50:13  INFO      [TIMING][3c2638fa4916] GET /api/transfer/status/VB94380D4608 - Time: 0.0338s
+2026-05-06 09:50:13  INFO      127.0.0.1 - - [06/May/2026 09:50:13] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:50:13  INFO      [TIMING][d78d3835aa4d] GET /api/transfer/log/VB94380D4608 - Time: 0.0210s
+2026-05-06 09:50:13  INFO      127.0.0.1 - - [06/May/2026 09:50:13] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:50:21  INFO      [TIMING][a4c1e68f16af] GET /api/transfer/recent - Time: 0.1412s
+2026-05-06 09:50:21  INFO      127.0.0.1 - - [06/May/2026 09:50:21] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:50:21  INFO      [TIMING][754ef4e46152] GET /api/transfer/status/VB94380D4608 - Time: 0.0322s
+2026-05-06 09:50:21  INFO      127.0.0.1 - - [06/May/2026 09:50:21] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:50:21  INFO      [TIMING][97f70e532075] GET /api/transfer/log/VB94380D4608 - Time: 0.0156s
+2026-05-06 09:50:21  INFO      127.0.0.1 - - [06/May/2026 09:50:21] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:51:16  INFO      [TIMING][06f56a5cacb0] GET /api/transfer/recent - Time: 0.1210s
+2026-05-06 09:51:16  INFO      127.0.0.1 - - [06/May/2026 09:51:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:51:16  INFO      [TIMING][9410590be027] GET /api/transfer/status/VB94380D4608 - Time: 0.0390s
+2026-05-06 09:51:16  INFO      127.0.0.1 - - [06/May/2026 09:51:16] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:51:16  INFO      [TIMING][4f006fbe7cdc] GET /api/transfer/log/VB94380D4608 - Time: 0.0329s
+2026-05-06 09:51:16  INFO      127.0.0.1 - - [06/May/2026 09:51:16] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:52:16  INFO      [TIMING][77dd5d387158] GET /api/transfer/recent - Time: 0.1612s
+2026-05-06 09:52:16  INFO      127.0.0.1 - - [06/May/2026 09:52:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:52:16  INFO      [TIMING][27abdb8ad4ec] GET /api/transfer/status/VB94380D4608 - Time: 0.0629s
+2026-05-06 09:52:16  INFO      127.0.0.1 - - [06/May/2026 09:52:16] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:52:16  INFO      [TIMING][b0d9020ec6a5] GET /api/transfer/log/VB94380D4608 - Time: 0.0225s
+2026-05-06 09:52:16  INFO      127.0.0.1 - - [06/May/2026 09:52:16] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:52:20  INFO      [TIMING][6cc7404dc81c] GET /api/accounts - Time: 0.0578s
+2026-05-06 09:52:20  INFO      127.0.0.1 - - [06/May/2026 09:52:20] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:52:20  INFO      [TIMING][9f4f6d5589de] GET /api/transfer/recent - Time: 0.2138s
+2026-05-06 09:52:20  INFO      127.0.0.1 - - [06/May/2026 09:52:20] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:52:28  INFO      [TIMING][7179457a2c20] GET /api/transfer/recent - Time: 0.1606s
+2026-05-06 09:52:28  INFO      127.0.0.1 - - [06/May/2026 09:52:28] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:52:28  INFO      [TIMING][37efecaae6dc] GET /api/transfer/status/VB94380D4608 - Time: 0.0380s
+2026-05-06 09:52:28  INFO      127.0.0.1 - - [06/May/2026 09:52:28] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:52:28  INFO      [TIMING][10c346958d1f] GET /api/transfer/log/VB94380D4608 - Time: 0.0190s
+2026-05-06 09:52:28  INFO      127.0.0.1 - - [06/May/2026 09:52:28] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:52:28  INFO      [TIMING][314e16403a42] OPTIONS /api/lookup-account - Time: 0.0002s
+2026-05-06 09:52:28  INFO      127.0.0.1 - - [06/May/2026 09:52:28] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 09:52:29  INFO      [TIMING][f10dfef6f756] POST /api/lookup-account - Time: 0.0421s
+2026-05-06 09:52:29  INFO      127.0.0.1 - - [06/May/2026 09:52:29] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 09:52:30  INFO      [TIMING][d9630273d747] OPTIONS /api/transfer - Time: 0.0003s
+2026-05-06 09:52:30  INFO      127.0.0.1 - - [06/May/2026 09:52:30] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-05-06 09:52:30  INFO      [TRANSFER] ── Giao dịch mới | tx=VB84C0403529 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 09:52:30  INFO      [BAL] TRƯỚC                  | tx=VB84C0403529   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 09:52:30  INFO      [BAL] TRƯỚC                  | tx=VB84C0403529   | acc=2038 4756 9801 | balance=220000 đ
+2026-05-06 09:52:30  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB84C0403529 | 84c040352903 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 09:52:30  ERROR     [TRANSFER] tx=VB84C0403529: Phase 1 thất bại | lỗi=(1644, 'Bank A rejected transaction (TC02)')
+2026-05-06 09:52:30  WARNING   [PHASE] Phase *  ✖ ABORTED     — Giao dịch bị hủy (Rollback) | tx=VB84C0403529
+2026-05-06 09:52:31  WARNING   [XA] Lỗi XA ROLLBACK (bank1): (1397, 'XAER_NOTA: Unknown XID')
+2026-05-06 09:52:31  INFO      [BAL] SAU-ABORTED(Phase1)    | tx=VB84C0403529   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 09:52:31  INFO      [BAL] SAU-ABORTED(Phase1)    | tx=VB84C0403529   | acc=2038 4756 9801 | balance=220000 đ
+2026-05-06 09:52:31  INFO      [TIMING][8890fcc8d1a6] POST /api/transfer - Time: 0.4903s
+2026-05-06 09:52:31  INFO      127.0.0.1 - - [06/May/2026 09:52:31] "[35m[1mPOST /api/transfer HTTP/1.1[0m" 500 -
+2026-05-06 09:52:31  INFO      [TIMING][78f44137a49a] GET /api/transfer/status/VB84C0403529 - Time: 0.0343s
+2026-05-06 09:52:31  INFO      127.0.0.1 - - [06/May/2026 09:52:31] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:52:31  INFO      [TIMING][31dbed8f80f1] GET /api/transfer/log/VB84C0403529 - Time: 0.0186s
+2026-05-06 09:52:31  INFO      127.0.0.1 - - [06/May/2026 09:52:31] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:52:36  INFO      [TIMING][e556a7737061] GET /api/transfer/recent - Time: 0.1311s
+2026-05-06 09:52:36  INFO      127.0.0.1 - - [06/May/2026 09:52:36] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:52:36  INFO      [TIMING][f8bc36284281] GET /api/transfer/status/VB84C0403529 - Time: 0.0332s
+2026-05-06 09:52:36  INFO      127.0.0.1 - - [06/May/2026 09:52:36] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:52:36  INFO      [TIMING][8e65a76a0497] GET /api/transfer/log/VB84C0403529 - Time: 0.0193s
+2026-05-06 09:52:36  INFO      127.0.0.1 - - [06/May/2026 09:52:36] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:52:45  INFO      [TIMING][7a0e6c8471f0] GET /api/transfer/recent - Time: 0.1934s
+2026-05-06 09:52:45  INFO      127.0.0.1 - - [06/May/2026 09:52:45] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:52:45  INFO      [TIMING][48678016ddc5] GET /api/transfer/status/VB84C0403529 - Time: 0.0423s
+2026-05-06 09:52:45  INFO      127.0.0.1 - - [06/May/2026 09:52:45] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:52:45  INFO      [TIMING][0a9a0343aeb7] GET /api/transfer/log/VB84C0403529 - Time: 0.0170s
+2026-05-06 09:52:45  INFO      127.0.0.1 - - [06/May/2026 09:52:45] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:52:53  INFO      [TIMING][4a3f0353c785] GET /api/transfer/recent - Time: 0.1535s
+2026-05-06 09:52:53  INFO      127.0.0.1 - - [06/May/2026 09:52:53] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:52:53  INFO      [TIMING][dc31ace7b2ad] GET /api/transfer/status/VB84C0403529 - Time: 0.0291s
+2026-05-06 09:52:53  INFO      127.0.0.1 - - [06/May/2026 09:52:53] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:52:53  INFO      [TIMING][dc1aa7c13a6c] GET /api/transfer/log/VB84C0403529 - Time: 0.0171s
+2026-05-06 09:52:53  INFO      127.0.0.1 - - [06/May/2026 09:52:53] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:01  INFO      [TIMING][1c900e005fdb] GET /api/transfer/recent - Time: 0.1768s
+2026-05-06 09:53:01  INFO      127.0.0.1 - - [06/May/2026 09:53:01] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:53:01  INFO      [TIMING][e3be0bfb7c7f] GET /api/transfer/status/VB84C0403529 - Time: 0.0281s
+2026-05-06 09:53:01  INFO      127.0.0.1 - - [06/May/2026 09:53:01] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:01  INFO      [TIMING][f4dfeebefac2] GET /api/transfer/log/VB84C0403529 - Time: 0.0155s
+2026-05-06 09:53:01  INFO      127.0.0.1 - - [06/May/2026 09:53:01] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:09  INFO      [TIMING][4bd02f180f4b] GET /api/transfer/recent - Time: 0.1775s
+2026-05-06 09:53:09  INFO      127.0.0.1 - - [06/May/2026 09:53:09] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:53:09  INFO      [TIMING][fff3babfb74a] GET /api/transfer/status/VB84C0403529 - Time: 0.0430s
+2026-05-06 09:53:09  INFO      127.0.0.1 - - [06/May/2026 09:53:09] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:09  INFO      [TIMING][845d776e5866] GET /api/transfer/log/VB84C0403529 - Time: 0.0167s
+2026-05-06 09:53:09  INFO      127.0.0.1 - - [06/May/2026 09:53:09] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:17  INFO      [TIMING][d04847dae95c] GET /api/transfer/recent - Time: 0.1204s
+2026-05-06 09:53:17  INFO      127.0.0.1 - - [06/May/2026 09:53:17] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:53:17  INFO      [TIMING][3053e4476900] GET /api/transfer/status/VB84C0403529 - Time: 0.0354s
+2026-05-06 09:53:17  INFO      127.0.0.1 - - [06/May/2026 09:53:17] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:17  INFO      [TIMING][dd29e4d868f0] GET /api/transfer/log/VB84C0403529 - Time: 0.0129s
+2026-05-06 09:53:17  INFO      127.0.0.1 - - [06/May/2026 09:53:17] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:25  INFO      [TIMING][f7f861ff5380] GET /api/transfer/recent - Time: 0.1688s
+2026-05-06 09:53:25  INFO      127.0.0.1 - - [06/May/2026 09:53:25] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:53:25  INFO      [TIMING][b5076b6e57e5] GET /api/transfer/status/VB84C0403529 - Time: 0.0451s
+2026-05-06 09:53:25  INFO      127.0.0.1 - - [06/May/2026 09:53:25] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:25  INFO      [TIMING][16e1c54946ee] GET /api/transfer/log/VB84C0403529 - Time: 0.0162s
+2026-05-06 09:53:25  INFO      127.0.0.1 - - [06/May/2026 09:53:25] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:33  INFO      [TIMING][1308fe18fbea] GET /api/transfer/recent - Time: 0.1704s
+2026-05-06 09:53:33  INFO      127.0.0.1 - - [06/May/2026 09:53:33] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:53:33  INFO      [TIMING][2c704b949f0c] GET /api/transfer/status/VB84C0403529 - Time: 0.0461s
+2026-05-06 09:53:33  INFO      127.0.0.1 - - [06/May/2026 09:53:33] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:53:33  INFO      [TIMING][748f4568ec00] GET /api/transfer/log/VB84C0403529 - Time: 0.0162s
+2026-05-06 09:53:33  INFO      127.0.0.1 - - [06/May/2026 09:53:33] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:54:16  INFO      [TIMING][a4ffbae742d6] GET /api/transfer/recent - Time: 0.2064s
+2026-05-06 09:54:16  INFO      127.0.0.1 - - [06/May/2026 09:54:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:54:16  INFO      [TIMING][568b5ab8e54f] GET /api/transfer/status/VB84C0403529 - Time: 0.0392s
+2026-05-06 09:54:16  INFO      127.0.0.1 - - [06/May/2026 09:54:16] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:54:16  INFO      [TIMING][60e199e9c516] GET /api/transfer/log/VB84C0403529 - Time: 0.0177s
+2026-05-06 09:54:16  INFO      127.0.0.1 - - [06/May/2026 09:54:16] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:54:21  INFO      [TIMING][e3bee4bb989e] GET /api/transfer/recent - Time: 0.1777s
+2026-05-06 09:54:21  INFO      127.0.0.1 - - [06/May/2026 09:54:21] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:54:21  INFO      [TIMING][4447d6346cb8] GET /api/transfer/status/VB84C0403529 - Time: 0.0373s
+2026-05-06 09:54:21  INFO      127.0.0.1 - - [06/May/2026 09:54:21] "GET /api/transfer/status/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:54:21  INFO      [TIMING][dc06ab15b8d3] GET /api/transfer/log/VB84C0403529 - Time: 0.0123s
+2026-05-06 09:54:21  INFO      127.0.0.1 - - [06/May/2026 09:54:21] "GET /api/transfer/log/VB84C0403529 HTTP/1.1" 200 -
+2026-05-06 09:54:22  INFO      [TIMING][e4ff51b1ba1c] GET /api/accounts - Time: 0.0815s
+2026-05-06 09:54:22  INFO      127.0.0.1 - - [06/May/2026 09:54:22] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:54:22  INFO      [TIMING][8533b223ced2] GET /api/transfer/recent - Time: 0.1756s
+2026-05-06 09:54:22  INFO      127.0.0.1 - - [06/May/2026 09:54:22] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:54:27  INFO      [TIMING][d59e15884160] OPTIONS /api/lookup-account - Time: 0.0002s
+2026-05-06 09:54:27  INFO      127.0.0.1 - - [06/May/2026 09:54:27] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 09:54:27  INFO      [TIMING][c5369c70f642] POST /api/lookup-account - Time: 0.0503s
+2026-05-06 09:54:27  INFO      127.0.0.1 - - [06/May/2026 09:54:27] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 09:54:29  INFO      [TIMING][fd1a3967a393] OPTIONS /api/transfer - Time: 0.0003s
+2026-05-06 09:54:29  INFO      127.0.0.1 - - [06/May/2026 09:54:29] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-05-06 09:54:29  INFO      [TRANSFER] ── Giao dịch mới | tx=VB03F1EED861 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 09:54:29  INFO      [BAL] TRƯỚC                  | tx=VB03F1EED861   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 09:54:29  INFO      [BAL] TRƯỚC                  | tx=VB03F1EED861   | acc=2038 4756 9801 | balance=220000 đ
+2026-05-06 09:54:29  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB03F1EED861 | 03f1eed8615a | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "Nguyễn Văn A chuyen tien"
+2026-05-06 09:54:29  ERROR     [TRANSFER] tx=VB03F1EED861: Phase 1 thất bại | lỗi=(1644, 'Bank B rejected transaction (TC03)')
+2026-05-06 09:54:29  WARNING   [PHASE] Phase *  ✖ ABORTED     — Giao dịch bị hủy (Rollback) | tx=VB03F1EED861
+2026-05-06 09:54:29  WARNING   [XA] Lỗi XA ROLLBACK (bank2): (1397, 'XAER_NOTA: Unknown XID')
+2026-05-06 09:54:29  INFO      [BAL] SAU-ABORTED(Phase1)    | tx=VB03F1EED861   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 09:54:29  INFO      [BAL] SAU-ABORTED(Phase1)    | tx=VB03F1EED861   | acc=2038 4756 9801 | balance=220000 đ
+2026-05-06 09:54:29  INFO      [TIMING][da68d96ed2c5] POST /api/transfer - Time: 0.4672s
+2026-05-06 09:54:29  INFO      127.0.0.1 - - [06/May/2026 09:54:29] "[35m[1mPOST /api/transfer HTTP/1.1[0m" 500 -
+2026-05-06 09:54:29  INFO      [TIMING][2e8820b164ed] GET /api/transfer/status/VB03F1EED861 - Time: 0.0395s
+2026-05-06 09:54:29  INFO      127.0.0.1 - - [06/May/2026 09:54:29] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:54:29  INFO      [TIMING][d9a91f4a9aee] GET /api/transfer/log/VB03F1EED861 - Time: 0.0158s
+2026-05-06 09:54:29  INFO      127.0.0.1 - - [06/May/2026 09:54:29] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:54:30  INFO      [TIMING][3d24645ffd43] GET /api/transfer/recent - Time: 0.1638s
+2026-05-06 09:54:30  INFO      127.0.0.1 - - [06/May/2026 09:54:30] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:54:30  INFO      [TIMING][a3a5d652ec61] GET /api/transfer/status/VB03F1EED861 - Time: 0.0396s
+2026-05-06 09:54:30  INFO      127.0.0.1 - - [06/May/2026 09:54:30] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:54:30  INFO      [TIMING][54fab3da3d37] GET /api/transfer/log/VB03F1EED861 - Time: 0.0177s
+2026-05-06 09:54:30  INFO      127.0.0.1 - - [06/May/2026 09:54:30] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:54:39  INFO      [TIMING][58c5a87e1e37] GET /api/transfer/recent - Time: 0.1925s
+2026-05-06 09:54:39  INFO      127.0.0.1 - - [06/May/2026 09:54:39] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:54:39  INFO      [TIMING][5becc2deb932] GET /api/transfer/status/VB03F1EED861 - Time: 0.0358s
+2026-05-06 09:54:39  INFO      127.0.0.1 - - [06/May/2026 09:54:39] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:54:39  INFO      [TIMING][5867e972a850] GET /api/transfer/log/VB03F1EED861 - Time: 0.0157s
+2026-05-06 09:54:39  INFO      127.0.0.1 - - [06/May/2026 09:54:39] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:54:47  INFO      [TIMING][ae5d0189d5c5] GET /api/transfer/recent - Time: 0.1647s
+2026-05-06 09:54:47  INFO      127.0.0.1 - - [06/May/2026 09:54:47] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:54:47  INFO      [TIMING][d31b9e53c833] GET /api/transfer/status/VB03F1EED861 - Time: 0.0216s
+2026-05-06 09:54:47  INFO      127.0.0.1 - - [06/May/2026 09:54:47] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:54:47  INFO      [TIMING][46f2d50be998] GET /api/transfer/log/VB03F1EED861 - Time: 0.0155s
+2026-05-06 09:54:47  INFO      127.0.0.1 - - [06/May/2026 09:54:47] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:54:55  INFO      [TIMING][ed93369937ec] GET /api/transfer/recent - Time: 0.1636s
+2026-05-06 09:54:55  INFO      127.0.0.1 - - [06/May/2026 09:54:55] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:54:55  INFO      [TIMING][034442c4d11c] GET /api/transfer/status/VB03F1EED861 - Time: 0.0570s
+2026-05-06 09:54:55  INFO      127.0.0.1 - - [06/May/2026 09:54:55] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:54:55  INFO      [TIMING][b5824d4da040] GET /api/transfer/log/VB03F1EED861 - Time: 0.0138s
+2026-05-06 09:54:55  INFO      127.0.0.1 - - [06/May/2026 09:54:55] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:03  INFO      [TIMING][02b30bc00c4a] GET /api/transfer/recent - Time: 0.1837s
+2026-05-06 09:55:03  INFO      127.0.0.1 - - [06/May/2026 09:55:03] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:55:03  INFO      [TIMING][cc0e035d3514] GET /api/transfer/status/VB03F1EED861 - Time: 0.0373s
+2026-05-06 09:55:03  INFO      127.0.0.1 - - [06/May/2026 09:55:03] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:03  INFO      [TIMING][e3424a9cc04c] GET /api/transfer/log/VB03F1EED861 - Time: 0.0170s
+2026-05-06 09:55:03  INFO      127.0.0.1 - - [06/May/2026 09:55:03] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:11  INFO      [TIMING][be6e51d87dd9] GET /api/transfer/recent - Time: 0.1592s
+2026-05-06 09:55:11  INFO      127.0.0.1 - - [06/May/2026 09:55:11] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:55:11  INFO      [TIMING][052fedad3476] GET /api/transfer/status/VB03F1EED861 - Time: 0.0216s
+2026-05-06 09:55:11  INFO      127.0.0.1 - - [06/May/2026 09:55:11] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:11  INFO      [TIMING][cb5f98dd3ab3] GET /api/transfer/log/VB03F1EED861 - Time: 0.0167s
+2026-05-06 09:55:11  INFO      127.0.0.1 - - [06/May/2026 09:55:11] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:19  INFO      [TIMING][1b28557e0347] GET /api/transfer/recent - Time: 0.1984s
+2026-05-06 09:55:19  INFO      127.0.0.1 - - [06/May/2026 09:55:19] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:55:19  INFO      [TIMING][358fe8431e94] GET /api/transfer/status/VB03F1EED861 - Time: 0.0430s
+2026-05-06 09:55:19  INFO      127.0.0.1 - - [06/May/2026 09:55:19] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:19  INFO      [TIMING][24f709566675] GET /api/transfer/log/VB03F1EED861 - Time: 0.0141s
+2026-05-06 09:55:19  INFO      127.0.0.1 - - [06/May/2026 09:55:19] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:27  INFO      [TIMING][7e8479ad49c5] GET /api/transfer/recent - Time: 0.1936s
+2026-05-06 09:55:27  INFO      127.0.0.1 - - [06/May/2026 09:55:27] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:55:27  INFO      [TIMING][a3020bb70998] GET /api/transfer/status/VB03F1EED861 - Time: 0.0396s
+2026-05-06 09:55:27  INFO      127.0.0.1 - - [06/May/2026 09:55:27] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:27  INFO      [TIMING][a1a471620bf4] GET /api/transfer/log/VB03F1EED861 - Time: 0.0175s
+2026-05-06 09:55:27  INFO      127.0.0.1 - - [06/May/2026 09:55:27] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:35  INFO      [TIMING][46507cf86b3b] GET /api/transfer/recent - Time: 0.1327s
+2026-05-06 09:55:35  INFO      127.0.0.1 - - [06/May/2026 09:55:35] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:55:35  INFO      [TIMING][25332ce542b3] GET /api/transfer/status/VB03F1EED861 - Time: 0.0294s
+2026-05-06 09:55:35  INFO      127.0.0.1 - - [06/May/2026 09:55:35] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:35  INFO      [TIMING][2a892ac2c65e] GET /api/transfer/log/VB03F1EED861 - Time: 0.0149s
+2026-05-06 09:55:35  INFO      127.0.0.1 - - [06/May/2026 09:55:35] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:43  INFO      [TIMING][d38121cb4147] GET /api/transfer/recent - Time: 0.1618s
+2026-05-06 09:55:43  INFO      127.0.0.1 - - [06/May/2026 09:55:43] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:55:43  INFO      [TIMING][3de10dff58a3] GET /api/transfer/status/VB03F1EED861 - Time: 0.0347s
+2026-05-06 09:55:43  INFO      127.0.0.1 - - [06/May/2026 09:55:43] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:43  INFO      [TIMING][fbb2ab24b396] GET /api/transfer/log/VB03F1EED861 - Time: 0.0148s
+2026-05-06 09:55:43  INFO      127.0.0.1 - - [06/May/2026 09:55:43] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:51  INFO      [TIMING][be141db10d0a] GET /api/transfer/recent - Time: 0.1690s
+2026-05-06 09:55:51  INFO      127.0.0.1 - - [06/May/2026 09:55:51] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:55:51  INFO      [TIMING][b1af1a0f59a0] GET /api/transfer/status/VB03F1EED861 - Time: 0.0442s
+2026-05-06 09:55:51  INFO      127.0.0.1 - - [06/May/2026 09:55:51] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:51  INFO      [TIMING][b4b006502119] GET /api/transfer/log/VB03F1EED861 - Time: 0.0142s
+2026-05-06 09:55:51  INFO      127.0.0.1 - - [06/May/2026 09:55:51] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:59  INFO      [TIMING][c484cc68c9e8] GET /api/transfer/recent - Time: 0.1723s
+2026-05-06 09:55:59  INFO      127.0.0.1 - - [06/May/2026 09:55:59] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:55:59  INFO      [TIMING][b1d56d4b9693] GET /api/transfer/status/VB03F1EED861 - Time: 0.0204s
+2026-05-06 09:55:59  INFO      127.0.0.1 - - [06/May/2026 09:55:59] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:55:59  INFO      [TIMING][83b9f4dd8aac] GET /api/transfer/log/VB03F1EED861 - Time: 0.0169s
+2026-05-06 09:55:59  INFO      127.0.0.1 - - [06/May/2026 09:55:59] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:56:07  INFO      [TIMING][019c48f5028f] GET /api/transfer/recent - Time: 0.1666s
+2026-05-06 09:56:07  INFO      127.0.0.1 - - [06/May/2026 09:56:07] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:56:07  INFO      [TIMING][a584b4afbf70] GET /api/transfer/status/VB03F1EED861 - Time: 0.0220s
+2026-05-06 09:56:07  INFO      127.0.0.1 - - [06/May/2026 09:56:07] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:56:07  INFO      [TIMING][5412197c140b] GET /api/transfer/log/VB03F1EED861 - Time: 0.0200s
+2026-05-06 09:56:07  INFO      127.0.0.1 - - [06/May/2026 09:56:07] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:56:16  INFO      [TIMING][8c91b606b5bc] GET /api/transfer/recent - Time: 0.1546s
+2026-05-06 09:56:16  INFO      127.0.0.1 - - [06/May/2026 09:56:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:56:16  INFO      [TIMING][4824e1c832d6] GET /api/transfer/status/VB03F1EED861 - Time: 0.0401s
+2026-05-06 09:56:16  INFO      127.0.0.1 - - [06/May/2026 09:56:16] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:56:16  INFO      [TIMING][96edef5e4471] GET /api/transfer/log/VB03F1EED861 - Time: 0.0163s
+2026-05-06 09:56:16  INFO      127.0.0.1 - - [06/May/2026 09:56:16] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:57:03  INFO      [TIMING][12c718b9fdbf] GET /api/transfer/recent - Time: 0.1668s
+2026-05-06 09:57:03  INFO      127.0.0.1 - - [06/May/2026 09:57:03] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:57:03  INFO      [TIMING][ac1bd65e0d46] GET /api/transfer/status/VB03F1EED861 - Time: 0.0417s
+2026-05-06 09:57:03  INFO      127.0.0.1 - - [06/May/2026 09:57:03] "GET /api/transfer/status/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:57:03  INFO      [TIMING][ddced3cac7d0] GET /api/transfer/log/VB03F1EED861 - Time: 0.0173s
+2026-05-06 09:57:03  INFO      127.0.0.1 - - [06/May/2026 09:57:03] "GET /api/transfer/log/VB03F1EED861 HTTP/1.1" 200 -
+2026-05-06 09:57:05  INFO      [TIMING][d0351085368a] GET /api/accounts - Time: 0.0627s
+2026-05-06 09:57:05  INFO      127.0.0.1 - - [06/May/2026 09:57:05] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:57:05  INFO      [TIMING][c9f16a840a97] GET /api/transfer/recent - Time: 0.1658s
+2026-05-06 09:57:05  INFO      127.0.0.1 - - [06/May/2026 09:57:05] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:57:09  INFO      [TIMING][3eba62816a94] OPTIONS /api/lookup-account - Time: 0.0002s
+2026-05-06 09:57:09  INFO      127.0.0.1 - - [06/May/2026 09:57:09] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 09:57:09  INFO      [TIMING][ce8a4c7e7a05] POST /api/lookup-account - Time: 0.0612s
+2026-05-06 09:57:09  INFO      127.0.0.1 - - [06/May/2026 09:57:09] "[33mPOST /api/lookup-account HTTP/1.1[0m" 404 -
+2026-05-06 09:57:12  INFO      [TIMING][fefec7dc6b88] POST /api/lookup-account - Time: 0.0391s
+2026-05-06 09:57:12  INFO      127.0.0.1 - - [06/May/2026 09:57:12] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 09:57:13  INFO      [TIMING][aa2d34ea1f84] GET /api/transfer/recent - Time: 0.1597s
+2026-05-06 09:57:13  INFO      127.0.0.1 - - [06/May/2026 09:57:13] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:57:13  INFO      [TIMING][0133c90a6d81] GET /api/transfer/status/VB94380D4608 - Time: 0.0354s
+2026-05-06 09:57:13  INFO      127.0.0.1 - - [06/May/2026 09:57:13] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:57:13  INFO      [TIMING][7ada3a566509] GET /api/transfer/log/VB94380D4608 - Time: 0.0171s
+2026-05-06 09:57:13  INFO      127.0.0.1 - - [06/May/2026 09:57:13] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:57:16  INFO      [TIMING][fd929b2e7c32] OPTIONS /api/transfer - Time: 0.0002s
+2026-05-06 09:57:16  INFO      127.0.0.1 - - [06/May/2026 09:57:16] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-05-06 09:57:16  INFO      [TRANSFER] ── Giao dịch mới | tx=VB593EC16836 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "TC06_CRASH_BEFORE_COMMIT"
+2026-05-06 09:57:16  INFO      [BAL] TRƯỚC                  | tx=VB593EC16836   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 09:57:16  INFO      [BAL] TRƯỚC                  | tx=VB593EC16836   | acc=2038 4756 9801 | balance=220000 đ
+2026-05-06 09:57:16  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB593EC16836 | 593ec1683698 | 1029 3847 5612 → 2038 4756 9801 | 10000đ | "TC06_CRASH_BEFORE_COMMIT"
+2026-05-06 09:57:16  CRITICAL  [DEMO] tx=VB593EC16836: TC06 crash while log is PREPARING, before PREPARED/COMMIT
+2026-05-06 09:57:39  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:57:39  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 09:57:39  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:57:39  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 09:57:39  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 09:57:39  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 09:57:39  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 09:57:39  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 09:57:39  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 09:57:39  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 09:57:40  INFO      [RECOVERY] Tìm thấy 23 giao dịch cần xử lý.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB593EC16836 | phase=PREPARING | PREPARED trên 2 DB
+2026-05-06 09:57:40  WARNING   [PHASE] Phase *  ✖ ABORTED     — Giao dịch bị hủy (Rollback) | tx=VB593EC16836
+2026-05-06 09:57:40  INFO      [BAL] RECOVERY-ABORTED-A     | tx=VB593EC16836   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 09:57:40  INFO      [BAL] RECOVERY-ABORTED-B     | tx=VB593EC16836   | acc=2038 4756 9801 | balance=220000 đ
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBCF937A6DB3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:40  INFO      [RECOVERY] tx=VBCF937A6DB3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:40  INFO      [STARTUP] ✓ Đã khôi phục 1 giao dịch treo
+2026-05-06 09:57:40  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:57:40  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 09:57:40  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 09:57:40  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 09:57:40  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 09:57:40  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 09:57:40  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:57:40  INFO      [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.10.2:5000
+2026-05-06 09:57:40  INFO      [33mPress CTRL+C to quit[0m
+2026-05-06 09:57:40  INFO       * Restarting with stat
+2026-05-06 09:57:40  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:57:40  INFO                    V-Bank 2PC Server đang khởi động...              
+2026-05-06 09:57:40  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:57:40  INFO      [STARTUP] Đang kiểm tra kết nối database...
+2026-05-06 09:57:40  INFO      [STARTUP] ✓ Kết nối Bank A (bank1) thành công
+2026-05-06 09:57:41  INFO      [STARTUP] ✓ Kết nối Bank B (bank2) thành công
+2026-05-06 09:57:41  INFO      [STARTUP] ✓ Kết nối Bank C (bank3) thành công
+2026-05-06 09:57:41  INFO      [STARTUP] ✓ Kết nối Coordinator (coordinator) thành công
+2026-05-06 09:57:41  INFO      [STARTUP] Đang chạy recovery cho các giao dịch treo...
+2026-05-06 09:57:41  INFO      [RECOVERY] ════════ Bắt đầu kiểm tra giao dịch treo ════════
+2026-05-06 09:57:41  INFO      [RECOVERY] Tìm thấy 23 giao dịch cần xử lý.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB60B398846A | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB60B398846A đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB593EC16836 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB593EC16836 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB93DF808852 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB93DF808852 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBABD2B43AE3 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBABD2B43AE3 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB9BB0CDA921 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB9BB0CDA921 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBCF937A6DB3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBCF937A6DB3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBE882CF7B98 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBE882CF7B98 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB05BC679F69 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB05BC679F69 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB66768B58F3 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB66768B58F3 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBC80ECC2190 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBC80ECC2190 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB27078F7EF4 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB27078F7EF4 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB09014E2153 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB09014E2153 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBB7A180088B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBB7A180088B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB6BA605F8B0 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB6BA605F8B0 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB48591DBB7C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB48591DBB7C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBB32683025C | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBB32683025C đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBA8CDE724E5 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBA8CDE724E5 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB3D0B8860C7 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB3D0B8860C7 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBC5EC754430 | phase=COMPENSATED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBC5EC754430 đã ở trạng thái cuối (COMPENSATED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB327C0C36C1 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB327C0C36C1 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBBA63787D80 | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBBA63787D80 đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB470E46E61B | phase=COMMITTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VB470E46E61B đã ở trạng thái cuối (COMMITTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBE1D8E95AF0 | phase=ABORTED | PREPARED trên 0 DB
+2026-05-06 09:57:41  INFO      [RECOVERY] tx=VBE1D8E95AF0 đã ở trạng thái cuối (ABORTED), bỏ qua recovery.
+2026-05-06 09:57:41  INFO      [STARTUP] ✓ Không có giao dịch treo nào
+2026-05-06 09:57:41  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:57:41  INFO        🎉 V-Bank 2PC Server khởi động thành công!
+2026-05-06 09:57:41  INFO        📍 Server chạy tại: http://localhost:5000
+2026-05-06 09:57:41  INFO        📍 API Base URL:    http://localhost:5000/api
+2026-05-06 09:57:41  INFO        🗄  Database:       bank1/bank2/bank3 + coordinator
+2026-05-06 09:57:41  INFO        ⏱  Prepare Timeout: 10 giây
+2026-05-06 09:57:41  INFO      ═══════════════════════════════════════════════════════════════
+2026-05-06 09:57:41  WARNING    * Debugger is active!
+2026-05-06 09:57:41  INFO       * Debugger PIN: 535-083-205
+2026-05-06 09:57:46  INFO      [TIMING][c322106310e1] GET /api/transfer/recent - Time: 0.1483s
+2026-05-06 09:57:46  INFO      127.0.0.1 - - [06/May/2026 09:57:46] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:57:46  INFO      [TIMING][d68eb9186ce4] GET /api/transfer/status/VB94380D4608 - Time: 0.0448s
+2026-05-06 09:57:46  INFO      127.0.0.1 - - [06/May/2026 09:57:46] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:57:46  INFO      [TIMING][1dcee2635a2a] GET /api/transfer/log/VB94380D4608 - Time: 0.0201s
+2026-05-06 09:57:46  INFO      127.0.0.1 - - [06/May/2026 09:57:46] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:57:54  INFO      [TIMING][f3c48ee6b20e] GET /api/transfer/recent - Time: 0.1354s
+2026-05-06 09:57:54  INFO      127.0.0.1 - - [06/May/2026 09:57:54] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:57:54  INFO      [TIMING][b4b9266ff559] GET /api/transfer/status/VB94380D4608 - Time: 0.0420s
+2026-05-06 09:57:54  INFO      127.0.0.1 - - [06/May/2026 09:57:54] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:57:54  INFO      [TIMING][9cca9d26f9c6] GET /api/transfer/log/VB94380D4608 - Time: 0.0167s
+2026-05-06 09:57:54  INFO      127.0.0.1 - - [06/May/2026 09:57:54] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:58:02  INFO      [TIMING][4ad206d66237] GET /api/transfer/recent - Time: 0.1679s
+2026-05-06 09:58:02  INFO      127.0.0.1 - - [06/May/2026 09:58:02] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:58:02  INFO      [TIMING][b75a93d33420] GET /api/transfer/status/VB94380D4608 - Time: 0.0429s
+2026-05-06 09:58:02  INFO      127.0.0.1 - - [06/May/2026 09:58:02] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:58:02  INFO      [TIMING][c3f122805645] GET /api/transfer/log/VB94380D4608 - Time: 0.0152s
+2026-05-06 09:58:02  INFO      127.0.0.1 - - [06/May/2026 09:58:02] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:58:10  INFO      [TIMING][e4e999c1ffbe] GET /api/transfer/recent - Time: 0.1630s
+2026-05-06 09:58:10  INFO      127.0.0.1 - - [06/May/2026 09:58:10] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:58:10  INFO      [TIMING][bb391255ecad] GET /api/transfer/status/VB94380D4608 - Time: 0.0363s
+2026-05-06 09:58:10  INFO      127.0.0.1 - - [06/May/2026 09:58:10] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:58:10  INFO      [TIMING][c1dfe83f5933] GET /api/transfer/log/VB94380D4608 - Time: 0.0160s
+2026-05-06 09:58:10  INFO      127.0.0.1 - - [06/May/2026 09:58:10] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:58:18  INFO      [TIMING][4de0301f109c] GET /api/transfer/recent - Time: 0.1209s
+2026-05-06 09:58:18  INFO      127.0.0.1 - - [06/May/2026 09:58:18] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:58:18  INFO      [TIMING][23df1252d59b] GET /api/transfer/status/VB94380D4608 - Time: 0.0423s
+2026-05-06 09:58:18  INFO      127.0.0.1 - - [06/May/2026 09:58:18] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:58:18  INFO      [TIMING][3f43b83f2906] GET /api/transfer/log/VB94380D4608 - Time: 0.0170s
+2026-05-06 09:58:18  INFO      127.0.0.1 - - [06/May/2026 09:58:18] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 09:58:23  INFO      [TIMING][2c4b32b91c4a] GET /api/accounts - Time: 0.0673s
+2026-05-06 09:58:23  INFO      127.0.0.1 - - [06/May/2026 09:58:23] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 09:58:23  INFO      [TIMING][6c2a96a82b31] GET /api/transfer/recent - Time: 0.1632s
+2026-05-06 09:58:23  INFO      127.0.0.1 - - [06/May/2026 09:58:23] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:58:32  INFO      [TIMING][c14ae83f7d44] GET /api/transfer/recent - Time: 0.1140s
+2026-05-06 09:58:32  INFO      127.0.0.1 - - [06/May/2026 09:58:32] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:58:40  INFO      [TIMING][78b4122d4f2c] GET /api/transfer/recent - Time: 0.1649s
+2026-05-06 09:58:40  INFO      127.0.0.1 - - [06/May/2026 09:58:40] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:58:48  INFO      [TIMING][e2a4647e5318] GET /api/transfer/recent - Time: 0.1716s
+2026-05-06 09:58:48  INFO      127.0.0.1 - - [06/May/2026 09:58:48] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:58:56  INFO      [TIMING][306b2f770152] GET /api/transfer/recent - Time: 0.1616s
+2026-05-06 09:58:56  INFO      127.0.0.1 - - [06/May/2026 09:58:56] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:59:04  INFO      [TIMING][f464503921ea] GET /api/transfer/recent - Time: 0.2049s
+2026-05-06 09:59:04  INFO      127.0.0.1 - - [06/May/2026 09:59:04] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:59:12  INFO      [TIMING][0ca0031d1c3c] GET /api/transfer/recent - Time: 0.1393s
+2026-05-06 09:59:12  INFO      127.0.0.1 - - [06/May/2026 09:59:12] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:59:20  INFO      [TIMING][f8665bffd941] GET /api/transfer/recent - Time: 0.1387s
+2026-05-06 09:59:20  INFO      127.0.0.1 - - [06/May/2026 09:59:20] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:59:28  INFO      [TIMING][87963cc22eae] GET /api/transfer/recent - Time: 0.1709s
+2026-05-06 09:59:28  INFO      127.0.0.1 - - [06/May/2026 09:59:28] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:59:36  INFO      [TIMING][78d4de4e3606] GET /api/transfer/recent - Time: 0.1551s
+2026-05-06 09:59:36  INFO      127.0.0.1 - - [06/May/2026 09:59:36] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 09:59:44  INFO      [TIMING][36d9f0d0765e] GET /api/transfer/recent - Time: 0.1684s
+2026-05-06 09:59:44  INFO      127.0.0.1 - - [06/May/2026 09:59:44] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:00:16  INFO      [TIMING][c7bbd0f47ddf] GET /api/transfer/recent - Time: 0.1813s
+2026-05-06 10:00:16  INFO      127.0.0.1 - - [06/May/2026 10:00:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:01:16  INFO      [TIMING][c1e77259b8c7] GET /api/transfer/recent - Time: 0.1769s
+2026-05-06 10:01:16  INFO      127.0.0.1 - - [06/May/2026 10:01:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:02:16  INFO      [TIMING][995ee8033916] GET /api/transfer/recent - Time: 0.1520s
+2026-05-06 10:02:16  INFO      127.0.0.1 - - [06/May/2026 10:02:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:03:11  INFO      [TIMING][2dc31f58f88d] GET /api/transfer/recent - Time: 0.1084s
+2026-05-06 10:03:11  INFO      127.0.0.1 - - [06/May/2026 10:03:11] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:03:19  INFO      [TIMING][410fb842a54d] GET /api/transfer/recent - Time: 0.1478s
+2026-05-06 10:03:19  INFO      127.0.0.1 - - [06/May/2026 10:03:19] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:03:20  INFO      [TIMING][42fa6ff55da3] GET /api/accounts - Time: 0.0423s
+2026-05-06 10:03:20  INFO      127.0.0.1 - - [06/May/2026 10:03:20] "GET /api/accounts HTTP/1.1" 200 -
+2026-05-06 10:03:20  INFO      [TIMING][8d8a0f363350] GET /api/transfer/recent - Time: 0.1532s
+2026-05-06 10:03:20  INFO      127.0.0.1 - - [06/May/2026 10:03:20] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:03:25  INFO      [TIMING][da8d4b894447] OPTIONS /api/lookup-account - Time: 0.0003s
+2026-05-06 10:03:25  INFO      127.0.0.1 - - [06/May/2026 10:03:25] "OPTIONS /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 10:03:25  INFO      [TIMING][9158c6819566] POST /api/lookup-account - Time: 0.0338s
+2026-05-06 10:03:25  INFO      127.0.0.1 - - [06/May/2026 10:03:25] "POST /api/lookup-account HTTP/1.1" 200 -
+2026-05-06 10:03:28  INFO      [TIMING][b5692cd40b60] GET /api/transfer/recent - Time: 0.1793s
+2026-05-06 10:03:28  INFO      127.0.0.1 - - [06/May/2026 10:03:28] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:03:28  INFO      [TIMING][ec7e8e98e9d4] GET /api/transfer/status/VB94380D4608 - Time: 0.0325s
+2026-05-06 10:03:28  INFO      127.0.0.1 - - [06/May/2026 10:03:28] "GET /api/transfer/status/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 10:03:28  INFO      [TIMING][e2101dfef1e5] GET /api/transfer/log/VB94380D4608 - Time: 0.0190s
+2026-05-06 10:03:28  INFO      127.0.0.1 - - [06/May/2026 10:03:28] "GET /api/transfer/log/VB94380D4608 HTTP/1.1" 200 -
+2026-05-06 10:03:31  INFO      [TIMING][c2d1a94f97b6] OPTIONS /api/transfer - Time: 0.0002s
+2026-05-06 10:03:31  INFO      127.0.0.1 - - [06/May/2026 10:03:31] "OPTIONS /api/transfer HTTP/1.1" 200 -
+2026-05-06 10:03:31  INFO      [TRANSFER] ── Giao dịch mới | tx=VB1EE54B7F46 | 1029 3847 5612 → 2038 4756 9801 | 50000đ | "TC04_B_COMMIT_FAIL"
+2026-05-06 10:03:31  INFO      [BAL] TRƯỚC                  | tx=VB1EE54B7F46   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 10:03:31  INFO      [BAL] TRƯỚC                  | tx=VB1EE54B7F46   | acc=2038 4756 9801 | balance=220000 đ
+2026-05-06 10:03:31  INFO      [PHASE] Phase 1  ▶ PREPARING   — TC bắt đầu giao dịch | tx=VB1EE54B7F46 | 1ee54b7f46e5 | 1029 3847 5612 → 2038 4756 9801 | 50000đ | "TC04_B_COMMIT_FAIL"
+2026-05-06 10:03:31  INFO      [PHASE] Phase 1  ✔ PREPARED    — Cả hai participant sẵn sàng | tx=VB1EE54B7F46
+2026-05-06 10:03:32  INFO      [PHASE] Phase 2  ▶ COMMITTING  — TC bắt đầu gửi COMMIT | tx=VB1EE54B7F46
+2026-05-06 10:03:32  WARNING   [PHASE] Phase 2  ⚡ COMMIT_A    — Bank A đã COMMIT, Bank B chưa | tx=VB1EE54B7F46
+2026-05-06 10:03:32  INFO      [BAL] SAU-COMMIT_A(-trừ)     | tx=VB1EE54B7F46   | acc=1029 3847 5612 | balance=233400000 đ
+2026-05-06 10:03:32  ERROR     [PARTIAL COMMIT] tx=VB1EE54B7F46: Bank A committed, Bank B failed → compensation
+2026-05-06 10:03:32  WARNING   [COMPENSATE] Bắt đầu hoàn tiền | tx=VB1EE54B7F46 | acc=1029 3847 5612 | amount=50000
+2026-05-06 10:03:32  INFO      [BAL] TRƯỚC-COMPENSATION     | tx=VB1EE54B7F46   | acc=1029 3847 5612 | balance=233400000 đ
+2026-05-06 10:03:32  WARNING   [PHASE] Recover  ↺ COMPENSATING — Đang hoàn tiền cho Bank A | tx=VB1EE54B7F46
+2026-05-06 10:03:32  INFO      [BAL] SAU-COMPENSATION(+hoàn) | tx=VB1EE54B7F46   | acc=1029 3847 5612 | balance=233450000 đ
+2026-05-06 10:03:32  INFO      [PHASE] Recover  ✔ COMPENSATED  — Hoàn tiền thành công | tx=VB1EE54B7F46
+2026-05-06 10:03:32  INFO      [COMPENSATE] Hoàn 50000đ → 1029 3847 5612 thành công | tx=VB1EE54B7F46
+2026-05-06 10:03:32  INFO      [TIMING][80a4160b74e6] POST /api/transfer - Time: 0.7407s
+2026-05-06 10:03:32  INFO      127.0.0.1 - - [06/May/2026 10:03:32] "[35m[1mPOST /api/transfer HTTP/1.1[0m" 500 -
+2026-05-06 10:03:32  INFO      [TIMING][09f43ba382b0] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0282s
+2026-05-06 10:03:32  INFO      127.0.0.1 - - [06/May/2026 10:03:32] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:03:32  INFO      [TIMING][a8de00af7689] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0218s
+2026-05-06 10:03:32  INFO      127.0.0.1 - - [06/May/2026 10:03:32] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:03:37  INFO      [TIMING][9a376640d89b] GET /api/transfer/recent - Time: 0.1757s
+2026-05-06 10:03:37  INFO      127.0.0.1 - - [06/May/2026 10:03:37] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:03:37  INFO      [TIMING][08bafabc5b3b] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0538s
+2026-05-06 10:03:37  INFO      127.0.0.1 - - [06/May/2026 10:03:37] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:03:37  INFO      [TIMING][f4f45bbc8590] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0180s
+2026-05-06 10:03:37  INFO      127.0.0.1 - - [06/May/2026 10:03:37] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:03:45  INFO      [TIMING][c6b9b81a02f0] GET /api/transfer/recent - Time: 0.1936s
+2026-05-06 10:03:45  INFO      127.0.0.1 - - [06/May/2026 10:03:45] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:03:45  INFO      [TIMING][527f79e2c168] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0296s
+2026-05-06 10:03:45  INFO      127.0.0.1 - - [06/May/2026 10:03:45] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:03:45  INFO      [TIMING][915db453bf17] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0178s
+2026-05-06 10:03:45  INFO      127.0.0.1 - - [06/May/2026 10:03:45] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:03:53  INFO      [TIMING][3fa8195672e8] GET /api/transfer/recent - Time: 0.1866s
+2026-05-06 10:03:53  INFO      127.0.0.1 - - [06/May/2026 10:03:53] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:03:53  INFO      [TIMING][31af84050162] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0471s
+2026-05-06 10:03:53  INFO      127.0.0.1 - - [06/May/2026 10:03:53] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:03:53  INFO      [TIMING][493e7382e668] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0169s
+2026-05-06 10:03:53  INFO      127.0.0.1 - - [06/May/2026 10:03:53] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:01  INFO      [TIMING][183a8e6fd179] GET /api/transfer/recent - Time: 0.1947s
+2026-05-06 10:04:01  INFO      127.0.0.1 - - [06/May/2026 10:04:01] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:04:01  INFO      [TIMING][c365bb4a84ee] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0282s
+2026-05-06 10:04:01  INFO      127.0.0.1 - - [06/May/2026 10:04:01] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:01  INFO      [TIMING][28efebc04511] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0164s
+2026-05-06 10:04:01  INFO      127.0.0.1 - - [06/May/2026 10:04:01] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:09  INFO      [TIMING][2ddb6ef2daf2] GET /api/transfer/recent - Time: 0.1970s
+2026-05-06 10:04:09  INFO      127.0.0.1 - - [06/May/2026 10:04:09] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:04:09  INFO      [TIMING][06b2ccdf053f] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0518s
+2026-05-06 10:04:09  INFO      127.0.0.1 - - [06/May/2026 10:04:09] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:09  INFO      [TIMING][6a8304cc0062] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0175s
+2026-05-06 10:04:09  INFO      127.0.0.1 - - [06/May/2026 10:04:09] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:17  INFO      [TIMING][9a7f2cd74b7a] GET /api/transfer/recent - Time: 0.1562s
+2026-05-06 10:04:17  INFO      127.0.0.1 - - [06/May/2026 10:04:17] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:04:17  INFO      [TIMING][e789699d1c9a] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0321s
+2026-05-06 10:04:17  INFO      127.0.0.1 - - [06/May/2026 10:04:17] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:17  INFO      [TIMING][ad091c9c8798] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0247s
+2026-05-06 10:04:17  INFO      127.0.0.1 - - [06/May/2026 10:04:17] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:25  INFO      [TIMING][52a4e2a6d3b3] GET /api/transfer/recent - Time: 0.1821s
+2026-05-06 10:04:25  INFO      127.0.0.1 - - [06/May/2026 10:04:25] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:04:25  INFO      [TIMING][2e906351fa0d] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0421s
+2026-05-06 10:04:25  INFO      127.0.0.1 - - [06/May/2026 10:04:25] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:25  INFO      [TIMING][2120ab9a2a22] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0177s
+2026-05-06 10:04:25  INFO      127.0.0.1 - - [06/May/2026 10:04:25] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:33  INFO      [TIMING][69298d995855] GET /api/transfer/recent - Time: 0.1683s
+2026-05-06 10:04:33  INFO      127.0.0.1 - - [06/May/2026 10:04:33] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:04:33  INFO      [TIMING][dd0224642a9f] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0330s
+2026-05-06 10:04:33  INFO      127.0.0.1 - - [06/May/2026 10:04:33] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:04:33  INFO      [TIMING][36aa429c5c6f] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0142s
+2026-05-06 10:04:33  INFO      127.0.0.1 - - [06/May/2026 10:04:33] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:05:16  INFO      [TIMING][bec299cd13ef] GET /api/transfer/recent - Time: 0.1489s
+2026-05-06 10:05:16  INFO      127.0.0.1 - - [06/May/2026 10:05:16] "GET /api/transfer/recent?limit=8 HTTP/1.1" 200 -
+2026-05-06 10:05:16  INFO      [TIMING][d7a453084695] GET /api/transfer/status/VB1EE54B7F46 - Time: 0.0385s
+2026-05-06 10:05:16  INFO      127.0.0.1 - - [06/May/2026 10:05:16] "GET /api/transfer/status/VB1EE54B7F46 HTTP/1.1" 200 -
+2026-05-06 10:05:16  INFO      [TIMING][a87c079964d5] GET /api/transfer/log/VB1EE54B7F46 - Time: 0.0178s
+2026-05-06 10:05:16  INFO      127.0.0.1 - - [06/May/2026 10:05:16] "GET /api/transfer/log/VB1EE54B7F46 HTTP/1.1" 200 -
