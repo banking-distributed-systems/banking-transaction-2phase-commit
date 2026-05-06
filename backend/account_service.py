@@ -45,27 +45,76 @@ def find_account_by_number(account_number: str) -> Tuple[Optional[Dict[str, Any]
     return None, None
 
 
-def authenticate_user(account_number: str) -> Optional[Dict[str, Any]]:
+def find_account_by_phone(phone: str) -> Tuple[Optional[Dict[str, Any]], Optional[Dict[str, Any]]]:
     """
-    Xác thực người dùng đăng nhập bằng số tài khoản.
+    Tìm tài khoản theo số điện thoại.
 
     Args:
-        account_number: Số tài khoản
+        phone: Số điện thoại
+
+    Returns:
+        Tuple (account, db_config) hoặc (None, None)
+    """
+    normalized_phone = str(phone or '').strip().replace(' ', '')
+    if not normalized_phone:
+        return None, None
+
+    for config in ALL_DB_CONFIGS:
+        try:
+            conn = get_connection(config)
+            with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.execute(
+                    "SELECT name, balance, account_number, account_type "
+                    "FROM accounts WHERE REPLACE(phone, ' ', '') = %s",
+                    (normalized_phone,)
+                )
+                acc = cursor.fetchone()
+            conn.close()
+            if acc:
+                return acc, config
+        except Exception as e:
+            logger.error('[LOOKUP] Lỗi tìm tài khoản theo phone: %s', e)
+    return None, None
+
+
+def authenticate_user(phone: str, password: str) -> Optional[Dict[str, Any]]:
+    """
+    Xác thực người dùng đăng nhập bằng số điện thoại và mật khẩu.
+
+    Args:
+        phone: Số điện thoại
+        password: Mật khẩu
 
     Returns:
         Thông tin user nếu đăng nhập thành công, None nếu thất bại
     """
-    user, config = find_account_by_number(account_number)
-    if not user or not config:
+    normalized_phone = str(phone or '').strip().replace(' ', '')
+    normalized_password = str(password or '')
+    if not normalized_phone or not normalized_password:
         return None
 
-    return {
-        'name': user['name'],
-        'balance': user['balance'],
-        'account_number': user['account_number'],
-        'account_type': user.get('account_type'),
-        'bank': config['database'],
-    }
+    for config in ALL_DB_CONFIGS:
+        try:
+            conn = get_connection(config)
+            with conn.cursor(pymysql.cursors.DictCursor) as cursor:
+                cursor.execute(
+                    "SELECT name, balance, account_number, account_type "
+                    "FROM accounts WHERE REPLACE(phone, ' ', '') = %s AND password = %s",
+                    (normalized_phone, normalized_password),
+                )
+                user = cursor.fetchone()
+            conn.close()
+            if user:
+                return {
+                    'name': user['name'],
+                    'balance': user['balance'],
+                    'account_number': user['account_number'],
+                    'account_type': user.get('account_type'),
+                    'bank': config['database'],
+                }
+        except Exception as e:
+            logger.error('[AUTH] Lỗi xác thực người dùng: %s', e)
+    return None
 
 
 def save_transaction(

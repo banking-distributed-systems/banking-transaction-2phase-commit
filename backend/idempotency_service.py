@@ -16,6 +16,7 @@ def get_idempotency_record(idem_key: str) -> Optional[Dict[str, Any]]:
     conn = None
     try:
         conn = get_coordinator_conn()
+        # Read idempotency state for the given key (single-row lookup).
         with conn.cursor(pymysql.cursors.DictCursor) as cur:
             cur.execute(
                 "SELECT idem_key, status, tx_id "
@@ -35,6 +36,7 @@ def create_processing_record(idem_key: str) -> bool:
     conn = None
     try:
         conn = get_coordinator_conn()
+        # Insert a fresh key in PROCESSING; unique constraint prevents duplicates.
         with conn.cursor() as cur:
             cur.execute(
                 "INSERT INTO idempotency_keys (idem_key, status, tx_id) VALUES (%s, 'PROCESSING', NULL)",
@@ -59,6 +61,7 @@ def finalize_record(
     conn = None
     try:
         conn = get_coordinator_conn()
+        # Finalize outcome and persist the transaction id for replay handling.
         with conn.cursor() as cur:
             cur.execute(
                 "UPDATE idempotency_keys "
@@ -78,4 +81,5 @@ def finalize_record(
 
 
 def parse_stored_response(record: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    # Placeholder for parsing a stored response payload (not yet implemented).
     return None

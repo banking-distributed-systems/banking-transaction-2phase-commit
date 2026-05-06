@@ -41,11 +41,13 @@ TEST_ACCOUNT_C = {
 }
 
 VALID_LOGIN_DATA = {
-    'account_number': '102938475612',
+    'phone': '0901234567',
+    'password': '123456',
 }
 
 INVALID_LOGIN_DATA = {
-    'account_number': '999999999999',
+    'phone': '0901234567',
+    'password': 'wrong-password',
 }
 
 VALID_TRANSFER_DATA = {
